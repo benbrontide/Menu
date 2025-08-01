@@ -10,116 +10,81 @@
       --btn-color: #fff;
       --modal-bg: rgba(0,0,0,.8);
       --font-base: 1.1rem;
-      --btn-padding-vert: 1rem;
-      --btn-padding-horiz: 1.2rem;
-      --chip-font: 1rem;
-      --chip-padding-vert: .6rem;
-      --chip-padding-horiz: 1rem;
-      --list-btn-height: 3rem;
+      --btn-v: 1rem;
+      --btn-h: 1.2rem;
+      --chip-f: 1rem;
+      --chip-v: .6rem;
+      --chip-h: 1rem;
+      --btn-hh: 3rem;
     }
     body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 1rem;
-      background: #f8f8f8;
-      font-size: var(--font-base);
-      color: #222;
+      font: var(--font-base)/1.4 Arial, sans-serif;
+      margin: 0; padding: 1rem; background: #f8f8f8; color: #222;
     }
-    h1 {
-      font-size: 2rem; margin-bottom: .5rem;
-    }
-    p.description {
-      font-size: 1rem; margin-bottom: 1rem; color: #555;
-    }
+    h1 { font-size: 2rem; margin-bottom: .5rem; }
+    p.description { margin-bottom: 1rem; color: #555; }
     button {
       cursor: pointer; border: none;
-      padding: var(--btn-padding-vert) var(--btn-padding-horiz);
-      border-radius: 8px;
-      font-size: var(--font-base);
-      background: var(--btn-bg);
-      color: var(--btn-color);
+      padding: var(--btn-v) var(--btn-h);
+      border-radius: 8px; font-size: var(--font-base);
+      background: var(--btn-bg); color: var(--btn-color);
       transition: background .2s;
     }
     button:hover { background: #666; }
-    #choosePersonBtn {
-      display: inline-block; margin-bottom: 1rem;
-    }
-    #chooseFoodBtn {
-      display: none; margin-top: 2rem;
-    }
+    #choosePersonBtn { margin-bottom: 1rem; }
+    #chooseFoodBtn { display: none; margin-top: 2rem; }
     .person-chip {
       display: inline-block;
-      padding: var(--chip-padding-vert) var(--chip-padding-horiz);
+      padding: var(--chip-v) var(--chip-h);
       border-radius: 16px; color: #fff;
-      font-weight: 600; margin: .4rem;
-      font-size: var(--chip-font);
+      font-weight: 600; margin: .4rem; font-size: var(--chip-f);
     }
     #personList {
-      display: flex; flex-wrap: wrap; gap: .6rem;
-      margin-bottom: 1rem;
+      display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem;
     }
     .person-btn {
       flex: 1 1 calc(50% - .6rem);
-      height: var(--list-btn-height);
-      line-height: var(--list-btn-height);
-      padding: 0 var(--btn-padding-horiz);
-      font-size: var(--font-base);
-      text-align: center;
-      border-radius: 8px;
-      background: var(--btn-bg);
-      color: var(--btn-color);
+      height: var(--btn-hh); line-height: var(--btn-hh);
+      text-align: center; background: var(--btn-bg);
+      color: #fff; border-radius: 8px; font-size: var(--font-base);
     }
     .menu-item {
       background: #fff; padding: 1.2rem; margin: .6rem 0;
-      border-radius: 10px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.1);
-      display: flex; flex-direction: column; gap: .6rem;
+      border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.1);
     }
     .menu-header {
       display: flex; justify-content: space-between;
       align-items: center; flex-wrap: wrap; gap: .5rem;
     }
-    .menu-text {
-      flex: 1 1 auto; min-width: 200px;
-      font-size: 1.1rem;
-    }
-    .price {
-      font-weight: 700; margin-left: .6rem;
-      font-size: 1.1rem;
-    }
+    .menu-text { font-size: 1.1rem; min-width: 200px; }
+    .price { font-weight: 700; margin-left: .6rem; font-size: 1.1rem; }
     .assigned {
-      display: flex; flex-wrap: wrap; gap: .4rem;
-      margin-top: .8rem;
+      display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem;
     }
     .modal {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: none;
-      align-items: center; justify-content: center;
-      background: var(--modal-bg); z-index: 10;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      display: none; align-items: center; justify-content: center;
+      background: var(--modal-bg);
     }
     .modal.active { display: flex; }
     .modal-content {
-      background: #fff;
-      padding: 1.2rem; border-radius: 10px;
-      width: 90%; max-width: 500px;
-      max-height: 80vh; overflow-y: auto;
+      background: #fff; padding: 1.2rem; border-radius: 10px;
+      width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;
     }
     .assign-person {
       position: relative;
       display: flex; align-items: center; justify-content: center;
-      height: var(--list-btn-height);
-      padding: 0 var(--btn-padding-horiz);
-      border-radius: 10px; margin: .4rem;
-      min-width: 90px; font-weight: 600; color: #fff;
-      opacity: .5; border: 2px solid transparent; cursor: pointer;
-      font-size: var(--font-base);
+      height: var(--btn-hh); padding: 0 var(--btn-h);
+      margin: .4rem; border-radius: 10px; opacity: .5;
+      font-size: var(--font-base); color: #fff;
+      cursor: pointer; border: 2px solid transparent;
     }
     .assign-person.selected { opacity: 1; border-color: #000; }
     .assign-person .qty {
       position: absolute; bottom: -8px; right: -8px;
       background: #000; color: #fff; border-radius: 50%;
-      font-size: .8rem; width: 26px; height: 26px;
-      display: flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; display: flex;
+      align-items: center; justify-content: center; font-size: .8rem;
     }
     #actionBar {
       display: none; margin-top: 1rem; gap: 1rem; flex-wrap: wrap;
@@ -152,7 +117,7 @@
     </button>
   </div>
 
-  <!-- Person selection modal -->
+  <!-- Person-selection modal -->
   <div id="personModal" class="modal">
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
@@ -194,10 +159,10 @@
 
       // — Carne —
       { de:"Salsiccia Piccante (Mozzarella, scharfe Peperoni-Salami, Basilikum)", en:"Salsiccia Piccante (Mozzarella, spicy pepperoni-salami, basil)", price:"" },
-      { de:"BBQ Chicken (Mozzarella, BBQ-Sauce, knusprige Hähnchenbrust, Paprika, Zwiebeln)", en:"BBQ Chicken (Mozzarella, BBQ sauce, fried chicken breast strips, peppers, onions)", price:"" },
+      { de:"BBQ Chicken (Mozzarella, BBQ-Sauce, knusprige Hähnchenbrust, Paprika, Zwiebeln)", en:"BBQ Chicken (Mozzarella, BBQ sauce, crispy chicken breast, peppers, onions)", price:"" },
       { de:"Salsiccia Fresca (Mozzarella, italienische Fenchelsalami, Wirsing, Grana Padano DOP)", en:"Salsiccia Fresca (Mozzarella, Italian fennel sausage, savoy cabbage, Grana Padano DOP)", price:"" },
       { de:"Rustica (Mozzarella, frische Tomaten, Oliven, Zwiebeln, Oregano, scharf)", en:"Rustica (Mozzarella, fresh tomatoes, olives, onions, oregano, spicy)", price:"" },
-      { de:"Parmigiana (Mozzarella, Aubergine, Grana Padano DOP, Oregano)", en:"Parmigiana (Mozzarella, aubergine, Grana Padano DOP, oregano)", price:"" },
+      { de:"Parmigiana (Mozzarella, Aubergine, Grana Padano DOP, Oregano)", en:"Parmigiana (Mozzarella, eggplant, Grana Padano DOP, oregano)", price:"" },
       { de:"Prosciutto Crudo (Mozzarella, luftgetrockneter Rohschinken)", en:"Prosciutto Crudo (Mozzarella, air-dried ham)", price:"" },
 
       // — Speciale & Vegetarisch —
@@ -214,13 +179,13 @@
     function renderSelected(){
       const out = document.getElementById("selectedPersons");
       out.innerHTML = "";
-      for(let [n,col] of Object.entries(selected)){
-        let chip = document.createElement("span");
+      Object.entries(selected).forEach(([n,c])=>{
+        const chip = document.createElement("span");
         chip.className = "person-chip";
         chip.textContent = n;
-        chip.style.background = col;
+        chip.style.background = c;
         out.appendChild(chip);
-      }
+      });
       document.getElementById("chooseFoodBtn").style.display =
         Object.keys(selected).length ? "inline-block" : "none";
     }
@@ -234,53 +199,55 @@
     }
     document.getElementById("choosePersonBtn").onclick = openPersonModal;
 
-    // build person list
+    // populate person list
     const pl = document.getElementById("personList");
     people.forEach((p,i)=>{
-      let b = document.createElement("button");
-      b.className = "person-btn";
-      b.textContent = p;
-      b.onclick = ()=>{
+      const btn = document.createElement("button");
+      btn.className = "person-btn";
+      btn.textContent = p;
+      btn.onclick = ()=>{
         if(selected[p]){
           delete selected[p];
-          b.classList.remove("selected");
-          b.style.background = "";
-          b.style.color = "";
+          btn.classList.remove("selected");
+          btn.style.background = "";
+          btn.style.color = "";
         } else {
           selected[p] = rndHue(Object.keys(selected).length);
-          b.classList.add("selected");
-          b.style.background = selected[p];
-          b.style.color = "#fff";
+          btn.classList.add("selected");
+          btn.style.background = selected[p];
+          btn.style.color = "#fff";
         }
       };
-      pl.appendChild(b);
+      pl.appendChild(btn);
     });
 
-    // show menu
+    // show menu items
     document.getElementById("chooseFoodBtn").onclick = ()=>{
-      const c = document.getElementById("menuContainer");
-      c.innerHTML = "";
-      menu.forEach((it,idx)=>{
-        let item = document.createElement("div");
-        item.className = "menu-item"; item.dataset.idx = idx;
-        let hdr = document.createElement("div");
+      const container = document.getElementById("menuContainer");
+      container.innerHTML = "";
+      menu.forEach((it, idx)=>{
+        const item = document.createElement("div");
+        item.className = "menu-item";
+        item.dataset.idx = idx;
+        const hdr = document.createElement("div");
         hdr.className = "menu-header";
         hdr.innerHTML = `
           <div class="menu-text">
             <strong>${it.de}</strong><br/><em>${it.en}</em>
             <span class="price">${it.price}</span>
           </div>`;
-        let btn = document.createElement("button");
-        btn.textContent = "Select / Auswählen";
-        btn.onclick = ()=> openAssign(idx);
-        hdr.appendChild(btn);
+        const sel = document.createElement("button");
+        sel.textContent = "Select / Auswählen";
+        sel.onclick = ()=> openAssign(idx);
+        hdr.appendChild(sel);
         item.appendChild(hdr);
-        let ass = document.createElement("div");
-        ass.className = "assigned"; ass.id = `a${idx}`;
-        item.appendChild(ass);
-        c.appendChild(item);
+        const assigned = document.createElement("div");
+        assigned.className = "assigned";
+        assigned.id = `a${idx}`;
+        item.appendChild(assigned);
+        container.appendChild(item);
       });
-      c.style.display = "";
+      container.style.display = "";
       document.getElementById("actionBar").style.display = "flex";
     };
 
@@ -288,13 +255,13 @@
     function openAssign(idx){
       currentIdx = idx;
       document.getElementById("assignTitle").textContent = menu[idx].de;
-      let al = document.getElementById("assignList");
-      al.innerHTML = "";
-      for(let [n,col] of Object.entries(selected)){
+      const list = document.getElementById("assignList");
+      list.innerHTML = "";
+      Object.entries(selected).forEach(([n,c])=>{
         let qty = (orders[n]||{})[idx]||0;
-        let div = document.createElement("div");
+        const div = document.createElement("div");
         div.className = "assign-person";
-        div.style.background = col;
+        div.style.background = c;
         if(qty) div.classList.add("selected");
         div.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
         div.onclick = ()=>{
@@ -306,8 +273,8 @@
           if(qty) orders[n][idx] = qty;
           else delete orders[n][idx];
         };
-        al.appendChild(div);
-      }
+        list.appendChild(div);
+      });
       document.getElementById("assignModal").classList.add("active");
     }
 
@@ -315,46 +282,48 @@
       document.getElementById("assignModal").classList.remove("active");
       updateAssigned(currentIdx);
     }
+
     function updateAssigned(idx){
-      let wrap = document.getElementById(`a${idx}`);
+      const wrap = document.getElementById(`a${idx}`);
       wrap.innerHTML = "";
-      for(let [n,col] of Object.entries(selected)){
-        let q = (orders[n]||{})[idx]||0;
+      Object.entries(selected).forEach(([n,c])=>{
+        const q = (orders[n]||{})[idx]||0;
         if(q){
-          let chip = document.createElement("span");
+          const chip = document.createElement("span");
           chip.className = "person-chip";
           chip.textContent = `${n} (${q})`;
-          chip.style.background = col;
+          chip.style.background = c;
           wrap.appendChild(chip);
         }
-      }
+      });
     }
 
     function buildMsg(){
-      let m = "";
-      for(let n of Object.keys(orders)){
-        m += n + ":\n";
-        for(let [i,q] of Object.entries(orders[n])){
-          let it = menu[i];
-          m += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
-        }
-        m += "\n";
-      }
-      return m.trim();
+      let msg = "";
+      Object.keys(orders).forEach(n=>{
+        msg += n + ":\n";
+        Object.entries(orders[n]).forEach(([i,q])=>{
+          const it = menu[i];
+          msg += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
+        });
+        msg += "\n";
+      });
+      return msg.trim();
     }
 
     document.getElementById("finishBtn").onclick = ()=>{
-      let msg = buildMsg();
-      navigator.clipboard.writeText(msg).catch(()=>{});
-      let u = /iphone|ipad|android/i.test(navigator.userAgent)
-              ? "whatsapp://send?text=" : "https://wa.me/?text=";
-      location.href = u + encodeURIComponent(msg);
+      const text = buildMsg();
+      navigator.clipboard.writeText(text).catch(()=>{});
+      const url = /iphone|ipad|android/i.test(navigator.userAgent)
+                  ? "whatsapp://send?text=" : "https://wa.me/?text=";
+      location.href = url + encodeURIComponent(text);
     };
+
     document.getElementById("copyBtn").onclick = ()=>{
-      let msg = buildMsg();
-      navigator.clipboard.writeText(msg)
+      const text = buildMsg();
+      navigator.clipboard.writeText(text)
         .then(()=>alert("Copied!"))
-        .catch(()=>alert(msg));
+        .catch(()=>alert(text));
     };
   </script>
 </body>
