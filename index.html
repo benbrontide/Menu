@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>L’Osteria – Online-Bestellung</title>
+  <title>Zimmerhof 13 – Online-Bestellung</title>
   <style>
     :root {
       --btn-bg: #444;
@@ -18,88 +18,98 @@
       --btn-hh: 3rem;
     }
     body {
-      font: var(--font-base)/1.4 Arial, sans-serif;
-      margin: 0; padding: 1rem; background: #f8f8f8; color: #222;
+      font: var(--font-base)/1.4 Arial,sans-serif;
+      margin:0; padding:1rem;
+      background:#f8f8f8; color:#222;
     }
-    h1 { font-size: 2rem; margin-bottom: .5rem; }
-    p.description { margin-bottom: 1rem; color: #555; }
+    h1 { font-size:2rem; margin-bottom:.5rem; }
+    p.description { margin-bottom:1rem; color:#555; }
     button {
-      cursor: pointer; border: none;
-      padding: var(--btn-v) var(--btn-h);
-      border-radius: 8px; font-size: var(--font-base);
-      background: var(--btn-bg); color: var(--btn-color);
-      transition: background .2s;
+      cursor:pointer; border:none;
+      padding:var(--btn-v) var(--btn-h);
+      border-radius:8px; font-size:var(--font-base);
+      background:var(--btn-bg); color:var(--btn-color);
+      transition:background .2s;
     }
-    button:hover { background: #666; }
-    #choosePersonBtn { margin-bottom: 1rem; }
-    #chooseFoodBtn { display: none; margin-top: 2rem; }
+    button:hover { background:#666; }
+    #choosePersonBtn { margin-bottom:1rem; }
+    #chooseFoodBtn { display:none; margin-top:2rem; }
     .person-chip {
-      display: inline-block;
-      padding: var(--chip-v) var(--chip-h);
-      border-radius: 16px; color: #fff;
-      font-weight: 600; margin: .4rem; font-size: var(--chip-f);
+      display:inline-block;
+      padding:var(--chip-v) var(--chip-h);
+      border-radius:16px; color:#fff;
+      font-weight:600; margin:.4rem;
+      font-size:var(--chip-f);
     }
     #personList {
-      display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem;
+      display:flex; flex-wrap:wrap; gap:.6rem;
+      margin-bottom:1rem;
     }
     .person-btn {
-      flex: 1 1 calc(50% - .6rem);
-      height: var(--btn-hh); line-height: var(--btn-hh);
-      text-align: center; background: var(--btn-bg);
-      color: #fff; border-radius: 8px; font-size: var(--font-base);
+      flex:1 1 calc(50% - .6rem);
+      height:var(--btn-hh); line-height:var(--btn-hh);
+      text-align:center; background:var(--btn-bg);
+      color:#fff; border-radius:8px;
+      font-size:var(--font-base);
     }
     .menu-item {
-      background: #fff; padding: 1.2rem; margin: .6rem 0;
-      border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      background:#fff; padding:1.2rem; margin:.6rem 0;
+      border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,.1);
     }
     .menu-header {
-      display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap; gap: .5rem;
+      display:flex; justify-content:space-between;
+      align-items:center; flex-wrap:wrap; gap:.5rem;
     }
-    .menu-text { font-size: 1.1rem; min-width: 200px; }
-    .price { font-weight: 700; margin-left: .6rem; font-size: 1.1rem; }
+    .menu-text { font-size:1.1rem; min-width:200px; }
+    .price { font-weight:700; margin-left:.6rem; font-size:1.1rem; }
     .assigned {
-      display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem;
+      display:flex; flex-wrap:wrap; gap:.4rem;
+      margin-top:.8rem;
     }
     .modal {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      display: none; align-items: center; justify-content: center;
-      background: var(--modal-bg);
+      position:fixed; top:0; left:0;
+      width:100%; height:100%;
+      display:none; align-items:center; justify-content:center;
+      background:var(--modal-bg);
     }
-    .modal.active { display: flex; }
+    .modal.active { display:flex; }
     .modal-content {
-      background: #fff; padding: 1.2rem; border-radius: 10px;
-      width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;
+      background:#fff; padding:1.2rem;
+      border-radius:10px;
+      width:90%; max-width:500px;
+      max-height:80vh; overflow-y:auto;
     }
     .assign-person {
-      position: relative;
-      display: flex; align-items: center; justify-content: center;
-      height: var(--btn-hh); padding: 0 var(--btn-h);
-      margin: .4rem; border-radius: 10px; opacity: .5;
-      font-size: var(--font-base); color: #fff;
-      cursor: pointer; border: 2px solid transparent;
+      position:relative; display:flex;
+      align-items:center; justify-content:center;
+      height:var(--btn-hh);
+      padding:0 var(--btn-h);
+      margin:.4rem; border-radius:10px;
+      opacity:.5; font-size:var(--font-base);
+      color:#fff; cursor:pointer; border:2px solid transparent;
     }
-    .assign-person.selected { opacity: 1; border-color: #000; }
+    .assign-person.selected { opacity:1; border-color:#000; }
     .assign-person .qty {
-      position: absolute; bottom: -8px; right: -8px;
-      background: #000; color: #fff; border-radius: 50%;
-      width: 26px; height: 26px; display: flex;
-      align-items: center; justify-content: center; font-size: .8rem;
+      position:absolute; bottom:-8px; right:-8px;
+      background:#000; color:#fff; border-radius:50%;
+      width:26px; height:26px; display:flex;
+      align-items:center; justify-content:center;
+      font-size:.8rem;
     }
     #actionBar {
-      display: none; margin-top: 1rem; gap: 1rem; flex-wrap: wrap;
+      display:none; margin-top:1rem;
+      gap:1rem; flex-wrap:wrap;
     }
   </style>
 </head>
 <body>
-  <h1>L’Osteria – Essen bestellen / Place your Order</h1>
+  <h1>Zimmerhof 13 – Essen bestellen / Place your Order</h1>
   <p class="description">
     Choose who you are ordering for — it can be multiple people.<br/>
     Wähle, für wen du bestellst – es können mehrere Personen sein.
   </p>
 
   <div id="selectedPersons"></div>
-
   <button id="choosePersonBtn">
     Choose person(s) / Person(en) auswählen
   </button>
@@ -117,7 +127,7 @@
     </button>
   </div>
 
-  <!-- Person-selection modal -->
+  <!-- Person modal -->
   <div id="personModal" class="modal">
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
@@ -136,40 +146,51 @@
   </div>
 
   <script>
-    const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena",
-                    "Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
+    const people = [
+      "Christa","Jochen","Sabine","Sven","Tom","Jan","Lena",
+      "Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"
+    ];
 
     const menu = [
-      // — Verde —
-      { de:"Margherita (Tomatensauce, Mozzarella, Basilikum)", en:"Margherita (Tomato sauce, mozzarella, basil)", price:"" },
-      { de:"Prosciutto (Schinkenschulter, Käse)", en:"Prosciutto (Shoulder of ham, cheese)", price:"" },
-      { de:"Salami (Salami, Käse)", en:"Salami (Salami, cheese)", price:"" },
-      { de:"Funghi Freschi (frische Champignons, Käse)", en:"Funghi Freschi (Fresh mushrooms, cheese)", price:"" },
-      { de:"Prosciutto e Funghi (Schinkenschulter, frische Champignons, Käse)", en:"Prosciutto e Funghi (Shoulder of ham, fresh mushrooms, cheese)", price:"" },
-      { de:"Pizza Bò (Calzone) (gefüllt mit Schinken, Champignons, Salami, Käse)", en:"Pizza Bò (Calzone) (filled with ham, mushrooms, salami, cheese)", price:"" },
-      { de:"Braccio di Ferro (Spinat, Ei, Käse, Knoblauch)", en:"Braccio di Ferro (Spinach, egg, cheese, garlic)", price:"" },
-      { de:"Hawaii (Schinkenschulter, Ananas, Käse)", en:"Hawaii (Shoulder of ham, pineapple, cheese)", price:"" },
-      { de:"Canario (Schinkenschulter, Champignons, Salami, Anchovis, Käse)", en:"Canario (Shoulder of ham, mushrooms, salami, anchovies, cheese)", price:"" },
-      { de:"Cip & Ciop (Mozzarella, Kapern, Anchovis, Oregano)", en:"Cip & Ciop (Mozzarella, capers, anchovies, oregano)", price:"" },
+      // Vorspeisen / Flüssiges
+      { de:"Kartoffelschaumsuppe (Backerbsen, Speck & Zwiebel, Gartenkresse, Brotzipfel)", 
+        en:"Potato foam soup (cracker bits, bacon & onion, garden cress, bread dippers)", price:"10,00 €" },
+      { de:"Kartoffelschaumsuppe – vegetarisch (Backerbsen, Gartenkresse, Brotzipfel)", 
+        en:"Potato foam soup – vegetarian (cracker bits, garden cress, bread dippers)", price:"9,50 €" },
+      { de:"Ziegenkäse Burger – vegetarisch (Ackersalat, hausgemachte Sauce)", 
+        en:"Goat-cheese burger – vegetarian (field lettuce, homemade sauce)", price:"19,00 €" },
+      { de:"Kleiner Salat – vegetarisch", 
+        en:"Small salad – vegetarian", price:"9,00 €" },
+      { de:"Büffel Burrata – vegetarisch (Ackersalat, Birne, Walnuss, Brotzipfel)", 
+        en:"Buffalo burrata – vegetarian (field lettuce, pear, walnut, bread dippers)", price:"17,00 €" },
 
-      // — Mare —
-      { de:"Tonno (Thunfisch, Zwiebeln, Käse)", en:"Tonno (Tuna, onions, cheese)", price:"" },
-      { de:"Gamberetti (Pizza Bianca) (Garnelen, frische Tomaten, Käse, Knoblauch)", en:"Gamberetti (Pizza Bianca) (Shrimps, fresh tomatoes, cheese, garlic)", price:"" },
-      { de:"Marinara (Meeresfrüchte, Käse, Knoblauch)", en:"Marinara (Seafood, cheese, garlic)", price:"" },
+      // Hauptgang
+      { de:"Herbstlicher Wildkräutersalat (Traube, Walnuss, Ziegenkäse, Honig-Senf-Dressing, Brotzipfel)", 
+        en:"Autumn wild-herb salad (grape, walnut, goat cheese, honey-mustard dressing, bread dippers)", price:"20,00 €" },
+      { de:"Filet vom Zander (Kartoffelstampf, Tomate)", 
+        en:"Zander fillet (mashed potatoes, tomato)", price:"29,00 €" },
+      { de:"Filet vom regionalen Rind (ca. 220 g, Wildkräutertwist, Kartoffelschaum, Jus, Brotzipfel)", 
+        en:"Regional beef fillet (about 220 g, wild-herb twist, potato foam, jus, bread dippers)", price:"42,00 €" },
+      { de:"Hausgemachte Ravioli (Wildkräuterbett, Mangold, Frischkäse, Limette)", 
+        en:"Homemade ravioli (wild-herb bed, chard, cream cheese, lime)", price:"21,00 €" },
 
-      // — Carne —
-      { de:"Salsiccia Piccante (Mozzarella, scharfe Peperoni-Salami, Basilikum)", en:"Salsiccia Piccante (Mozzarella, spicy pepperoni-salami, basil)", price:"" },
-      { de:"BBQ Chicken (Mozzarella, BBQ-Sauce, knusprige Hähnchenbrust, Paprika, Zwiebeln)", en:"BBQ Chicken (Mozzarella, BBQ sauce, crispy chicken breast, peppers, onions)", price:"" },
-      { de:"Salsiccia Fresca (Mozzarella, italienische Fenchelsalami, Wirsing, Grana Padano DOP)", en:"Salsiccia Fresca (Mozzarella, Italian fennel sausage, savoy cabbage, Grana Padano DOP)", price:"" },
-      { de:"Rustica (Mozzarella, frische Tomaten, Oliven, Zwiebeln, Oregano, scharf)", en:"Rustica (Mozzarella, fresh tomatoes, olives, onions, oregano, spicy)", price:"" },
-      { de:"Parmigiana (Mozzarella, Aubergine, Grana Padano DOP, Oregano)", en:"Parmigiana (Mozzarella, eggplant, Grana Padano DOP, oregano)", price:"" },
-      { de:"Prosciutto Crudo (Mozzarella, luftgetrockneter Rohschinken)", en:"Prosciutto Crudo (Mozzarella, air-dried ham)", price:"" },
+      // Specials
+      { de:"Kürbis Special (Risotto, Kürbis, Marone, Ziegenkäse-Espuma)", 
+        en:"Pumpkin special (risotto, pumpkin, chestnut, goat cheese espuma)", price:"25,00 €" },
+      { de:"Herbsttrüffel – vegetarisch (Trüffelgnocchi, Spinat, Herbsttrüffel)", 
+        en:"Autumn truffle – vegetarian (truffle gnocchi, spinach, autumn truffle)", price:"27,00 €" },
+      { de:"Herbsttrüffel Zwischengang – vegetarisch (Getrüffelter Burrata, warme Tomatenlava, Hausbrot)", 
+        en:"Autumn truffle interlude – vegetarian (truffled burrata, warm tomato lava, house bread)", price:"21,00 €" },
 
-      // — Speciale & Vegetarisch —
-      { de:"Caprese (italienische Mozzarella-Kugel, Kirschtomaten, Basilikum)", en:"Caprese (Italian mozzarella ball, cherry tomatoes, basil)", price:"" },
-      { de:"Vegetariana (Mozzarella, gegrilltes Gemüse, Champignons, Knoblauch, Rucola)", en:"Vegetariana (Mozzarella, grilled vegetables, mushrooms, garlic, rocket)", price:"" },
-      { de:"Quattro Formaggi (Mozzarella, Edamer, Gorgonzola, Grana Padano DOP)", en:"Quattro Formaggi (Mozzarella, Edam, Gorgonzola, Grana Padano DOP)", price:"" },
-      { de:"Rucola (Mozzarella, Rucola, Grana Padano DOP, Knoblauch)", en:"Rucola (Mozzarella, rocket, Grana Padano DOP, garlic)", price:"" }
+      // Dessert
+      { de:"Käseplatte – vegetarisch (Käse vom Hof im Greth, luftiger Rahm, Dip, warmer Brotlaib)", 
+        en:"Cheese platter – vegetarian (Greth farm cheese, airy cream, dip, warm bread loaf)", price:"16,00 €" },
+      { de:"Crème Brûlée (Frucht von hier)", 
+        en:"Crème brûlée (local fruit)", price:"9,00 €" },
+      { de:"Crumble (Apfel, Zwetschge)", 
+        en:"Crumble (apple, plum)", price:"9,00 €" },
+      { de:"Zwetschgeneis", 
+        en:"Plum ice cream", price:"9,00 €" }
     ];
 
     let selected = {}, orders = {};
@@ -179,13 +200,13 @@
     function renderSelected(){
       const out = document.getElementById("selectedPersons");
       out.innerHTML = "";
-      Object.entries(selected).forEach(([n,c])=>{
+      for(let [n,c] of Object.entries(selected)){
         const chip = document.createElement("span");
         chip.className = "person-chip";
         chip.textContent = n;
         chip.style.background = c;
         out.appendChild(chip);
-      });
+      }
       document.getElementById("chooseFoodBtn").style.display =
         Object.keys(selected).length ? "inline-block" : "none";
     }
@@ -199,33 +220,33 @@
     }
     document.getElementById("choosePersonBtn").onclick = openPersonModal;
 
-    // populate person list
+    // build person list
     const pl = document.getElementById("personList");
     people.forEach((p,i)=>{
-      const btn = document.createElement("button");
-      btn.className = "person-btn";
-      btn.textContent = p;
-      btn.onclick = ()=>{
+      const b = document.createElement("button");
+      b.className = "person-btn";
+      b.textContent = p;
+      b.onclick = ()=>{
         if(selected[p]){
           delete selected[p];
-          btn.classList.remove("selected");
-          btn.style.background = "";
-          btn.style.color = "";
+          b.classList.remove("selected");
+          b.style.background = "";
+          b.style.color = "";
         } else {
           selected[p] = rndHue(Object.keys(selected).length);
-          btn.classList.add("selected");
-          btn.style.background = selected[p];
-          btn.style.color = "#fff";
+          b.classList.add("selected");
+          b.style.background = selected[p];
+          b.style.color = "#fff";
         }
       };
-      pl.appendChild(btn);
+      pl.appendChild(b);
     });
 
-    // show menu items
+    // show menu
     document.getElementById("chooseFoodBtn").onclick = ()=>{
-      const container = document.getElementById("menuContainer");
-      container.innerHTML = "";
-      menu.forEach((it, idx)=>{
+      const c = document.getElementById("menuContainer");
+      c.innerHTML = "";
+      menu.forEach((it,idx)=>{
         const item = document.createElement("div");
         item.className = "menu-item";
         item.dataset.idx = idx;
@@ -245,9 +266,9 @@
         assigned.className = "assigned";
         assigned.id = `a${idx}`;
         item.appendChild(assigned);
-        container.appendChild(item);
+        c.appendChild(item);
       });
-      container.style.display = "";
+      c.style.display = "";
       document.getElementById("actionBar").style.display = "flex";
     };
 
@@ -255,26 +276,24 @@
     function openAssign(idx){
       currentIdx = idx;
       document.getElementById("assignTitle").textContent = menu[idx].de;
-      const list = document.getElementById("assignList");
-      list.innerHTML = "";
-      Object.entries(selected).forEach(([n,c])=>{
+      const al = document.getElementById("assignList");
+      al.innerHTML = "";
+      for(let [n,c] of Object.entries(selected)){
         let qty = (orders[n]||{})[idx]||0;
-        const div = document.createElement("div");
-        div.className = "assign-person";
-        div.style.background = c;
-        if(qty) div.classList.add("selected");
-        div.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
-        div.onclick = ()=>{
+        const d = document.createElement("div");
+        d.className = "assign-person";
+        d.style.background = c;
+        if(qty) d.classList.add("selected");
+        d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
+        d.onclick = ()=>{
           qty = (qty+1)%6;
-          if(qty) div.classList.add("selected");
-          else div.classList.remove("selected");
-          div.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
+          if(qty) d.classList.add("selected"); else d.classList.remove("selected");
+          d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
           orders[n] = orders[n]||{};
-          if(qty) orders[n][idx] = qty;
-          else delete orders[n][idx];
+          if(qty) orders[n][idx] = qty; else delete orders[n][idx];
         };
-        list.appendChild(div);
-      });
+        al.appendChild(d);
+      }
       document.getElementById("assignModal").classList.add("active");
     }
 
@@ -282,11 +301,10 @@
       document.getElementById("assignModal").classList.remove("active");
       updateAssigned(currentIdx);
     }
-
     function updateAssigned(idx){
       const wrap = document.getElementById(`a${idx}`);
       wrap.innerHTML = "";
-      Object.entries(selected).forEach(([n,c])=>{
+      for(let [n,c] of Object.entries(selected)){
         const q = (orders[n]||{})[idx]||0;
         if(q){
           const chip = document.createElement("span");
@@ -295,19 +313,19 @@
           chip.style.background = c;
           wrap.appendChild(chip);
         }
-      });
+      }
     }
 
     function buildMsg(){
       let msg = "";
-      Object.keys(orders).forEach(n=>{
+      for(let n of Object.keys(orders)){
         msg += n + ":\n";
-        Object.entries(orders[n]).forEach(([i,q])=>{
+        for(let [i,q] of Object.entries(orders[n])){
           const it = menu[i];
           msg += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
-        });
+        }
         msg += "\n";
-      });
+      }
       return msg.trim();
     }
 
@@ -318,7 +336,6 @@
                   ? "whatsapp://send?text=" : "https://wa.me/?text=";
       location.href = url + encodeURIComponent(text);
     };
-
     document.getElementById("copyBtn").onclick = ()=>{
       const text = buildMsg();
       navigator.clipboard.writeText(text)
