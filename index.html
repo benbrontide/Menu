@@ -2,50 +2,51 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Eichenwald – Online-Bestellung</title>
+  <title>L’Osteria – Online-Bestellung</title>
   <style>
     :root { --btn-bg:#444; --btn-color:#fff; --modal-bg:rgba(0,0,0,.7); }
-    body{font-family:Arial,sans-serif;margin:0;padding:1rem;background:#f8f8f8;}
-    button{cursor:pointer;border:none;padding:.4rem .8rem;border-radius:6px;
-           font-size:.85rem;background:var(--btn-bg);color:var(--btn-color);
-           transition:background .2s;}
-    button:hover{background:#666;}
-    .person-chip{display:inline-block;padding:.3rem .6rem;border-radius:12px;
-                 color:#fff;font-weight:600;margin:.15rem;font-size:.75rem;}
-    /* person picker grid */
-    #personList{display:flex;flex-wrap:wrap;gap:.4rem;}
-    .person-btn{flex:1 1 calc(50% - .4rem);padding:.3rem .6rem;font-size:.8rem;}
-    .menu-item{background:#fff;padding:1rem;margin:.5rem 0;border-radius:8px;
-               box-shadow:0 1px 3px rgba(0,0,0,.1);display:flex;flex-direction:column;}
-    .menu-header{display:flex;justify-content:space-between;align-items:center;}
-    .menu-text{flex:1 1 auto;min-width:250px;}
-    .price{font-weight:700;margin-left:.4rem;}
-    .assigned{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.5rem;}
-    .modal{position:fixed;top:0;left:0;width:100%;height:100%;display:none;
-           align-items:center;justify-content:center;background:var(--modal-bg);z-index:10;}
-    .modal.active{display:flex;}
-    .modal-content{background:#fff;padding:1rem;border-radius:8px;max-height:80vh;
-                   overflow:auto;min-width:280px;}
-    .assign-person{position:relative;display:flex;align-items:center;justify-content:center;
-                   padding:.4rem .8rem;border-radius:8px;margin:.25rem;
-                   min-width:80px;font-weight:600;color:#fff;opacity:.4;
-                   border:2px solid transparent;cursor:pointer;}
-    .assign-person.selected{opacity:1;border-color:#000;}
-    .assign-person .qty{position:absolute;bottom:-6px;right:-6px;
-                         background:#000;color:#fff;border-radius:50%;
-                         font-size:.65rem;width:20px;height:20px;
-                         display:flex;align-items:center;justify-content:center;}
-    #actionBar{display:none;margin-top:1rem;gap:.6rem;}
+    body { font-family:Arial,sans-serif; margin:0; padding:1rem; background:#f8f8f8; }
+    h1 { font-size:1.5rem; margin-bottom:1rem; }
+    button { cursor:pointer; border:none; padding:.4rem .8rem; border-radius:6px;
+             font-size:.85rem; background:var(--btn-bg); color:var(--btn-color);
+             transition:background .2s; }
+    button:hover { background:#666; }
+    .person-chip { display:inline-block; padding:.3rem .6rem; border-radius:12px;
+                   color:#fff; font-weight:600; margin:.15rem; font-size:.75rem; }
+    #personList { display:flex; flex-wrap:wrap; gap:.4rem; }
+    .person-btn { flex:1 1 calc(50% - .4rem); padding:.3rem .6rem; font-size:.8rem; }
+    .menu-item { background:#fff; padding:1rem; margin:.5rem 0; border-radius:8px;
+                 box-shadow:0 1px 3px rgba(0,0,0,.1); display:flex; flex-direction:column; }
+    .menu-header { display:flex; justify-content:space-between; align-items:center; }
+    .menu-text { flex:1 1 auto; min-width:250px; }
+    .price { font-weight:700; margin-left:.4rem; }
+    .assigned { display:flex; flex-wrap:wrap; gap:.25rem; margin-top:.5rem; }
+    .modal { position:fixed; top:0; left:0; width:100%; height:100%; display:none;
+             align-items:center; justify-content:center; background:var(--modal-bg);
+             z-index:10; }
+    .modal.active { display:flex; }
+    .modal-content { background:#fff; padding:1rem; border-radius:8px;
+                     max-height:80vh; overflow:auto; min-width:280px; }
+    .assign-person { position:relative; display:flex; align-items:center;
+                     justify-content:center; padding:.4rem .8rem; border-radius:8px;
+                     margin:.25rem; min-width:80px; font-weight:600; color:#fff;
+                     opacity:.4; border:2px solid transparent; cursor:pointer; }
+    .assign-person.selected { opacity:1; border-color:#000; }
+    .assign-person .qty { position:absolute; bottom:-6px; right:-6px;
+                           background:#000; color:#fff; border-radius:50%;
+                           font-size:.65rem; width:20px; height:20px;
+                           display:flex; align-items:center; justify-content:center; }
+    #actionBar { display:none; margin-top:1rem; gap:.6rem; }
   </style>
 </head>
 <body>
-  <h1>Essen bestellen / Place your Order</h1>
+  <h1>L’Osteria – Essen bestellen / Place your Order</h1>
   <div id="selectedPersons"></div>
   <button id="choosePersonBtn">Choose a person / Person auswählen</button>
-  <button id="chooseFoodBtn" style="display:none;margin-left:.5rem;">
+  <button id="chooseFoodBtn" style="display:none; margin-left:.5rem;">
     Choose your food / Essen auswählen
   </button>
-  <div id="menuContainer" style="display:none;margin-top:1rem;"></div>
+  <div id="menuContainer" style="display:none; margin-top:1rem;"></div>
   <div id="actionBar">
     <button id="finishBtn" style="background:#008000;">
       Finished – WhatsApp / Fertig – WhatsApp
@@ -53,7 +54,7 @@
     <button id="copyBtn" style="background:#555;">Copy text / Text kopieren</button>
   </div>
 
-  <!-- person select modal -->
+  <!-- Person selection modal -->
   <div id="personModal" class="modal">
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
@@ -62,198 +63,182 @@
     </div>
   </div>
 
-  <!-- assign modal -->
+  <!-- Assignment modal -->
   <div id="assignModal" class="modal">
     <div class="modal-content">
       <h3 id="assignTitle"></h3>
-      <div id="assignList" style="display:flex;flex-wrap:wrap;"></div>
+      <div id="assignList" style="display:flex; flex-wrap:wrap;"></div>
       <button onclick="confirmAssignment()" style="margin-top:1rem;">OK</button>
     </div>
   </div>
 
   <script>
-    const people=["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena",
-                  "Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas",
-                  "Lisa","Mira"];
-    const menu=[
-      {de:"Weinbergschnecken in Kräuterbutter mit Toastbrot",en:"Escargots in herb butter with toast bread",price:"14,90 €"},
-      {de:"Riesengarnelen in Kräuterbutter mit Baguette",en:"King prawns in herb butter with baguette",price:"19,50 €"},
-      {de:"Hochzeitssuppe mit Einlage",en:"Wedding soup with garnish",price:"6,30 €"},
-      {de:"Tomatensuppe mit Sahnehaube",en:"Tomato soup with cream topping",price:"6,90 €"},
-      {de:"Beilagensalate – Gurkensalat oder Tomatensalat",en:"Side salads – cucumber or tomato salad",price:"4,60 €"},
-      {de:"Gemischter Salat (Dressing: Sylter oder Honig-Senf)",en:"Mixed salad (dressing: Sylt-style or honey mustard)",price:"4,60 €"},
-      {de:"Großer Salatteller … Dressing: Sylter oder Honig-Senf",en:"Large salad plate … dressing: Sylt-style or honey mustard",price:"10,50 €"},
-      {de:"Brokkoli-Blumenkohl-Gratin in Käse-Sahne-Sauce mit Kroketten",en:"Broccoli-cauliflower gratin in cheese-cream sauce with croquettes",price:"16,00 €"},
-      {de:"Gebackener Camembert mit Preiselbeeren, Toast und Salat",en:"Baked camembert with cranberry sauce, toast and salad",price:"12,00 €"},
-      {de:"Currywurst mit Brot",en:"Curry sausage with bread",price:"8,00 €"},
-      {de:"Hawaiitoast mit Kochschinken, Ananas und Käse",en:"Hawaiian toast with ham, pineapple and cheese",price:"8,00 €"},
-      {de:"Krösschen – kleines Schweineschnitzel mit 2 Spiegeleiern, Toast",en:"'Krösschen' – small pork schnitzel with two fried eggs, toast",price:"13,90 €"},
-      {de:"Damentoast – kleines Schweineschnitzel mit Champignon-Rahmsauce, Toast",en:"'Ladies' toast' – small pork schnitzel with creamy mushroom sauce, toast",price:"13,90 €"},
-      {de:"Ofenkartoffel mit Salat und Kräuterrahm",en:"Baked potato with salad and herb cream",price:"10,50 €"},
-      {de:"Matjesfilets mit Butterbohnen und Bratkartoffeln",en:"Pickled herring fillets with butter beans and fried potatoes",price:"17,50 €"},
-      {de:"Heringstopf 'Hausfrauen Art' …",en:"Herring pot 'housewife style' …",price:"18,00 €"},
-      {de:"Rotbarschfilet in zerlassener Butter, Salzkartoffeln und Salat",en:"Redfish fillet in melted butter, boiled potatoes and salad",price:"23,50 €"},
-      {de:"3 Spiegeleier mit Gewürzgurke",en:"Three fried eggs with gherkin",price:"10,30 €"},
-      {de:"Leberkäse mit 2 Spiegeleiern und Gewürzgurke",en:"Bavarian meat loaf with two fried eggs and gherkin",price:"16,50 €"},
-      {de:"Hausgemachtes Sauerfleisch mit Remouladensauce und Gewürzgurke",en:"Homemade pickled pork with remoulade and gherkin",price:"18,50 €"},
-      {de:"Bauernfrühstück – Kartoffelomelett mit Schinken & Zwiebeln, Gewürzgurke",en:"Farmer's breakfast – potato omelette with ham & onions, gherkin",price:"13,00 €"},
-      {de:"Schnitzel Wiener Art mit Pfannengemüse und Bratkartoffeln",en:"Viennese-style schnitzel with pan vegetables & fried potatoes",price:"22,50 €"},
-      {de:"Jägerschnitzel mit Champignon-Rahmsauce und Pommes Frites",en:"Hunter's schnitzel with creamy mushroom sauce & fries",price:"22,50 €"},
-      {de:"Zwiebelschnitzel mit geschmorten Zwiebeln und Bratkartoffeln",en:"Onion schnitzel with braised onions & fried potatoes",price:"23,50 €"},
-      {de:"Cordon Bleu (Schinken & Käse) mit Pfannengemüse, Pommes Frites",en:"Cordon bleu (ham & cheese) with pan vegetables & fries",price:"28,90 €"},
-      {de:"Schweinelendchen in Champignon-Rahmsauce, Kroketten, Salat",en:"Pork tenderloin in creamy mushroom sauce, croquettes, salad",price:"28,90 €"},
-      {de:"Gegrillte Schweinehaxe (≈1,5 kg) mit Sauerkraut & Salzkartoffeln",en:"Grilled pork knuckle (≈1.5 kg) with sauerkraut & boiled potatoes",price:"23,00 €"},
-      {de:"Filettopf nach Art des Hauses – 3 Rinderfiletmedaillons …",en:"House-style fillet pot – 3 beef fillet medallions …",price:"33,90 €"},
-      {de:"Schweinefiletspieß 'Tessin' – 4 Medaillons, Käse, Preiselbeeren, …",en:"Pork fillet skewer 'Ticino' – 4 medallions, cheese, cranberries, …",price:"31,50 €"},
-      {de:"Hähnchenbrustfiletsteak mit gebackenem Pfirsich, Reis, Currysauce",en:"Chicken breast steak with baked peach, rice, curry sauce",price:"25,90 €"},
-      {de:"Rinderfilet (200 g)",en:"Beef tenderloin (200 g)",price:"41,00 €"},
-      {de:"Rinderfilet (300 g)",en:"Beef tenderloin (300 g)",price:"59,00 €"},
-      {de:"Rumpsteak (200 g)",en:"Rump steak (200 g)",price:"31,00 €"},
-      {de:"Rumpsteak (300 g)",en:"Rump steak (300 g)",price:"46,00 €"},
-      {de:"Pfeffersauce",en:"Pepper sauce",price:"3,50 €"},
-      {de:"Champignon-Sauce",en:"Mushroom sauce",price:"3,50 €"},
-      {de:"Kräuterrahm",en:"Herb cream",price:"3,50 €"},
-      {de:"Steakbrot (extra)",en:"Extra steak bread",price:"3,50 €"},
-      {de:"Hausgemachte Kräuterbutter",en:"Homemade herb butter",price:"3,50 €"},
-      {de:"Kroketten",en:"Croquettes",price:"4,50 €"},
-      {de:"Pommes Frites",en:"French fries",price:"4,50 €"},
-      {de:"Bratkartoffeln",en:"Fried potatoes",price:"4,50 €"},
-      {de:"Pfannengemüse",en:"Pan vegetables",price:"5,00 €"},
-      {de:"Butterbohnen",en:"Butter beans",price:"5,00 €"},
-      {de:"Champignons",en:"Mushrooms",price:"5,00 €"},
-      {de:"Speckbohnen",en:"Green beans with bacon",price:"5,90 €"},
-      {de:"Geschmorte Zwiebeln",en:"Braised onions",price:"5,90 €"},
-      {de:"Folienkartoffel mit Kräuterrahm",en:"Foil-baked potato with herb cream",price:"7,50 €"},
-      {de:"Gemischter Beilagensalat",en:"Mixed side salad",price:"4,60 €"},
-      {de:"Gurkensalat",en:"Cucumber salad",price:"4,60 €"},
-      {de:"Tomatensalat",en:"Tomato salad",price:"4,60 €"},
-      {de:"Apfelstrudel mit Vanilleeis und Sahne",en:"Apple strudel with vanilla ice cream & cream",price:"7,90 €"},
-      {de:"Schokoladensoufflé mit Himbeerpüree, Vanilleeis, Sahne",en:"Chocolate soufflé with raspberry purée, vanilla ice cream, cream",price:"8,60 €"},
-      {de:"Haselnuss-Schoko-Trüffel mit roter Grütze und Sahne",en:"Hazelnut-chocolate truffle with red berry compote & cream",price:"7,50 €"},
-      {de:"Eiskaffee – Filterkaffee mit Vanilleeis und Sahne",en:"Iced coffee – filter coffee with vanilla ice cream & cream",price:"5,20 €"},
-      {de:"Gemischtes Eis (3 Kugeln) ohne Sahne",en:"Mixed ice cream (3 scoops) without cream",price:"4,50 €"},
-      {de:"Gemischtes Eis (3 Kugeln) mit Sahne",en:"Mixed ice cream (3 scoops) with cream",price:"5,00 €"},
-      {de:"Coupe Dänemark – Vanilleeis, Sahne, warme Schokosauce",en:"Coupe Denmark – vanilla ice cream, cream, hot chocolate sauce",price:"5,70 €"},
-      {de:"Schwedenbecher – Vanilleeis, Sahne, Apfelmus, Eierlikör",en:"Swedish sundae – vanilla ice cream, cream, apple sauce, advocaat",price:"6,80 €"},
-      {de:"Nussbecher – Pistazie, Haselnuss, Schokolade, Walnüsse, Sahne",en:"Nut sundae – pistachio, hazelnut & chocolate ice cream, walnuts, cream",price:"5,70 €"},
-      {de:"Vanilleeis mit heißen Früchten (Kirschen o. Himbeeren)",en:"Vanilla ice cream with hot fruits (cherries or raspberries)",price:"6,30 €"},
-      {de:"Kinderbecher 'Käpt'n Blaubär' – Cielo Blu, Gummibären, Sauce",en:"Kids cup 'Captain Bluebear' – Cielo Blu, gummy bears, sauce",price:"2,90 €"},
-      {de:"Bunter Becher – 2 Kugeln Eis, Sahne, Smarties, Streusel",en:"Colourful cup – 2 scoops ice cream, cream, Smarties, sprinkles",price:"3,60 €"}
-    ];
-    let selected={},orders={};
+    const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena",
+                    "Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
 
-    function rndHue(i){return `hsl(${(i*137.508)%360},70%,50%)`;}
+    const menu = [
+      // — Verde —
+      { de:"Margherita (Tomatensauce, Mozzarella, Basilikum)",
+        en:"Margherita (Tomato sauce, mozzarella, basil)", price:"" },
+      { de:"Prosciutto (Schinkenschulter, Käse)",
+        en:"Prosciutto (Shoulder of ham, cheese)", price:"" },
+      { de:"Salami (Salami, Käse)",
+        en:"Salami (Salami, cheese)", price:"" },
+      { de:"Funghi Freschi (frische Champignons, Käse)",
+        en:"Funghi Freschi (Fresh mushrooms, cheese)", price:"" },
+      { de:"Prosciutto e Funghi (Schinkenschulter, frische Champignons, Käse)",
+        en:"Prosciutto e Funghi (Shoulder of ham, fresh mushrooms, cheese)", price:"" },
+      { de:"Pizza Bò (Calzone) (gefüllt mit Schinken, Champignons, Salami, Käse)",
+        en:"Pizza Bò (Calzone) (filled with ham, mushrooms, salami, cheese)", price:"" },
+      { de:"Braccio di Ferro (Spinat, Ei, Käse, Knoblauch)",
+        en:"Braccio di Ferro (Spinach, egg, cheese, garlic)", price:"" },
+      { de:"Hawaii (Schinkenschulter, Ananas, Käse)",
+        en:"Hawaii (Shoulder of ham, pineapple, cheese)", price:"" },
+      { de:"Canario (Schinkenschulter, Champignons, Salami, Anchovis, Käse)",
+        en:"Canario (Shoulder of ham, mushrooms, salami, anchovies, cheese)", price:"" },
+      { de:"Cip & Ciop (Mozzarella, Kapern, Anchovis, Oregano)",
+        en:"Cip & Ciop (Mozzarella, capers, anchovies, oregano)", price:"" },
+
+      // — Mare —
+      { de:"Tonno (Thunfisch, Zwiebeln, Käse)",
+        en:"Tonno (Tuna, onions, cheese)", price:"" },
+      { de:"Gamberetti (Pizza Bianca) (Garnelen, frische Tomaten, Käse, Knoblauch)",
+        en:"Gamberetti (Pizza Bianca) (Shrimps, fresh tomatoes, cheese, garlic)", price:"" },
+      { de:"Marinara (Meeresfrüchte, Käse, Knoblauch)",
+        en:"Marinara (Seafood, cheese, garlic)", price:"" },
+
+      // — Carne —
+      { de:"Salsiccia Piccante (Mozzarella, scharfe Peperoni-Salami, Basilikum)",
+        en:"Salsiccia Piccante (Mozzarella, spicy pepperoni-salami, basil)", price:"" },
+      { de:"BBQ Chicken (Mozzarella, BBQ-Sauce, knusprige Hähnchenbrust, Paprika, Zwiebeln)",
+        en:"BBQ Chicken (Mozzarella, BBQ sauce, fried chicken breast strips, peppers, onions)", price:"" },
+      { de:"Salsiccia Fresca (Mozzarella, italienische Fenchelsalami, Wirsing, Grana Padano DOP)",
+        en:"Salsiccia Fresca (Mozzarella, Italian fennel sausage, savoy cabbage, Grana Padano DOP)", price:"" },
+      { de:"Rustica (Mozzarella, frische Tomaten, Oliven, Zwiebeln, Oregano, scharf)",
+        en:"Rustica (Mozzarella, fresh tomatoes, olives, onions, oregano, spicy)", price:"" },
+      { de:"Parmigiana (Mozzarella, Aubergine, Grana Padano DOP, Oregano)",
+        en:"Parmigiana (Mozzarella, aubergine, Grana Padano DOP, oregano)", price:"" },
+      { de:"Prosciutto Crudo (Mozzarella, luftgetrockneter Rohschinken)",
+        en:"Prosciutto Crudo (Mozzarella, air-dried ham)", price:"" },
+
+      // — Speciale & Vegetarisch —
+      { de:"Caprese (italienische Mozzarella-Kugel, Kirschtomaten, Basilikum)",
+        en:"Caprese (Italian mozzarella ball, cherry tomatoes, basil)", price:"" },
+      { de:"Vegetariana (Mozzarella, gegrilltes Gemüse, Champignons, Knoblauch, Rucola)",
+        en:"Vegetariana (Mozzarella, grilled vegetables, mushrooms, garlic, rocket)", price:"" },
+      { de:"Quattro Formaggi (Mozzarella, Edamer, Gorgonzola, Grana Padano DOP)",
+        en:"Quattro Formaggi (Mozzarella, Edam, Gorgonzola, Grana Padano DOP)", price:"" },
+      { de:"Rucola (Mozzarella, Rucola, Grana Padano DOP, Knoblauch)",
+        en:"Rucola (Mozzarella, rocket, Grana Padano DOP, garlic)", price:"" }
+    ];
+
+    let selected = {}, orders = {};
+
+    function rndHue(i){ return `hsl(${(i*137.508)%360},70%,50%)`; }
     function renderSelected(){
-      const w=document.getElementById("selectedPersons"); w.innerHTML="";
+      const w = document.getElementById("selectedPersons");
+      w.innerHTML = "";
       Object.entries(selected).forEach(([n,c])=>{
-        const s=document.createElement("span");
-        s.className="person-chip"; s.style.background=c; s.textContent=n;
-        w.appendChild(s);
+        const chip = document.createElement("span");
+        chip.className="person-chip";
+        chip.textContent = n;
+        chip.style.background = c;
+        w.appendChild(chip);
       });
-      document.getElementById("chooseFoodBtn")
-        .style.display=Object.keys(selected).length?"":"none";
+      document.getElementById("chooseFoodBtn").style.display =
+        Object.keys(selected).length ? "" : "none";
     }
-    function openPersonModal(){
-      document.getElementById("personModal").classList.add("active");
-    }
-    function closePersonModal(){
-      document.getElementById("personModal").classList.remove("active");
-      renderSelected();
-    }
-    document.getElementById("choosePersonBtn").onclick=openPersonModal;
-    const pl=document.getElementById("personList");
+    function openPersonModal(){ document.getElementById("personModal").classList.add("active"); }
+    function closePersonModal(){ document.getElementById("personModal").classList.remove("active"); renderSelected(); }
+    document.getElementById("choosePersonBtn").onclick = openPersonModal;
+
+    const pl = document.getElementById("personList");
     people.forEach((p,i)=>{
-      const b=document.createElement("button");
-      b.className="person-btn"; b.textContent=p;
-      b.onclick=()=>{
+      const b = document.createElement("button");
+      b.className="person-btn"; b.textContent = p;
+      b.onclick = ()=>{
         if(selected[p]){
           delete selected[p];
           b.classList.remove("selected");
-          b.style.background=""; b.style.color="";
+          b.style.background = "";
+          b.style.color = "";
         } else {
-          selected[p]=rndHue(Object.keys(selected).length);
+          selected[p] = rndHue(Object.keys(selected).length);
           b.classList.add("selected");
-          b.style.background=selected[p];
-          b.style.color="#fff";
+          b.style.background = selected[p];
+          b.style.color = "#fff";
         }
       };
       pl.appendChild(b);
     });
 
     function showMenu(){
-      const c=document.getElementById("menuContainer");
-      c.innerHTML="";
+      const c = document.getElementById("menuContainer");
+      c.innerHTML = "";
       menu.forEach((it,idx)=>{
-        const d=document.createElement("div");
-        d.className="menu-item"; d.dataset.idx=idx;
-        const h=document.createElement("div");
-        h.className="menu-header";
-        h.innerHTML=`
+        const item = document.createElement("div");
+        item.className="menu-item"; item.dataset.idx = idx;
+        const hdr = document.createElement("div");
+        hdr.className="menu-header";
+        hdr.innerHTML = `
           <div class="menu-text">
             <strong>${it.de}</strong><br><em>${it.en}</em>
             <span class="price">${it.price}</span>
           </div>`;
-        const btn=document.createElement("button");
+        const btn = document.createElement("button");
         btn.textContent="Select / Auswählen";
-        btn.onclick=()=>openAssign(idx);
-        h.appendChild(btn);
-        d.appendChild(h);
-        const a=document.createElement("div");
-        a.className="assigned"; a.id=`a${idx}`;
-        d.appendChild(a);
-        c.appendChild(d);
+        btn.onclick = ()=> openAssign(idx);
+        hdr.appendChild(btn);
+        item.appendChild(hdr);
+        const ass = document.createElement("div");
+        ass.className="assigned"; ass.id = `a${idx}`;
+        item.appendChild(ass);
+        c.appendChild(item);
       });
-      c.style.display=""; document.getElementById("actionBar")
-        .style.display="flex";
+      c.style.display=""; document.getElementById("actionBar").style.display="flex";
     }
-    document.getElementById("chooseFoodBtn").onclick=showMenu;
+    document.getElementById("chooseFoodBtn").onclick = showMenu;
 
-    let currentIdx=0;
+    let currentIdx = 0;
     function openAssign(idx){
-      currentIdx=idx;
-      document.getElementById("assignTitle")
-        .textContent=menu[idx].de;
-      const al=document.getElementById("assignList");
-      al.innerHTML="";
+      currentIdx = idx;
+      document.getElementById("assignTitle").textContent = menu[idx].de;
+      const al = document.getElementById("assignList");
+      al.innerHTML = "";
       Object.entries(selected).forEach(([n,c])=>{
-        let qty=(orders[n]||{})[idx]||0;
-        const div=document.createElement("div");
-        div.className="assign-person"; div.style.background=c;
+        let qty = (orders[n]||{})[idx]||0;
+        const div = document.createElement("div");
+        div.className="assign-person"; div.style.background = c;
         if(qty) div.classList.add("selected");
-        div.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
-        div.onclick=()=>{
-          qty=(qty+1)%6;
-          if(qty) div.classList.add("selected");
-          else div.classList.remove("selected");
-          div.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
-          orders[n]=orders[n]||{};
-          if(qty) orders[n][idx]=qty;
-          else delete orders[n][idx];
+        div.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
+        div.onclick = ()=>{
+          qty = (qty+1)%6;
+          if(qty) div.classList.add("selected"); else div.classList.remove("selected");
+          div.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
+          orders[n] = orders[n]||{};
+          if(qty) orders[n][idx]=qty; else delete orders[n][idx];
         };
         al.appendChild(div);
       });
-      document.getElementById("assignModal")
-        .classList.add("active");
+      document.getElementById("assignModal").classList.add("active");
     }
     function confirmAssignment(){
-      document.getElementById("assignModal")
-        .classList.remove("active");
+      document.getElementById("assignModal").classList.remove("active");
       updateAssigned(currentIdx);
     }
     function updateAssigned(idx){
-      const w=document.getElementById(`a${idx}`);
-      w.innerHTML="";
+      const w = document.getElementById(`a${idx}`); w.innerHTML="";
       Object.entries(selected).forEach(([n,c])=>{
-        const q=(orders[n]||{})[idx]||0;
+        const q = (orders[n]||{})[idx]||0;
         if(q){
-          const s=document.createElement("span");
-          s.className="person-chip"; s.style.background=c;
-          s.textContent=`${n} (${q})`; w.appendChild(s);
+          const chip = document.createElement("span");
+          chip.className="person-chip"; chip.textContent=`${n} (${q})`;
+          chip.style.background=c; w.appendChild(chip);
         }
       });
     }
     function buildMsg(){
-      let m="";
+      let m = "";
       Object.keys(orders).forEach(n=>{
         m+=n+":\n";
         Object.entries(orders[n]).forEach(([i,q])=>{
@@ -264,15 +249,15 @@
       });
       return m.trim();
     }
-    document.getElementById("finishBtn").onclick=()=>{
-      const msg=buildMsg();
+    document.getElementById("finishBtn").onclick = ()=>{
+      const msg = buildMsg();
       navigator.clipboard.writeText(msg).catch(()=>{});
-      const url=/iphone|ipad|android/i.test(navigator.userAgent)?
-        "whatsapp://send?text=":"https://wa.me/?text=";
-      location.href=url+encodeURIComponent(msg);
+      const u = /iphone|ipad|android/i.test(navigator.userAgent)?
+                "whatsapp://send?text=" : "https://wa.me/?text=";
+      location.href = u + encodeURIComponent(msg);
     };
-    document.getElementById("copyBtn").onclick=()=>{
-      const msg=buildMsg();
+    document.getElementById("copyBtn").onclick = ()=>{
+      const msg = buildMsg();
       navigator.clipboard.writeText(msg)
         .then(()=>alert("Copied!"))
         .catch(()=>alert(msg));
