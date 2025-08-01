@@ -38,19 +38,16 @@
       display:inline-block;
       padding:var(--chip-v) var(--chip-h);
       border-radius:16px; color:#fff;
-      font-weight:600; margin:.4rem;
-      font-size:var(--chip-f);
+      font-weight:600; margin:.4rem; font-size:var(--chip-f);
     }
     #personList {
-      display:flex; flex-wrap:wrap; gap:.6rem;
-      margin-bottom:1rem;
+      display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:1rem;
     }
     .person-btn {
       flex:1 1 calc(50% - .6rem);
       height:var(--btn-hh); line-height:var(--btn-hh);
       text-align:center; background:var(--btn-bg);
-      color:#fff; border-radius:8px;
-      font-size:var(--font-base);
+      color:#fff; border-radius:8px; font-size:var(--font-base);
     }
     .menu-item {
       background:#fff; padding:1.2rem; margin:.6rem 0;
@@ -63,8 +60,7 @@
     .menu-text { font-size:1.1rem; min-width:200px; }
     .price { font-weight:700; margin-left:.6rem; font-size:1.1rem; }
     .assigned {
-      display:flex; flex-wrap:wrap; gap:.4rem;
-      margin-top:.8rem;
+      display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.8rem;
     }
     .modal {
       position:fixed; top:0; left:0;
@@ -74,18 +70,13 @@
     }
     .modal.active { display:flex; }
     .modal-content {
-      background:#fff; padding:1.2rem;
-      border-radius:10px;
-      width:90%; max-width:500px;
-      max-height:80vh; overflow-y:auto;
+      background:#fff; padding:1.2rem; border-radius:10px;
+      width:90%; max-width:500px; max-height:80vh; overflow-y:auto;
     }
     .assign-person {
-      position:relative; display:flex;
-      align-items:center; justify-content:center;
-      height:var(--btn-hh);
-      padding:0 var(--btn-h);
-      margin:.4rem; border-radius:10px;
-      opacity:.5; font-size:var(--font-base);
+      position:relative; display:flex; align-items:center; justify-content:center;
+      height:var(--btn-hh); padding:0 var(--btn-h); margin:.4rem;
+      border-radius:10px; opacity:.5; font-size:var(--font-base);
       color:#fff; cursor:pointer; border:2px solid transparent;
     }
     .assign-person.selected { opacity:1; border-color:#000; }
@@ -93,12 +84,10 @@
       position:absolute; bottom:-8px; right:-8px;
       background:#000; color:#fff; border-radius:50%;
       width:26px; height:26px; display:flex;
-      align-items:center; justify-content:center;
-      font-size:.8rem;
+      align-items:center; justify-content:center; font-size:.8rem;
     }
     #actionBar {
-      display:none; margin-top:1rem;
-      gap:1rem; flex-wrap:wrap;
+      display:none; margin-top:1rem; gap:1rem; flex-wrap:wrap;
     }
   </style>
 </head>
@@ -110,12 +99,8 @@
   </p>
 
   <div id="selectedPersons"></div>
-  <button id="choosePersonBtn">
-    Choose person(s) / Person(en) auswählen
-  </button>
-  <button id="chooseFoodBtn">
-    Choose your food / Essen auswählen
-  </button>
+  <button id="choosePersonBtn">Choose person(s) / Person(en) auswählen</button>
+  <button id="chooseFoodBtn">Choose your food / Essen auswählen</button>
 
   <div id="menuContainer" style="display:none; margin-top:1rem;"></div>
   <div id="actionBar">
@@ -127,7 +112,7 @@
     </button>
   </div>
 
-  <!-- Person modal -->
+  <!-- Person-selection modal -->
   <div id="personModal" class="modal">
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
@@ -153,44 +138,92 @@
 
     const menu = [
       // Vorspeisen / Flüssiges
-      { de:"Kartoffelschaumsuppe (Backerbsen, Speck & Zwiebel, Gartenkresse, Brotzipfel)", 
-        en:"Potato foam soup (cracker bits, bacon & onion, garden cress, bread dippers)", price:"10,00 €" },
-      { de:"Kartoffelschaumsuppe – vegetarisch (Backerbsen, Gartenkresse, Brotzipfel)", 
-        en:"Potato foam soup – vegetarian (cracker bits, garden cress, bread dippers)", price:"9,50 €" },
-      { de:"Ziegenkäse Burger – vegetarisch (Ackersalat, hausgemachte Sauce)", 
-        en:"Goat-cheese burger – vegetarian (field lettuce, homemade sauce)", price:"19,00 €" },
-      { de:"Kleiner Salat – vegetarisch", 
-        en:"Small salad – vegetarian", price:"9,00 €" },
-      { de:"Büffel Burrata – vegetarisch (Ackersalat, Birne, Walnuss, Brotzipfel)", 
-        en:"Buffalo burrata – vegetarian (field lettuce, pear, walnut, bread dippers)", price:"17,00 €" },
+      {
+        de: "Kartoffelschaumsuppe (Backerbsen, Speck & Zwiebel, Gartenkresse, Brotzipfel)",
+        en: "Potato foam soup (cracker bits, bacon & onion, garden cress, bread dippers)",
+        price: "10,00 €"
+      },
+      {
+        de: "Kartoffelschaumsuppe – vegetarisch (Backerbsen, Gartenkresse, Brotzipfel)",
+        en: "Potato foam soup – vegetarian (cracker bits, garden cress, bread dippers)",
+        price: "9,50 €"
+      },
+      {
+        de: "Ziegenkäse Burger – vegetarisch (Ackersalat, hausgemachte Sauce)",
+        en: "Goat-cheese burger – vegetarian (field lettuce, homemade sauce)",
+        price: "19,00 €"
+      },
+      {
+        de: "Kleiner Salat – vegetarisch",
+        en: "Small salad – vegetarian",
+        price: "9,00 €"
+      },
+      {
+        de: "Büffel Burrata – vegetarisch (Ackersalat, Birne, Walnuss, Brotzipfel)",
+        en: "Buffalo burrata – vegetarian (field lettuce, pear, walnut, bread dippers)",
+        price: "17,00 €"
+      },
 
       // Hauptgang
-      { de:"Herbstlicher Wildkräutersalat (Traube, Walnuss, Ziegenkäse, Honig-Senf-Dressing, Brotzipfel)", 
-        en:"Autumn wild-herb salad (grape, walnut, goat cheese, honey-mustard dressing, bread dippers)", price:"20,00 €" },
-      { de:"Filet vom Zander (Kartoffelstampf, Tomate)", 
-        en:"Zander fillet (mashed potatoes, tomato)", price:"29,00 €" },
-      { de:"Filet vom regionalen Rind (ca. 220 g, Wildkräutertwist, Kartoffelschaum, Jus, Brotzipfel)", 
-        en:"Regional beef fillet (about 220 g, wild-herb twist, potato foam, jus, bread dippers)", price:"42,00 €" },
-      { de:"Hausgemachte Ravioli (Wildkräuterbett, Mangold, Frischkäse, Limette)", 
-        en:"Homemade ravioli (wild-herb bed, chard, cream cheese, lime)", price:"21,00 €" },
+      {
+        de: "Sommerlicher Wildkräutersalat – leicht & vegetarisch (Blaubeere, Ziegenkäse, Walnuss, hausgemachtes Honig-Senf-Dressing, Apfel, Brotzipfel)",
+        en: "Summer wild-herb salad – light & vegetarian (blueberry, goat cheese, walnut, homemade honey-mustard dressing, apple, bread dippers)",
+        price: "20,00 €"
+      },
+      {
+        de: "Filet vom Zander (Kartoffelstampf, Tomate)",
+        en: "Perch fillet (mashed potatoes, tomato)",
+        price: "29,00 €"
+      },
+      {
+        de: "Filet vom regionalen Rind (ca. 220 g, Wildkräutertwist, Kartoffelschaum, Jus, Brotzipfel)",
+        en: "Regional beef fillet (approx. 220 g, wild-herb twist, potato foam, jus, bread dippers)",
+        price: "42,00 €"
+      },
+      {
+        de: "Hausgemachte Ravioli – vegetarisch (Wildkräuterbett, Mangold, Frischkäse, Limette)",
+        en: "Homemade ravioli – vegetarian (wild-herb bed, chard, cream cheese, lime)",
+        price: "21,00 €"
+      },
 
       // Specials
-      { de:"Kürbis Special (Risotto, Kürbis, Marone, Ziegenkäse-Espuma)", 
-        en:"Pumpkin special (risotto, pumpkin, chestnut, goat cheese espuma)", price:"25,00 €" },
-      { de:"Herbsttrüffel – vegetarisch (Trüffelgnocchi, Spinat, Herbsttrüffel)", 
-        en:"Autumn truffle – vegetarian (truffle gnocchi, spinach, autumn truffle)", price:"27,00 €" },
-      { de:"Herbsttrüffel Zwischengang – vegetarisch (Getrüffelter Burrata, warme Tomatenlava, Hausbrot)", 
-        en:"Autumn truffle interlude – vegetarian (truffled burrata, warm tomato lava, house bread)", price:"21,00 €" },
+      {
+        de: "Pfifferlinge Special (sautierte Pfifferlinge, Salzbutter, Hausbrot) – danach Käseauswahl oder Beerensorbet",
+        en: "Chanterelle special (sautéed chanterelles, salted butter, house bread) – then cheese selection or berry sorbet",
+        price: "28,00 €"
+      },
+      {
+        de: "Sommertrüffel – vegetarisch (Trüffelgnocchi, Spinat, Sommertrüffel)",
+        en: "Summer truffle – vegetarian (truffle gnocchi, spinach, summer truffle)",
+        price: "27,00 €"
+      },
+      {
+        de: "Sommertrüffel Zwischengang – vegetarisch (Getrüffelter Burrata, warme Tomatenlava, Hausbrot)",
+        en: "Summer truffle interlude – vegetarian (truffled burrata, warm tomato lava, house bread)",
+        price: "25,00 €"
+      },
 
       // Dessert
-      { de:"Käseplatte – vegetarisch (Käse vom Hof im Greth, luftiger Rahm, Dip, warmer Brotlaib)", 
-        en:"Cheese platter – vegetarian (Greth farm cheese, airy cream, dip, warm bread loaf)", price:"16,00 €" },
-      { de:"Crème Brûlée (Frucht von hier)", 
-        en:"Crème brûlée (local fruit)", price:"9,00 €" },
-      { de:"Crumble (Apfel, Zwetschge)", 
-        en:"Crumble (apple, plum)", price:"9,00 €" },
-      { de:"Zwetschgeneis", 
-        en:"Plum ice cream", price:"9,00 €" }
+      {
+        de: "Käseplatte – vegetarisch (regionaler Käse, Salzbutter, Dip, warmer Brotlaib)",
+        en: "Cheese platter – vegetarian (regional cheese, salted butter, dip, warm bread loaf)",
+        price: "16,00 €"
+      },
+      {
+        de: "Crème Brûlée – vegetarisch (Frucht von hier)",
+        en: "Crème brûlée – vegetarian (local fruit)",
+        price: "9,00 €"
+      },
+      {
+        de: "Crumble (Apfel, Pflaume) – vegetarisch",
+        en: "Crumble (apple, plum) – vegetarian",
+        price: "9,00 €"
+      },
+      {
+        de: "Erdbeereis – vegetarisch",
+        en: "Strawberry ice cream – vegetarian",
+        price: "9,00 €"
+      }
     ];
 
     let selected = {}, orders = {};
@@ -200,7 +233,7 @@
     function renderSelected(){
       const out = document.getElementById("selectedPersons");
       out.innerHTML = "";
-      for(let [n,c] of Object.entries(selected)){
+      for (let [n,c] of Object.entries(selected)){
         const chip = document.createElement("span");
         chip.className = "person-chip";
         chip.textContent = n;
@@ -227,7 +260,7 @@
       b.className = "person-btn";
       b.textContent = p;
       b.onclick = ()=>{
-        if(selected[p]){
+        if (selected[p]){
           delete selected[p];
           b.classList.remove("selected");
           b.style.background = "";
@@ -278,19 +311,21 @@
       document.getElementById("assignTitle").textContent = menu[idx].de;
       const al = document.getElementById("assignList");
       al.innerHTML = "";
-      for(let [n,c] of Object.entries(selected)){
+      for (let [n,c] of Object.entries(selected)){
         let qty = (orders[n]||{})[idx]||0;
         const d = document.createElement("div");
         d.className = "assign-person";
         d.style.background = c;
-        if(qty) d.classList.add("selected");
+        if (qty) d.classList.add("selected");
         d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
         d.onclick = ()=>{
           qty = (qty+1)%6;
-          if(qty) d.classList.add("selected"); else d.classList.remove("selected");
+          if (qty) d.classList.add("selected");
+          else d.classList.remove("selected");
           d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
           orders[n] = orders[n]||{};
-          if(qty) orders[n][idx] = qty; else delete orders[n][idx];
+          if (qty) orders[n][idx] = qty;
+          else delete orders[n][idx];
         };
         al.appendChild(d);
       }
@@ -304,9 +339,9 @@
     function updateAssigned(idx){
       const wrap = document.getElementById(`a${idx}`);
       wrap.innerHTML = "";
-      for(let [n,c] of Object.entries(selected)){
+      for (let [n,c] of Object.entries(selected)){
         const q = (orders[n]||{})[idx]||0;
-        if(q){
+        if (q){
           const chip = document.createElement("span");
           chip.className = "person-chip";
           chip.textContent = `${n} (${q})`;
@@ -317,16 +352,16 @@
     }
 
     function buildMsg(){
-      let msg = "";
-      for(let n of Object.keys(orders)){
-        msg += n + ":\n";
-        for(let [i,q] of Object.entries(orders[n])){
+      let m = "";
+      for (let n of Object.keys(orders)){
+        m += n + ":\n";
+        for (let [i,q] of Object.entries(orders[n])){
           const it = menu[i];
-          msg += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
+          m += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
         }
-        msg += "\n";
+        m += "\n";
       }
-      return msg.trim();
+      return m.trim();
     }
 
     document.getElementById("finishBtn").onclick = ()=>{
