@@ -54,9 +54,6 @@
       overflow-y: auto;
     }
     .modal-content h3 { margin-top: 0; }
-    .modal-content .add-btn {
-      background: #0066cc; margin-bottom: 1rem;
-    }
     #personList {
       display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem;
     }
@@ -123,10 +120,10 @@
   <div id="personModal" class="modal">
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
-      <button class="add-btn" onclick="addNewName()">
+      <div id="personList"></div>
+      <button style="width:100%; margin-bottom:1rem;" onclick="addNewName()">
         Add New Name / Neuen Namen hinzufügen
       </button>
-      <div id="personList"></div>
       <button onclick="closePersonModal()">OK</button>
     </div>
   </div>
@@ -147,7 +144,7 @@
     ];
 
     const menu = [
-      /* … your Zimmerhof 13 menu items here … */
+      /* … Zimmerhof 13 menu items … */
     ];
 
     let selected = {}, orders = {};
@@ -160,23 +157,21 @@
       const btn = document.createElement("button");
       btn.className = "person-btn";
       btn.textContent = name;
-      btn.addEventListener("click", ()=>{
+      btn.onclick = ()=>{
         if(selected[name]){
           delete selected[name];
           btn.classList.remove("selected");
           btn.style.background = "";
-          btn.style.color = "";
         } else {
           selected[name] = rndHue(Object.keys(selected).length);
           btn.classList.add("selected");
           btn.style.background = selected[name];
-          btn.style.color = "#fff";
         }
-      });
+      };
       document.getElementById("personList").appendChild(btn);
     }
 
-    // Build initial list
+    // initial build
     people.forEach(createPersonBtn);
 
     function addNewName(){
@@ -190,11 +185,11 @@
     function renderSelected(){
       const out = document.getElementById("selectedPersons");
       out.innerHTML = "";
-      for(let [n,color] of Object.entries(selected)){
+      for(let [n,c] of Object.entries(selected)){
         const chip = document.createElement("span");
         chip.className = "person-chip";
         chip.textContent = n;
-        chip.style.background = color;
+        chip.style.background = c;
         out.appendChild(chip);
       }
       document.getElementById("chooseFoodBtn").style.display =
@@ -209,50 +204,28 @@
       renderSelected();
     }
 
-    let currentIdx=0;
     function openAssign(idx){
-      currentIdx = idx;
+      let current = idx;
       document.getElementById("assignTitle").textContent = menu[idx].de;
       const list = document.getElementById("assignList");
       list.innerHTML = "";
-      for(let [n,color] of Object.entries(selected)){
+      for(let [n,c] of Object.entries(selected)){
         let qty = (orders[n]||{})[idx]||0;
         const d = document.createElement("div");
         d.className = "assign-person";
-        d.style.background = color;
+        d.style.background = c;
         if(qty) d.classList.add("selected");
         d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
-        d.addEventListener("click", ()=>{
+        d.onclick = ()=>{
           qty = (qty+1)%6;
-          if(qty) d.classList.add("selected");
-          else d.classList.remove("selected");
+          if(qty) d.classList.add("selected"); else d.classList.remove("selected");
           d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
           orders[n] = orders[n]||{};
-          if(qty) orders[n][idx] = qty;
-          else delete orders[n][idx];
-        });
+          if(qty) orders[n][idx] = qty; else delete orders[n][idx];
+        };
         list.appendChild(d);
       }
       document.getElementById("assignModal").classList.add("active");
-    }
-
-    function confirmAssignment(){
-      document.getElementById("assignModal").classList.remove("active");
-      updateAssigned(currentIdx);
-    }
-    function updateAssigned(idx){
-      const wrap = document.getElementById(`a${idx}`);
-      wrap.innerHTML = "";
-      for(let [n,color] of Object.entries(selected)){
-        const q = (orders[n]||{})[idx]||0;
-        if(q){
-          const chip = document.createElement("span");
-          chip.className = "person-chip";
-          chip.textContent = `${n} (${q})`;
-          chip.style.background = color;
-          wrap.appendChild(chip);
-        }
-      }
     }
 
     document.getElementById("chooseFoodBtn").onclick = ()=>{
@@ -277,11 +250,33 @@
       document.getElementById("actionBar").style.display = "flex";
     };
 
+    function confirmAssignment(){
+      document.getElementById("assignModal").classList.remove("active");
+      updateAssigned();
+    }
+    function updateAssigned(){
+      for(let idx=0; idx<menu.length; idx++){
+        const wrap = document.getElementById(`a${idx}`);
+        if(!wrap) continue;
+        wrap.innerHTML = "";
+        for(let [n,c] of Object.entries(selected)){
+          const q = (orders[n]||{})[idx]||0;
+          if(q){
+            const chip = document.createElement("span");
+            chip.className = "person-chip";
+            chip.textContent = `${n} (${q})`;
+            chip.style.background = c;
+            wrap.appendChild(chip);
+          }
+        }
+      }
+    }
+
     function buildMsg(){
       let out = "";
-      for(let name of Object.keys(orders)){
-        out += name + ":\n";
-        for(let [i,q] of Object.entries(orders[name])){
+      for(let n of Object.keys(orders)){
+        out += n + ":\n";
+        for(let [i,q] of Object.entries(orders[n])){
           const it = menu[i];
           out += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
         }
@@ -291,17 +286,17 @@
     }
 
     document.getElementById("finishBtn").onclick = ()=>{
-      const text = buildMsg();
-      navigator.clipboard.writeText(text).catch(()=>{});
+      const txt = buildMsg();
+      navigator.clipboard.writeText(txt).catch(()=>{});
       const u = /iphone|ipad|android/i.test(navigator.userAgent)
                 ? "whatsapp://send?text=" : "https://wa.me/?text=";
-      location.href = u + encodeURIComponent(text);
+      location.href = u + encodeURIComponent(txt);
     };
     document.getElementById("copyBtn").onclick = ()=>{
-      const text = buildMsg();
-      navigator.clipboard.writeText(text)
+      const txt = buildMsg();
+      navigator.clipboard.writeText(txt)
         .then(()=>alert("Copied!"))
-        .catch(()=>alert(text));
+        .catch(()=>alert(txt));
     };
   </script>
 </body>
