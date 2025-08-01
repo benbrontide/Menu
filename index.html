@@ -27,7 +27,12 @@
     }
     h1 {
       font-size: 2rem;
+      margin-bottom: .5rem;
+    }
+    p.description {
+      font-size: 1rem;
       margin-bottom: 1rem;
+      color: #555;
     }
     button {
       cursor: pointer;
@@ -100,12 +105,10 @@
       margin-top: .8rem;
     }
     .modal {
-      position: fixed;
-      top: 0; left: 0;
+      position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
       display: none;
-      align-items: center;
-      justify-content: center;
+      align-items: center; justify-content: center;
       background: var(--modal-bg);
       z-index: 10;
     }
@@ -114,53 +117,43 @@
       background: #fff;
       padding: 1.2rem;
       border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 80vh;
-      overflow-y: auto;
+      width: 90%; max-width: 500px;
+      max-height: 80vh; overflow-y: auto;
     }
     .assign-person {
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       height: var(--list-btn-height);
       padding: 0 var(--btn-padding-horiz);
-      border-radius: 10px;
-      margin: .4rem;
-      min-width: 90px;
-      font-weight: 600;
-      color: #fff;
-      opacity: .5;
-      border: 2px solid transparent;
-      cursor: pointer;
+      border-radius: 10px; margin: .4rem;
+      min-width: 90px; font-weight: 600; color: #fff;
+      opacity: .5; border: 2px solid transparent; cursor: pointer;
       font-size: var(--font-base);
     }
     .assign-person.selected { opacity: 1; border-color: #000; }
     .assign-person .qty {
-      position: absolute;
-      bottom: -8px; right: -8px;
-      background: #000; color: #fff;
-      border-radius: 50%;
-      font-size: .8rem;
-      width: 26px; height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute; bottom: -8px; right: -8px;
+      background: #000; color: #fff; border-radius: 50%;
+      font-size: .8rem; width: 26px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
     }
     #actionBar {
-      display: none;
-      margin-top: 1rem;
-      gap: 1rem;
-      flex-wrap: wrap;
+      display: none; margin-top: 1rem; gap: 1rem; flex-wrap: wrap;
     }
   </style>
 </head>
 <body>
   <h1>L’Osteria – Essen bestellen / Place your Order</h1>
+  <p class="description">
+    Choose who you are ordering for, it can be multiple people.<br/>
+    Wähle, für wen du bestellst – es können mehrere Personen sein.
+  </p>
   <div id="selectedPersons"></div>
-  <button id="choosePersonBtn">Choose a person / Person auswählen</button>
-  <button id="chooseFoodBtn" style="display:none; margin-left: .5rem;">
+  <button id="choosePersonBtn">
+    Choose person(s) / Person(en) auswählen
+  </button>
+  <button id="chooseFoodBtn"
+          style="display:none; margin-top:1rem; margin-left:.5rem;">
     Choose your food / Essen auswählen
   </button>
   <div id="menuContainer" style="display:none; margin-top:1rem;"></div>
@@ -168,7 +161,9 @@
     <button id="finishBtn" style="background:#008000;">
       Finished – WhatsApp / Fertig – WhatsApp
     </button>
-    <button id="copyBtn" style="background:#555;">Copy text / Text kopieren</button>
+    <button id="copyBtn" style="background:#555;">
+      Copy text / Text kopieren
+    </button>
   </div>
 
   <!-- Person selection modal -->
@@ -193,38 +188,45 @@
     const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena",
                     "Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
     const menu = [
-      /* paste your menu array here */
+      /* your { de:"…", en:"…", price:"…" } items here */
     ];
 
     let selected = {}, orders = {};
+
     function rndHue(i){ return `hsl(${(i*137.508)%360},70%,50%)`; }
     function renderSelected(){
       const w = document.getElementById("selectedPersons");
       w.innerHTML = "";
-      Object.entries(selected).forEach(([n,c])=>{
-        const chip = document.createElement("span");
-        chip.className="person-chip";
+      for (let [n,c] of Object.entries(selected)){
+        let chip = document.createElement("span");
+        chip.className = "person-chip";
         chip.textContent = n;
         chip.style.background = c;
         w.appendChild(chip);
-      });
+      }
       document.getElementById("chooseFoodBtn").style.display =
-        Object.keys(selected).length ? "" : "none";
+        Object.keys(selected).length ? "inline-block" : "none";
     }
-    function openPersonModal(){ document.getElementById("personModal").classList.add("active"); }
-    function closePersonModal(){ document.getElementById("personModal").classList.remove("active"); renderSelected(); }
+
+    function openPersonModal(){
+      document.getElementById("personModal").classList.add("active");
+    }
+    function closePersonModal(){
+      document.getElementById("personModal").classList.remove("active");
+      renderSelected();
+    }
     document.getElementById("choosePersonBtn").onclick = openPersonModal;
 
-    const pl = document.getElementById("personList");
-    people.forEach((p,i)=>{
-      const b = document.createElement("button");
-      b.className="person-btn"; b.textContent = p;
+    let pl = document.getElementById("personList");
+    people.forEach((p,i) => {
+      let b = document.createElement("button");
+      b.className = "person-btn";
+      b.textContent = p;
       b.onclick = ()=>{
-        if(selected[p]){
+        if (selected[p]){
           delete selected[p];
           b.classList.remove("selected");
-          b.style.background = "";
-          b.style.color = "";
+          b.style.background = ""; b.style.color = "";
         } else {
           selected[p] = rndHue(Object.keys(selected).length);
           b.classList.add("selected");
@@ -235,89 +237,101 @@
       pl.appendChild(b);
     });
 
-    function showMenu(){
-      const c = document.getElementById("menuContainer");
-      c.innerHTML = "";
-      menu.forEach((it,idx)=>{
-        const item = document.createElement("div");
-        item.className="menu-item"; item.dataset.idx = idx;
-        const hdr = document.createElement("div");
-        hdr.className="menu-header";
+    document.getElementById("chooseFoodBtn").onclick = ()=>{
+      let cont = document.getElementById("menuContainer");
+      cont.innerHTML = "";
+      menu.forEach((it, idx) => {
+        let item = document.createElement("div");
+        item.className = "menu-item"; item.dataset.idx = idx;
+        let hdr = document.createElement("div");
+        hdr.className = "menu-header";
         hdr.innerHTML = `
           <div class="menu-text">
-            <strong>${it.de}</strong><br><em>${it.en}</em>
+            <strong>${it.de}</strong><br/><em>${it.en}</em>
             <span class="price">${it.price}</span>
           </div>`;
-        const btn = document.createElement("button");
-        btn.textContent="Select / Auswählen";
+        let btn = document.createElement("button");
+        btn.textContent = "Select / Auswählen";
         btn.onclick = ()=> openAssign(idx);
         hdr.appendChild(btn);
         item.appendChild(hdr);
-        const ass = document.createElement("div");
-        ass.className="assigned"; ass.id = `a${idx}`;
+        let ass = document.createElement("div");
+        ass.className = "assigned"; ass.id = `a${idx}`;
         item.appendChild(ass);
-        c.appendChild(item);
+        cont.appendChild(item);
       });
-      c.style.display=""; document.getElementById("actionBar").style.display="flex";
-    }
-    document.getElementById("chooseFoodBtn").onclick = showMenu;
+      cont.style.display = "";
+      document.getElementById("actionBar").style.display = "flex";
+    };
 
     let currentIdx = 0;
     function openAssign(idx){
       currentIdx = idx;
       document.getElementById("assignTitle").textContent = menu[idx].de;
-      const al = document.getElementById("assignList");
+      let al = document.getElementById("assignList");
       al.innerHTML = "";
-      Object.entries(selected).forEach(([n,c])=>{
+      for (let [n,c] of Object.entries(selected)){
         let qty = (orders[n]||{})[idx]||0;
-        const div = document.createElement("div");
-        div.className="assign-person"; div.style.background = c;
+        let div = document.createElement("div");
+        div.className = "assign-person";
+        div.style.background = c;
         if(qty) div.classList.add("selected");
         div.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
         div.onclick = ()=>{
           qty = (qty+1)%6;
-          if(qty) div.classList.add("selected"); else div.classList.remove("selected");
+          if(qty) div.classList.add("selected");
+          else div.classList.remove("selected");
           div.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
           orders[n] = orders[n]||{};
-          if(qty) orders[n][idx]=qty; else delete orders[n][idx];
+          if(qty) orders[n][idx] = qty;
+          else delete orders[n][idx];
         };
         al.appendChild(div);
-      });
+      }
       document.getElementById("assignModal").classList.add("active");
     }
-    function confirmAssignment(){ document.getElementById("assignModal").classList.remove("active"); updateAssigned(currentIdx); }
-    function updateAssigned(idx){
-      const w = document.getElementById(`a${idx}`); w.innerHTML="";
-      Object.entries(selected).forEach(([n,c])=>{
-        const q = (orders[n]||{})[idx]||0;
-        if(q){
-          const chip = document.createElement("span");
-          chip.className="person-chip"; chip.textContent=`${n} (${q})`;
-          chip.style.background=c; w.appendChild(chip);
-        }
-      });
+
+    function confirmAssignment(){
+      document.getElementById("assignModal").classList.remove("active");
+      updateAssigned(currentIdx);
     }
+    function updateAssigned(idx){
+      let w = document.getElementById(`a${idx}`);
+      w.innerHTML = "";
+      for (let [n,c] of Object.entries(selected)){
+        let q = (orders[n]||{})[idx]||0;
+        if(q){
+          let chip = document.createElement("span");
+          chip.className = "person-chip";
+          chip.textContent = `${n} (${q})`;
+          chip.style.background = c;
+          w.appendChild(chip);
+        }
+      }
+    }
+
     function buildMsg(){
       let m = "";
-      Object.keys(orders).forEach(n=>{
-        m+=n+":\n";
-        Object.entries(orders[n]).forEach(([i,q])=>{
-          const it=menu[i];
-          m+=`- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
-        });
-        m+="\n";
-      });
+      for (let n of Object.keys(orders)){
+        m += n + ":\n";
+        for (let [i,q] of Object.entries(orders[n])){
+          let it = menu[i];
+          m += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
+        }
+        m += "\n";
+      }
       return m.trim();
     }
+
     document.getElementById("finishBtn").onclick = ()=>{
-      const msg = buildMsg();
+      let msg = buildMsg();
       navigator.clipboard.writeText(msg).catch(()=>{});
-      const u = /iphone|ipad|android/i.test(navigator.userAgent)?
-                "whatsapp://send?text=" : "https://wa.me/?text=";
+      let u = /iphone|ipad|android/i.test(navigator.userAgent)
+              ? "whatsapp://send?text=" : "https://wa.me/?text=";
       location.href = u + encodeURIComponent(msg);
     };
     document.getElementById("copyBtn").onclick = ()=>{
-      const msg = buildMsg();
+      let msg = buildMsg();
       navigator.clipboard.writeText(msg)
         .then(()=>alert("Copied!"))
         .catch(()=>alert(msg));
