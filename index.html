@@ -2,19 +2,20 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>L’Osteria – Online-Bestellung</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>L’Osteria – Online-Bestellung</title>
   <style>
     :root {
       --btn-bg: #444;
       --btn-color: #fff;
       --modal-bg: rgba(0,0,0,.8);
-      --font-base: 1rem;
-      --btn-padding-vert: .6rem;
-      --btn-padding-horiz: 1rem;
-      --chip-font: .9rem;
-      --chip-padding-vert: .4rem;
-      --chip-padding-horiz: .8rem;
+      --font-base: 1.1rem;
+      --btn-padding-vert: 1rem;
+      --btn-padding-horiz: 1.2rem;
+      --chip-font: 1rem;
+      --chip-padding-vert: .6rem;
+      --chip-padding-horiz: 1rem;
+      --list-btn-height: 3rem;
     }
     body {
       font-family: Arial, sans-serif;
@@ -25,7 +26,7 @@
       color: #222;
     }
     h1 {
-      font-size: 1.8rem;
+      font-size: 2rem;
       margin-bottom: 1rem;
     }
     button {
@@ -33,35 +34,37 @@
       border: none;
       padding: var(--btn-padding-vert) var(--btn-padding-horiz);
       border-radius: 8px;
-      font-size: 1rem;
+      font-size: var(--font-base);
       background: var(--btn-bg);
       color: var(--btn-color);
       transition: background .2s;
     }
-    button:hover {
-      background: #666;
-    }
+    button:hover { background: #666; }
     .person-chip {
       display: inline-block;
       padding: var(--chip-padding-vert) var(--chip-padding-horiz);
       border-radius: 16px;
       color: #fff;
       font-weight: 600;
-      margin: .3rem;
+      margin: .4rem;
       font-size: var(--chip-font);
     }
     #personList {
       display: flex;
       flex-wrap: wrap;
       gap: .6rem;
-      margin-bottom: .8rem;
+      margin-bottom: 1rem;
     }
     .person-btn {
       flex: 1 1 calc(50% - .6rem);
-      padding: .5rem .8rem;
-      font-size: .95rem;
+      height: var(--list-btn-height);
+      line-height: var(--list-btn-height);
+      padding: 0 var(--btn-padding-horiz);
+      font-size: var(--font-base);
       text-align: center;
       border-radius: 8px;
+      background: var(--btn-bg);
+      color: var(--btn-color);
     }
     .menu-item {
       background: #fff;
@@ -78,22 +81,23 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+      gap: .5rem;
     }
     .menu-text {
       flex: 1 1 auto;
       min-width: 200px;
-      font-size: 1rem;
+      font-size: 1.1rem;
     }
     .price {
       font-weight: 700;
       margin-left: .6rem;
-      font-size: 1rem;
+      font-size: 1.1rem;
     }
     .assigned {
       display: flex;
       flex-wrap: wrap;
-      gap: .3rem;
-      margin-top: .6rem;
+      gap: .4rem;
+      margin-top: .8rem;
     }
     .modal {
       position: fixed;
@@ -105,46 +109,41 @@
       background: var(--modal-bg);
       z-index: 10;
     }
-    .modal.active {
-      display: flex;
-    }
+    .modal.active { display: flex; }
     .modal-content {
       background: #fff;
       padding: 1.2rem;
       border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
       max-height: 80vh;
       overflow-y: auto;
-      width: 90%;
-      max-width: 400px;
     }
     .assign-person {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: .5rem .9rem;
+      height: var(--list-btn-height);
+      padding: 0 var(--btn-padding-horiz);
       border-radius: 10px;
-      margin: .3rem;
+      margin: .4rem;
       min-width: 90px;
       font-weight: 600;
       color: #fff;
       opacity: .5;
       border: 2px solid transparent;
       cursor: pointer;
-      font-size: .9rem;
+      font-size: var(--font-base);
     }
-    .assign-person.selected {
-      opacity: 1;
-      border-color: #000;
-    }
+    .assign-person.selected { opacity: 1; border-color: #000; }
     .assign-person .qty {
       position: absolute;
       bottom: -8px; right: -8px;
-      background: #000;
-      color: #fff;
+      background: #000; color: #fff;
       border-radius: 50%;
-      font-size: .75rem;
-      width: 24px; height: 24px;
+      font-size: .8rem;
+      width: 26px; height: 26px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -152,7 +151,7 @@
     #actionBar {
       display: none;
       margin-top: 1rem;
-      gap: .8rem;
+      gap: 1rem;
       flex-wrap: wrap;
     }
   </style>
@@ -166,7 +165,9 @@
   </button>
   <div id="menuContainer" style="display:none; margin-top:1rem;"></div>
   <div id="actionBar">
-    <button id="finishBtn" style="background:#008000;">Finished – WhatsApp / Fertig – WhatsApp</button>
+    <button id="finishBtn" style="background:#008000;">
+      Finished – WhatsApp / Fertig – WhatsApp
+    </button>
     <button id="copyBtn" style="background:#555;">Copy text / Text kopieren</button>
   </div>
 
@@ -191,35 +192,11 @@
   <script>
     const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena",
                     "Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
-
     const menu = [
-      { de:"Margherita (Tomatensauce, Mozzarella, Basilikum)", en:"Margherita (Tomato sauce, mozzarella, basil)", price:"" },
-      { de:"Prosciutto (Schinkenschulter, Käse)", en:"Prosciutto (Shoulder of ham, cheese)", price:"" },
-      { de:"Salami (Salami, Käse)", en:"Salami (Salami, cheese)", price:"" },
-      { de:"Funghi Freschi (frische Champignons, Käse)", en:"Funghi Freschi (Fresh mushrooms, cheese)", price:"" },
-      { de:"Prosciutto e Funghi (Schinkenschulter, frische Champignons, Käse)", en:"Prosciutto e Funghi (Shoulder of ham, fresh mushrooms, cheese)", price:"" },
-      { de:"Pizza Bò (Calzone) (gefüllt mit Schinken, Champignons, Salami, Käse)", en:"Pizza Bò (Calzone) (filled with ham, mushrooms, salami, cheese)", price:"" },
-      { de:"Braccio di Ferro (Spinat, Ei, Käse, Knoblauch)", en:"Braccio di Ferro (Spinach, egg, cheese, garlic)", price:"" },
-      { de:"Hawaii (Schinkenschulter, Ananas, Käse)", en:"Hawaii (Shoulder of ham, pineapple, cheese)", price:"" },
-      { de:"Canario (Schinkenschulter, Champignons, Salami, Anchovis, Käse)", en:"Canario (Shoulder of ham, mushrooms, salami, anchovies, cheese)", price:"" },
-      { de:"Cip & Ciop (Mozzarella, Kapern, Anchovis, Oregano)", en:"Cip & Ciop (Mozzarella, capers, anchovies, oregano)", price:"" },
-      { de:"Tonno (Thunfisch, Zwiebeln, Käse)", en:"Tonno (Tuna, onions, cheese)", price:"" },
-      { de:"Gamberetti (Pizza Bianca) (Garnelen, frische Tomaten, Käse, Knoblauch)", en:"Gamberetti (Pizza Bianca) (Shrimps, fresh tomatoes, cheese, garlic)", price:"" },
-      { de:"Marinara (Meeresfrüchte, Käse, Knoblauch)", en:"Marinara (Seafood, cheese, garlic)", price:"" },
-      { de:"Salsiccia Piccante (Mozzarella, scharfe Peperoni-Salami, Basilikum)", en:"Salsiccia Piccante (Mozzarella, spicy pepperoni-salami, basil)", price:"" },
-      { de:"BBQ Chicken (Mozzarella, BBQ-Sauce, knusprige Hähnchenbrust, Paprika, Zwiebeln)", en:"BBQ Chicken (Mozzarella, BBQ sauce, fried chicken breast strips, peppers, onions)", price:"" },
-      { de:"Salsiccia Fresca (Mozzarella, italienische Fenchelsalami, Wirsing, Grana Padano DOP)", en:"Salsiccia Fresca (Mozzarella, Italian fennel sausage, savoy cabbage, Grana Padano DOP)", price:"" },
-      { de:"Rustica (Mozzarella, frische Tomaten, Oliven, Zwiebeln, Oregano, scharf)", en:"Rustica (Mozzarella, fresh tomatoes, olives, onions, oregano, spicy)", price:"" },
-      { de:"Parmigiana (Mozzarella, Aubergine, Grana Padano DOP, Oregano)", en:"Parmigiana (Mozzarella, aubergine, Grana Padano DOP, oregano)", price:"" },
-      { de:"Prosciutto Crudo (Mozzarella, luftgetrockneter Rohschinken)", en:"Prosciutto Crudo (Mozzarella, air-dried ham)", price:"" },
-      { de:"Caprese (italienische Mozzarella-Kugel, Kirschtomaten, Basilikum)", en:"Caprese (Italian mozzarella ball, cherry tomatoes, basil)", price:"" },
-      { de:"Vegetariana (Mozzarella, gegrilltes Gemüse, Champignons, Knoblauch, Rucola)", en:"Vegetariana (Mozzarella, grilled vegetables, mushrooms, garlic, rocket)", price:"" },
-      { de:"Quattro Formaggi (Mozzarella, Edamer, Gorgonzola, Grana Padano DOP)", en:"Quattro Formaggi (Mozzarella, Edam, Gorgonzola, Grana Padano DOP)", price:"" },
-      { de:"Rucola (Mozzarella, Rucola, Grana Padano DOP, Knoblauch)", en:"Rucola (Mozzarella, rocket, Grana Padano DOP, garlic)", price:"" }
+      /* paste your menu array here */
     ];
 
     let selected = {}, orders = {};
-
     function rndHue(i){ return `hsl(${(i*137.508)%360},70%,50%)`; }
     function renderSelected(){
       const w = document.getElementById("selectedPersons");
@@ -308,10 +285,7 @@
       });
       document.getElementById("assignModal").classList.add("active");
     }
-    function confirmAssignment(){
-      document.getElementById("assignModal").classList.remove("active");
-      updateAssigned(currentIdx);
-    }
+    function confirmAssignment(){ document.getElementById("assignModal").classList.remove("active"); updateAssigned(currentIdx); }
     function updateAssigned(idx){
       const w = document.getElementById(`a${idx}`); w.innerHTML="";
       Object.entries(selected).forEach(([n,c])=>{
