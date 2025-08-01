@@ -38,8 +38,7 @@
       font-size:1rem;
     }
     button:hover { background:#666; }
-    #choosePersonBtn,
-    #chooseFoodBtn {
+    #choosePersonBtn,#chooseFoodBtn {
       width:100%; margin-bottom:1rem; text-align:center;
     }
     #chooseFoodBtn { display:none; }
@@ -51,6 +50,8 @@
       border-radius:12px;
       font-size:var(--chip-f);
     }
+
+    /* MODAL BACKDROP */
     .modal {
       position:fixed; top:0; left:0;
       width:100%; height:100%;
@@ -65,6 +66,8 @@
       padding:1rem;
     }
     .modal-content h3 { margin-top:0; font-size:1.2rem; }
+
+    /* PERSON GRID */
     #personList {
       display:grid;
       grid-template-columns:repeat(2,1fr);
@@ -72,6 +75,7 @@
       margin:1rem 0;
     }
     .person-btn {
+      width:100%;
       height:var(--btn-h);
       display:flex; align-items:center; justify-content:center;
       background:var(--btn-bg); color:var(--btn-color);
@@ -79,8 +83,10 @@
     }
     .person-btn.selected {
       border:2px solid #000;
-      background:inherit;
+      /* keep the original random background */
     }
+
+    /* MENU/LIST */
     .menu-item {
       background:#fff; border-radius:6px;
       box-shadow:0 1px 3px rgba(0,0,0,.1);
@@ -101,8 +107,8 @@
       height:var(--btn-h);
       display:flex; align-items:center; justify-content:center;
       background:var(--btn-bg); color:#fff;
-      border-radius:6px; position:relative;
-      opacity:.5; border:2px solid transparent;
+      border-radius:6px; position:relative; opacity:.5;
+      border:2px solid transparent;
     }
     .assign-person.selected {
       opacity:1; border-color:#000;
@@ -114,6 +120,8 @@
       display:flex; align-items:center; justify-content:center;
       font-size:.7rem;
     }
+
+    /* ACTION BAR */
     #actionBar {
       display:none; margin-top:1rem;
       gap:1rem; flex-wrap:wrap;
@@ -127,10 +135,13 @@
     Choose who you are ordering for — it can be multiple people.<br>
     Wähle, für wen du bestellst – es können mehrere Personen sein.
   </p>
+
   <div id="selectedPersons"></div>
   <button id="choosePersonBtn">Choose person(s) / Person(en) auswählen</button>
   <button id="chooseFoodBtn">Choose your food / Essen auswählen</button>
+
   <div id="menuContainer" style="display:none; margin-top:1rem;"></div>
+
   <div id="actionBar">
     <button id="finishBtn" style="background:#008000;">
       Finished – WhatsApp / Fertig – WhatsApp
@@ -140,28 +151,31 @@
     </button>
   </div>
 
-  <!-- Person-picker modal -->
+  <!-- PERSON MODAL -->
   <div id="personModal" class="modal">
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
       <div id="personList"></div>
-      <button style="width:100%; margin-bottom:.8rem;" onclick="addNewName()">
+      <button style="width:100%; margin-bottom:.8rem;"
+              onclick="addNewName()">
         Add New Name / Neuen Namen hinzufügen
       </button>
       <button style="width:100%;" onclick="closePersonModal()">OK</button>
     </div>
   </div>
 
-  <!-- Assignment modal -->
+  <!-- ASSIGNMENT MODAL -->
   <div id="assignModal" class="modal">
     <div class="modal-content">
       <h3 id="assignTitle"></h3>
-      <div id="assignList" style="display:flex;flex-wrap:wrap;gap:var(--gap);margin:1rem 0;"></div>
+      <div id="assignList"
+           style="display:flex;flex-wrap:wrap;gap:var(--gap);margin:1rem 0;"></div>
       <button style="width:100%;" onclick="confirmAssignment()">OK</button>
     </div>
   </div>
 
   <script>
+    // initial data
     const people = [
       "Christa","Jochen","Sabine","Sven",
       "Tom","Jan","Lena","Ben",
@@ -189,23 +203,25 @@
 
     let selected={}, orders={};
 
+    // pick a nice distinct hue
     function rndHue(i){
       return `hsl(${(i*137.5)%360},70%,50%)`;
     }
 
+    // create a name button inside the grid
     function createPersonBtn(name){
-      const btn=document.createElement("button");
-      btn.className="person-btn";
-      btn.textContent=name;
-      btn.onclick=()=>{
+      const btn = document.createElement("button");
+      btn.className = "person-btn";
+      btn.textContent = name;
+      btn.onclick = ()=>{
         if(selected[name]){
           delete selected[name];
           btn.classList.remove("selected");
-          btn.style.background="";
+          btn.style.background = "";
         } else {
-          selected[name]=rndHue(Object.keys(selected).length);
+          selected[name] = rndHue(Object.keys(selected).length);
           btn.classList.add("selected");
-          btn.style.background=selected[name];
+          btn.style.background = selected[name];
         }
       };
       document.getElementById("personList").append(btn);
@@ -213,7 +229,7 @@
     people.forEach(createPersonBtn);
 
     function addNewName(){
-      const name=prompt("Enter new name / Gib neuen Namen ein")?.trim();
+      const name = prompt("Enter new name / Gib neuen Namen ein")?.trim();
       if(name && !people.includes(name)){
         people.push(name);
         createPersonBtn(name);
@@ -221,20 +237,20 @@
     }
 
     function renderSelected(){
-      const out=document.getElementById("selectedPersons");
-      out.innerHTML="";
+      const out = document.getElementById("selectedPersons");
+      out.innerHTML = "";
       Object.entries(selected).forEach(([n,c])=>{
-        const chip=document.createElement("span");
-        chip.className="person-chip";
-        chip.textContent=n;
-        chip.style.background=c;
+        const chip = document.createElement("span");
+        chip.className = "person-chip";
+        chip.textContent = n;
+        chip.style.background = c;
         out.append(chip);
       });
-      document.getElementById("chooseFoodBtn").style.display=
-        Object.keys(selected).length?"block":"none";
+      document.getElementById("chooseFoodBtn").style.display =
+        Object.keys(selected).length ? "block":"none";
     }
 
-    document.getElementById("choosePersonBtn").onclick=()=>{
+    document.getElementById("choosePersonBtn").onclick = ()=>{
       document.getElementById("personModal").classList.add("active");
     };
     function closePersonModal(){
@@ -242,13 +258,13 @@
       renderSelected();
     }
 
-    document.getElementById("chooseFoodBtn").onclick=()=>{
-      const c=document.getElementById("menuContainer");
-      c.innerHTML="";
+    document.getElementById("chooseFoodBtn").onclick = ()=>{
+      const c = document.getElementById("menuContainer");
+      c.innerHTML = "";
       menu.forEach((it,i)=>{
-        const div=document.createElement("div");
-        div.className="menu-item";
-        div.innerHTML=`
+        const div = document.createElement("div");
+        div.className = "menu-item";
+        div.innerHTML = `
           <div class="menu-header">
             <div class="menu-text">
               <strong>${it.de}</strong><br><em>${it.en}</em>
@@ -257,32 +273,33 @@
             <button>Select / Auswählen</button>
           </div>
           <div class="assigned" id="a${i}"></div>`;
-        div.querySelector("button").onclick=()=>openAssign(i);
+        div.querySelector("button").onclick = ()=> openAssign(i);
         c.append(div);
       });
-      c.style.display="block";
-      document.getElementById("actionBar").style.display="flex";
+      c.style.display = "block";
+      document.getElementById("actionBar").style.display = "flex";
     };
 
-    let currentIdx=0;
+    let currentIdx = 0;
     function openAssign(idx){
-      currentIdx=idx;
-      document.getElementById("assignTitle").textContent=menu[idx].de;
-      const list=document.getElementById("assignList");
-      list.innerHTML="";
+      currentIdx = idx;
+      document.getElementById("assignTitle").textContent = menu[idx].de;
+      const list = document.getElementById("assignList");
+      list.innerHTML = "";
       Object.entries(selected).forEach(([n,c])=>{
-        let qty=(orders[n]||{})[idx]||0;
-        const d=document.createElement("div");
-        d.className="assign-person";
-        d.style.background=c;
+        let qty = (orders[n]||{})[idx]||0;
+        const d = document.createElement("div");
+        d.className = "assign-person";
+        d.style.background = c;
         if(qty) d.classList.add("selected");
-        d.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
-        d.onclick=()=>{
-          qty=(qty+1)%6;
-          if(qty) d.classList.add("selected"); else d.classList.remove("selected");
-          d.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
-          orders[n]=orders[n]||{};
-          if(qty) orders[n][idx]=qty; else delete orders[n][idx];
+        d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
+        d.onclick = ()=>{
+          qty = (qty+1)%6;
+          if(qty) d.classList.add("selected");
+          else d.classList.remove("selected");
+          d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
+          orders[n] = orders[n]||{};
+          if(qty) orders[n][idx] = qty; else delete orders[n][idx];
         };
         list.append(d);
       });
@@ -291,15 +308,15 @@
     function confirmAssignment(){
       document.getElementById("assignModal").classList.remove("active");
       menu.forEach((_,i)=>{
-        const wrap=document.getElementById(`a${i}`);
-        wrap.innerHTML="";
+        const wrap = document.getElementById(`a${i}`);
+        wrap.innerHTML = "";
         Object.entries(selected).forEach(([n,c])=>{
-          const q=(orders[n]||{})[i]||0;
+          const q = (orders[n]||{})[i]||0;
           if(q){
-            const chip=document.createElement("span");
-            chip.className="person-chip";
-            chip.textContent=`${n} (${q})`;
-            chip.style.background=c;
+            const chip = document.createElement("span");
+            chip.className = "person-chip";
+            chip.textContent = `${n} (${q})`;
+            chip.style.background = c;
             wrap.append(chip);
           }
         });
@@ -307,27 +324,29 @@
     }
 
     function buildMsg(){
-      let out="";
+      let out = "";
       Object.keys(orders).forEach(n=>{
-        out+=n+":\n";
+        out += n +":\n";
         Object.entries(orders[n]).forEach(([i,q])=>{
-          const it=menu[i];
-          out+=`- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
+          const it = menu[i];
+          out += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
         });
-        out+="\n";
+        out += "\n";
       });
       return out.trim();
     }
-    document.getElementById("finishBtn").onclick=()=>{
-      const t=buildMsg();
+    document.getElementById("finishBtn").onclick = ()=>{
+      const t = buildMsg();
       navigator.clipboard.writeText(t).catch(()=>{});
-      const u=/iphone|ipad|android/i.test(navigator.userAgent)
-        ?"whatsapp://send?text=":"https://wa.me/?text=";
-      location.href=u+encodeURIComponent(t);
+      const u = /iphone|ipad|android/i.test(navigator.userAgent)
+                ? "whatsapp://send?text=" : "https://wa.me/?text=";
+      location.href = u + encodeURIComponent(t);
     };
-    document.getElementById("copyBtn").onclick=()=>{
-      const t=buildMsg();
-      navigator.clipboard.writeText(t).then(()=>alert("Copied!")).catch(()=>alert(t));
+    document.getElementById("copyBtn").onclick = ()=>{
+      const t = buildMsg();
+      navigator.clipboard.writeText(t)
+        .then(()=>alert("Copied!"))
+        .catch(()=>alert(t));
     };
   </script>
 </body>
