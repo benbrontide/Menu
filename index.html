@@ -5,69 +5,138 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quán Ăn Ngon Uelzen – Bestellung</title>
 <style>
-    :root {
-        --accent:#c5282f;
-        --btn-bg:#f3f3f3;
-        --btn-border:#ccc;
-        --btn-radius:10px;
-        --btn-height:52px;
-        --gap:10px;
-        font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    }
-    h1{margin:.5em 0;text-align:center;color:var(--accent)}
-    #nameModal{
-        position:fixed;inset:0;background:#fff;z-index:10;display:flex;flex-direction:column;
-        padding:clamp(10px,2.5vw,32px);overflow:auto
-    }
-    .names-grid{
-        display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:1.5rem
-    }
-    .name-btn,.add-btn{
-        height:var(--btn-height);border:2px solid var(--btn-border);border-radius:var(--btn-radius);
-        background:var(--btn-bg);display:flex;align-items:center;justify-content:center;
-        font-size:1rem;cursor:pointer;transition:.2s
-    }
-    .name-btn.selected{border-color:var(--accent);background:#ffecec}
-    .add-btn{border-style:dashed;font-weight:600}
-    #proceedBtn:disabled{opacity:.4;cursor:not-allowed}
-    fieldset{border:1px solid #ddd;border-radius:var(--btn-radius);margin:1rem 0;padding:.5rem 1rem}
-    legend{padding:0 .5rem;font-weight:700;color:var(--accent)}
-    .item{display:flex;align-items:flex-start;gap:.5rem;margin:.25rem 0}
-    .item label{flex:1;cursor:pointer}
-    .price{white-space:nowrap;margin-left:auto;font-weight:600}
-    #copyBtn{
-        width:100%;margin:2rem 0;padding:1rem;font-size:1.1rem;font-weight:700;
-        background:var(--accent);color:#fff;border:none;border-radius:var(--btn-radius);cursor:pointer
-    }
+  :root{
+    --accent:#c5282f;--btn-bg:#f3f3f3;--btn-border:#ccc;--btn-radius:10px;
+    --btn-height:52px;--gap:10px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
+  }
+  h1{margin:.5em 0;text-align:center;color:var(--accent)}
+  #nameModal{position:fixed;inset:0;background:#fff;z-index:10;
+             display:flex;flex-direction:column;padding:clamp(10px,2.5vw,32px);overflow:auto}
+  .names-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:1.5rem}
+  .name-btn,.add-btn{height:var(--btn-height);border:2px solid var(--btn-border);border-radius:var(--btn-radius);
+                     background:var(--btn-bg);display:flex;align-items:center;justify-content:center;
+                     font-size:1rem;cursor:pointer;transition:.2s}
+  .name-btn.selected{border-color:var(--accent);background:#ffecec}
+  .add-btn{border-style:dashed;font-weight:600}
+  #proceedBtn:disabled{opacity:.4;cursor:not-allowed}
+  fieldset{border:1px solid #ddd;border-radius:var(--btn-radius);margin:1rem 0;padding:.5rem 1rem}
+  legend{padding:0 .5rem;font-weight:700;color:var(--accent)}
+  .item{display:flex;align-items:flex-start;gap:.5rem;margin:.25rem 0}
+  .item label{flex:1;cursor:pointer}
+  .price{white-space:nowrap;margin-left:auto;font-weight:600}
+  #copyBtn{width:100%;margin:2rem 0;padding:1rem;font-size:1.1rem;font-weight:700;
+           background:var(--accent);color:#fff;border:none;border-radius:var(--btn-radius);cursor:pointer}
 </style>
 </head>
 <body>
 
 <h1>Quán Ăn Ngon Uelzen</h1>
 
-<!-- NAME SELECTOR MODAL -->
+<!-- NAME SELECTOR -->
 <div id="nameModal">
-    <h2 style="text-align:center;margin-top:0">Wer bestellt?</h2>
-    <div class="names-grid" id="namesGrid"></div>
-    <button id="proceedBtn" disabled>Jetzt Essen auswählen</button>
+  <h2 style="text-align:center;margin-top:0">Wer bestellt?</h2>
+  <div class="names-grid" id="namesGrid"></div>
+  <button id="proceedBtn" disabled>Jetzt Essen auswählen</button>
 </div>
 
-<!-- MENU CONTAINER -->
+<!-- MENU -->
 <div id="menuContainer"></div>
 
-<button id="copyBtn">Bestellung kopieren &amp; WhatsApp öffnen</button>
+<button id="copyBtn">Bestellung kopieren&nbsp;&amp;&nbsp;WhatsApp öffnen</button>
 
 <script>
-/* ---------- CONSTANTS ---------- */
-const restaurantName = "Quán Ăn Ngon Uelzen";
-const menu = {           /* PDF 2 Aug 2025 full list */
-  "Vorspeisen": [
-    ["Nem Rán&nbsp;(2 Stück)","frittierte vietnamesische Frühlingsrollen mit Schweinefleisch und Gemüse, dazu spezielle hausgemachte Sauce","5.90 €"],
+/* ------ CONSTANTS ------ */
+const restaurantName="Quán Ăn Ngon Uelzen";
+const menu={
+  "Vorspeisen":[
+    ["Nem Rán (2 Stück)","frittierte vietnamesische Frühlingsrollen mit Schweinefleisch und Gemüse, dazu spezielle hausgemachte Sauce","5.90 €"],
     ["Gỏi Cuốn","hausgemachte kalte Sommerrollen, gefüllt mit Reisnudeln, Salat und Mango","5.50 €"],
-    ["Tôm Chiên Cốm&nbsp;(5 Stück)","knusprig gebackene Garnelen im Cốm-Mantel, dazu Sweet-Chili-Dip; Zutat nach Wahl","6.90 €"]
+    ["Tôm Chiên Cốm (5 Stück)","knusprig gebackene Garnelen im Cốm-Mantel, dazu Sweet-Chili-Dip; Zutat nach Wahl","6.90 €"]
   ],
-  /* … (all other categories exactly as in the PDF, omitted here for brevity but included in testing) … */
-  "Alkoholische Getränke": [
+  "Suppen":[
+    ["Mẹt Thập Cẩm","gemischter Vorspeisenteller: Tofu-, Hühner-, Garnelen-Sommerrollen, Frühlingsrollen & gebackene Garnelen, dazu hausgemachte Sauce","12.50 €"],
+    ["Súp Canh Chua Đậu Phụ (leicht scharf)","traditionelle Suppe mit gebratenem Tofu, Pak Choi, Champignons & Riesen-Elefantenohr","5.50 €"],
+    ["Súp Sữa Dừa Thịt Gà","Kokosmilchsuppe mit Hühnerbrustfilet, Gemüse & Koriander","5.50 €"],
+    ["Súp Xoài Thịt Gà","Kokosmilchsuppe mit Hühnerbrustfilet, Mango-Streifen, Gemüse & Koriander","5.50 €"],
+    ["Súp Miến Gà","Glasnudelsuppe mit Hühnerbrustfilet, Gemüse & Koriander","5.50 €"],
+    ["Súp Cải Tôm","traditionelle Garnelensuppe mit Pak Choi & Ingwer","6.50 €"]
+  ],
+  "Salat":[
+    ["Đậu Nành Nguyên Trái","gekochte Sojabohnen mit Meersalz","4.90 €"],
+    ["Gỏi Xoài Đậu Phụ","gebackener Tofu mit Mango, Karotten, Salat, Kräutern & Erdnüssen; Limetten-Dressing","8.50 €"],
+    ["Gỏi Xoài Gà","gekochtes Hühnerbrustfilet mit Mango, Karotten, Salat, Kräutern & Erdnüssen; Limetten-Dressing","8.90 €"],
+    ["Nộm Miến Gà","Glasnudeln mit Hühnerbrust, Salat, Kräutern & Chili; Limetten-Dressing","8.90 €"],
+    ["Gỏi Vịt Tae","Ha-Noi-Salat mit knuspriger Ente, Mango, Kräutern & Erdnüssen; würziges Dressing","10.90 €"],
+    ["Nộm Ngó Sen","Lotusstiele mit Garnelen, Ananas, Kräutern & Erdnüssen; würziges Dressing","10.90 €"],
+    ["Nộm Cá Hồi","gegrilltes Lachsfilet mit Mango, Kräutern & Erdnüssen; Limetten-Dressing","10.90 €"]
+  ],
+  "Hauptgerichte – Nudelgerichte":[
+    ["Phở","Reisbandnudelsuppe mit Rindfleisch, Sternanis, Koriander & Limette; Zutat nach Wahl","10.90 €"],
+    ["Mì Quảng","Reisbandnudeln mit knusprigem Lachs, Salat & Kokossauce","15.50 €"],
+    ["Bún","Reisnudeln mit Salat, Erdnüssen, Röstzwiebeln & Kräutern; Sauce nach Wahl","12.90 €"],
+    ["Bún Nước","Reisnudelsuppe mit Tomaten, Champignons, Dill & Tamarindenbrühe; Zutat nach Wahl","14.90 €"],
+    ["Hủ Tiếu Mì Thơ","große Nudelsuppe mit gegrilltem Lachsfilet, Garnelen & Kräutern","15.90 €"]
+  ],
+  "Vegetarische Gerichte":[
+    ["Đậu Phụ Xào Xả Ớt (scharf)","gebackener Tofu mit Gemüse, Knoblauch, Zitronengras & Chili","11.90 €"],
+    ["Đậu Phụ Masaman (leicht scharf)","gebackener Tofu mit Kokosmilch, Bambus, Kartoffeln & Karotten","11.90 €"],
+    ["Rau Xào Thập Cẩm","verschiedenes Wok-Gemüse, fein & würzig","11.90 €"]
+  ],
+  "Hühnerfleisch Gerichte":[
+    ["Gà Xào Xả Ớt (scharf)","gebratenes Hühnerbrustfilet mit Gemüse, Zitronengras & Zwiebeln","12.90 €"],
+    ["Cà Ri Gà (leicht scharf)","Hühnerbrust in rotem Curry mit Gemüse & Kokosmilch","12.90 €"],
+    ["Gà Nướng","gegrillte Hühnerspieße mit knackigem Gemüse","14.90 €"]
+  ],
+  "Rindfleisch Gerichte":[
+    ["Bò Xào Xả Ớt (scharf)","gebratenes Rindfleisch mit Gemüse, Zitronengras & Zwiebeln","13.90 €"],
+    ["Bò Lúc Lắc","gebratenes Rindfleisch mit Gemüse, Zwiebeln & Cashews","13.90 €"],
+    ["Bò Cuốn Lúa Hồng","Rinderhack am Zitronengrasspieß mit Reisnudelsalat & Kräutern","15.90 €"]
+  ],
+  "Entenfleisch Gerichte":[
+    ["Vịt Chiên Cà Ri (leicht scharf)","knusprige Ente mit Gemüse & rotem Curry","14.90 €"],
+    ["Vịt Chiên Sốt Đậu Phộng","knusprige Ente mit Gemüse & Erdnusssauce","15.90 €"],
+    ["Vịt Nướng Hạt Điều","medium gegrillte Barbarie-Ente mit Cashews & Süßkartoffeln","17.90 €"]
+  ],
+  "Garnelen Gerichte":[
+    ["Tôm Xào Xả Ớt (leicht scharf)","gebratene Garnelen mit Gemüse, Zitronengras & Zwiebeln","16.90 €"],
+    ["Cà Rô Tôm (leicht scharf)","Garnelen mit Gemüse, Kokosmilch & rotem Curry","16.90 €"],
+    ["Tôm Nướng","gegrillte Riesengarnelen & vietnamesischer Salat, dazu Süßkartoffeln","18.90 €"]
+  ],
+  "Lachs Gerichte":[
+    ["Cá Hồi Nướng Nước Dừa","gegrillter Lachs in Curry-Kokossauce mit Gemüse & Basilikum","17.90 €"],
+    ["Canh Chua Cá Hồi (scharf)","süß-scharfe Lachs-Suppe mit Ananas, Dill & Tamarinde","16.90 €"]
+  ],
+  "Spezialitäten":[
+    ["Cá Hồi Nướng Đặc Biệt","Lachssteak mit Garnelen, Gemüse & Sauce, dazu Süßkartoffeln","18.90 €"],
+    ["Cơm Niêu","traditioneller Duftreis-Topf mit Gemüse & Ei; hausgemachte Sauce; Zutat nach Wahl","13.90 €"],
+    ["Bí Đỏ Sapa","Bio-Hokkaido-Kürbis & Süßkartoffeln in Curry-Kokossauce; Zutat nach Wahl","12.90 €"],
+    ["Cá Kho Tộ","karamellisierter Lachs mit Gemüse","16.90 €"]
+  ],
+  "Kindermenü":[
+    ["Gia Đình (für 2 Personen)","Kokossuppe mit Shrimps","49.00 €"]
+  ],
+  "Dessert":[
+    ["Gà Xiên","gegrillte Hühnerspieße mit Gemüse & Süßkartoffel-Pommes","8.90 €"],
+    ["Bánh Rán","Sesam-Klebreisbällchen","4.50 €"],
+    ["Chuối Chiên","gebackene Banane mit Honig, Erdnüssen & Kokosraspeln","4.50 €"],
+    ["Bánh Chuối","gedämpfte Banane im Klebreismantel mit Kokoscreme & Erdnüssen","4.50 €"]
+  ],
+  "Beilagen":[
+    ["Bánh Khoai Môn","gedämpfter Taro im Klebreismantel mit Kokoscreme & Erdnüssen","4.50 €"],
+    ["Reis","","2.00 €"],
+    ["Reisnudeln","","2.00 €"],
+    ["Frittierte Süßkartoffelpommes","","3.00 €"]
+  ],
+  "Alkoholfreie Getränke":[
+    ["Holsten alkoholfrei 0,33 l","","3.90 €"],
+    ["Erdinger alkoholfrei 0,5 l","","4.90 €"],
+    ["Malzbier 0,33 l","","3.90 €"],
+    ["Staatl. Fachingen still 0,25 l","","2.90 €"],
+    ["Staatl. Fachingen still 0,75 l","","6.90 €"],
+    ["Staatl. Fachingen spritzig 0,25 l","","2.90 €"],
+    ["Staatl. Fachingen spritzig 0,75 l","","6.90 €"]
+  ],
+  "Alkoholische Getränke":[
     ["Ginger Ale 0,2 l","","3.50 €"],
     ["Bier Sài Gòn 0,3 l","","4.50 €"],
     ["Erdinger Hefeweizen hell 0,5 l","","4.90 €"],
@@ -77,76 +146,58 @@ const menu = {           /* PDF 2 Aug 2025 full list */
   ]
 };
 
-/* ---------- NAME SELECTOR ---------- */
-let names = ["Mama","Papa","Ben"];      // default names; can be empty if you like
-let selectedName = "";
-
-const namesGrid = document.getElementById("namesGrid");
-const proceedBtn = document.getElementById("proceedBtn");
+/* ------ NAME SELECTOR ------ */
+let names=["Mama","Papa","Ben"];
+let selectedName="";
+const namesGrid=document.getElementById("namesGrid"),proceedBtn=document.getElementById("proceedBtn");
 function renderNames(){
   namesGrid.innerHTML="";
   names.forEach(name=>{
-    const btn=document.createElement("button");
-    btn.className="name-btn";
-    btn.textContent=name;
-    btn.onclick=()=>{document.querySelectorAll(".name-btn").forEach(b=>b.classList.remove("selected"));
-                    btn.classList.add("selected"); selectedName=name; proceedBtn.disabled=false;};
-    namesGrid.appendChild(btn);
+    const b=document.createElement("button");
+    b.className="name-btn";b.textContent=name;
+    b.onclick=()=>{document.querySelectorAll(".name-btn").forEach(x=>x.classList.remove("selected"));
+                   b.classList.add("selected");selectedName=name;proceedBtn.disabled=false};
+    namesGrid.appendChild(b);
   });
-  // “Add new name” tile
   const add=document.createElement("button");
-  add.className="add-btn"; add.textContent="Neuen Namen hinzufügen";
-  add.onclick=()=>{
-    const n=prompt("Neuer Name:");
-    if(n){names.push(n.trim());renderNames();}
-  };
+  add.className="add-btn";add.textContent="Neuen Namen hinzufügen";
+  add.onclick=()=>{const n=prompt("Neuer Name:");if(n){names.push(n.trim());renderNames()}};
   namesGrid.appendChild(add);
 }
 renderNames();
+proceedBtn.onclick=()=>{document.getElementById("nameModal").style.display="none";
+                        document.getElementById("menuContainer").scrollIntoView({behavior:"smooth"})};
 
-proceedBtn.onclick=()=>{
-  document.getElementById("nameModal").style.display="none";
-  document.getElementById("menuContainer").scrollIntoView({behavior:"smooth"});
-};
-
-/* ---------- MENU RENDER ---------- */
-const menuContainer = document.getElementById("menuContainer");
-Object.entries(menu).forEach(([category,items])=>{
-  const fs=document.createElement("fieldset");
-  const legend=document.createElement("legend");
-  legend.innerHTML=category;
-  fs.appendChild(legend);
+/* ------ MENU RENDER ------ */
+const menuContainer=document.getElementById("menuContainer");
+Object.entries(menu).forEach(([cat,items])=>{
+  const fs=document.createElement("fieldset"),leg=document.createElement("legend");
+  leg.innerHTML=cat;fs.appendChild(leg);
   items.forEach(([title,desc,price],i)=>{
-    const id=category.replace(/\s+/g,"_")+i;
-    const div=document.createElement("div");
+    const id=cat.replace(/\s+/g,"_")+i,div=document.createElement("div");
     div.className="item";
-    const checkbox=document.createElement("input");
-    checkbox.type="checkbox"; checkbox.id=id;
-    checkbox.dataset.text=`${title} – ${desc ? desc+" – " : ""}${price}`;
+    const cb=document.createElement("input");
+    cb.type="checkbox";cb.id=id;
+    cb.dataset.text=`${title} – ${desc?desc+" – ":""}${price}`;
     const label=document.createElement("label");
     label.htmlFor=id;
     label.innerHTML=`<strong>${title}</strong>${desc?" – "+desc:""} <span class="price">${price}</span>`;
-    div.append(checkbox,label);
-    fs.appendChild(div);
+    div.append(cb,label);fs.appendChild(div);
   });
   menuContainer.appendChild(fs);
 });
 
-/* ---------- COPY / WHATSAPP ---------- */
-document.getElementById("copyBtn").addEventListener("click",()=>{
-  if(!selectedName){
-     alert("Bitte zuerst einen Namen wählen!");return;
-  }
-  const checked=[...document.querySelectorAll('#menuContainer input[type="checkbox"]:checked')]
-        .map(cb=>cb.dataset.text);
+/* ------ COPY / WHATSAPP ------ */
+document.getElementById("copyBtn").onclick=()=>{
+  if(!selectedName){alert("Bitte zuerst einen Namen wählen!");return;}
+  const checked=[...document.querySelectorAll('#menuContainer input:checked')].map(x=>x.dataset.text);
   if(!checked.length){alert("Bitte Gerichte auswählen!");return;}
   const text=`${restaurantName}\nBestellung für: ${selectedName}\n\n${checked.join("\n")}`;
   navigator.clipboard.writeText(text).then(()=>{
-     const url=`https://wa.me/?text=${encodeURIComponent(text)}`;
-     window.open(url,'_blank');
-     alert("Bestellung kopiert! (Falls WhatsApp nicht automatisch öffnet, einfach Chat manuell einfügen.)");
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank');
+    alert("Bestellung kopiert! (Falls WhatsApp nicht öffnet, Chat manuell einfügen.)");
   });
-});
+};
 </script>
 </body>
 </html>
