@@ -1,297 +1,233 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quán Ăn Ngon Uelzen – Bestellung (DE/EN)</title>
-<style>
-  :root{--accent:#c5282f;--btn-bg:#f7f7f7;--btn-border:#ccc;--rad:10px;--gap:10px;
-        font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-  h1{margin:.5em 0;text-align:center;color:var(--accent)}
-  #nameModal{position:fixed;inset:0;z-index:10;background:#fff;display:flex;flex-direction:column;
-             padding:clamp(10px,3vw,36px);overflow:auto}
-  .names-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:1.5rem}
-  .name-btn,.add-btn{height:52px;border:2px solid var(--btn-border);border-radius:var(--rad);
-                     background:var(--btn-bg);display:flex;align-items:center;justify-content:center;
-                     cursor:pointer;font-size:1rem;transition:.2s}
-  .name-btn.selected{border-color:var(--accent);background:#ffecec}
-  .add-btn{border-style:dashed;font-weight:600}
-  #proceedBtn:disabled{opacity:.4;cursor:not-allowed}
-  fieldset{border:1px solid #ddd;border-radius:var(--rad);margin:1rem 0;padding:0.5rem 1rem}
-  legend{padding:0 .5rem;font-weight:700;color:var(--accent)}
-  .item{display:flex;align-items:flex-start;gap:.5rem;margin:.25rem 0}
-  .item label{flex:1;cursor:pointer}
-  .price{white-space:nowrap;margin-left:auto;font-weight:600}
-  #copyBtn{width:100%;margin:2rem 0;padding:1rem;font-size:1.1rem;font-weight:700;
-           background:var(--accent);color:#fff;border:none;border-radius:var(--rad);cursor:pointer}
-  em{font-size:.9em;color:#555}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Quán An Ngon Uelzen — Essen bestellen / Place your Order</title>
+  <style>
+    body { font-family: sans-serif; margin: 1rem; background: #f5f5f5; }
+    h1 { font-size: 1.75rem; margin-bottom: .5rem; }
+    p.description { margin-top: 0; color: #555; }
+    .btn { display: inline-block; padding: .75rem 1.25rem; margin: .25rem .25rem 0 0; 
+           border-radius: .5rem; font-size: 1rem; color: white; background: #333; text-align: center; }
+    .btn.green { background: #2a9d8f; }
+    .btn.small { padding: .5rem .75rem; font-size: .9rem; }
+    .overlay { position: fixed; top: 0; left: 0; right:0; bottom:0; background: rgba(0,0,0,.6);
+               display: none; align-items: center; justify-content: center; }
+    .modal { background: white; padding: 1rem; border-radius: .75rem; max-width: 90%; max-height: 90%; overflow:auto; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: .5rem; }
+    button.name { width: 100%; padding: .75rem; font-size: 1rem; background: #333; color: white; 
+                  border: none; border-radius: .5rem; text-align: center; }
+    button.name.selected { color: white; }
+    .menu-item { background: white; padding: 1rem; margin: .5rem 0; border-radius: .5rem; }
+    .menu-item h3 { margin: 0 0 .25rem; font-size: 1.1rem; }
+    .menu-item h3 small { font-size: .85rem; color: #555; display: block; margin-top:.25rem;}
+    .menu-item .price { float: right; font-weight: bold; }
+    .select-btn { margin-top: .75rem; }
+  </style>
 </head>
 <body>
+  <h1>Quán An Ngon Uelzen — Essen bestellen / Place your Order</h1>
+  <p class="description">
+    Choose who you are ordering for — it can be multiple people.<br>
+    Wähle, für wen du bestellst — es können mehrere Personen sein.
+  </p>
 
-<h1>Quán Ăn Ngon Uelzen</h1>
+  <div id="selected-people"></div>
 
-<!-- NAME SELECTOR -->
-<div id="nameModal">
-  <h2 style="text-align:center;margin-top:0">Wer bestellt? / Who’s ordering?</h2>
-  <div class="names-grid" id="namesGrid"></div>
-  <button id="proceedBtn" disabled>Essen auswählen / Choose food</button>
-</div>
+  <button id="open-people" class="btn">Choose person(s) / Person(en) auswählen</button>
+  <button id="open-food"   class="btn">Choose your food / Essen auswählen</button>
+  <button id="finish"      class="btn green">Finished – WhatsApp / Fertig – WhatsApp</button>
+  <button id="copy"        class="btn">Copy text / Text kopieren</button>
 
-<!-- MENU -->
-<div id="menuContainer"></div>
+  <div id="people-overlay" class="overlay">
+    <div class="modal">
+      <h2>Wähle Personen / Choose people</h2>
+      <div id="people-grid" class="grid-2"></div>
+      <button id="add-name" class="btn small">Add New Name / Neuen Namen hinzufügen</button>
+      <button id="close-people" class="btn small">OK</button>
+    </div>
+  </div>
 
-<button id="copyBtn">Bestellung kopieren & WhatsApp öffnen<br><small>(Copy order & open WhatsApp)</small></button>
+  <div id="food-overlay" class="overlay">
+    <div class="modal">
+      <h2>Wähle Essen / Choose your food</h2>
+      <div id="menu-list"></div>
+      <button id="close-food" class="btn small">OK</button>
+    </div>
+  </div>
 
 <script>
-/* ===== CONSTANTS ===== */
-const restaurantName="Quán Ăn Ngon Uelzen";
-const menu={
-  "Vorspeisen / Starters":[
-    ["Nem Rán (2 Stück)",
-     "frittierte vietnamesische Frühlingsrollen mit Schweinefleisch & Gemüse; hausgemachte Sauce",
-     "fried Vietnamese spring rolls with pork & vegetables; homemade dip","5.90 €"],
-    ["Gỏi Cuốn",
-     "kalte Sommerrollen mit Reisnudeln, Salat & Mango",
-     "fresh summer rolls filled with rice noodles, salad & mango","5.50 €"],
-    ["Tôm Chiên Cốm (5 Stück)",
-     "knusprig gebackene Garnelen im Cốm-Mantel; Sweet-Chili-Dip; Zutat nach Wahl",
-     "crispy prawns in young-rice batter; sweet-chilli dip; ingredient of your choice","6.90 €"]
-  ],
-  "Suppen / Soups":[
-    ["Mẹt Thập Cẩm",
-     "gemischter Vorspeisenteller (Tofu-, Hühner-, Garnelen-Sommerrollen, Frühlingsrollen, gebackene Garnelen) mit Sauce",
-     "mixed appetiser platter (tofu, chicken & shrimp summer rolls, spring rolls, fried prawns) with dip","12.50 €"],
-    ["Súp Canh Chua Đậu Phụ (leicht scharf)",
-     "traditionelle Suppe mit gebratenem Tofu, Pak Choi, Champignons & Riesen-Elefantenohr",
-     "traditional sweet-sour soup with fried tofu, pak choi, mushrooms & taro stems","5.50 €"],
-    ["Súp Sữa Dừa Thịt Gà",
-     "Kokosmilchsuppe mit Hühnerbrustfilet, Gemüse & Koriander",
-     "coconut milk soup with chicken breast, vegetables & coriander","5.50 €"],
-    ["Súp Xoài Thịt Gà",
-     "Kokosmilchsuppe mit Hühnerbrust & Mango-Streifen, Gemüse & Koriander",
-     "coconut milk soup with chicken & mango strips, vegetables & coriander","5.50 €"],
-    ["Súp Miến Gà",
-     "Glasnudelsuppe mit Hühnerbrust, Gemüse & Koriander",
-     "glass-noodle soup with chicken, vegetables & coriander","5.50 €"],
-    ["Súp Cải Tôm",
-     "traditionelle Garnelensuppe mit Pak Choi & Ingwer",
-     "traditional prawn soup with pak choi & ginger","6.50 €"]
-  ],
-  "Salat / Salads":[
-    ["Đậu Nành Nguyên Trái",
-     "gekochte Sojabohnen mit Meersalz",
-     "steamed edamame with sea salt","4.90 €"],
-    ["Gỏi Xoài Đậu Phụ",
-     "gebackener Tofu mit Mango, Karotten, Salat, Kräutern & Erdnüssen; Limetten-Dressing",
-     "crispy tofu with mango, carrots, salad, herbs & peanuts; lime dressing","8.50 €"],
-    ["Gỏi Xoài Gà",
-     "gekochtes Hühnerbrustfilet mit Mango, Karotten, Salat, Kräutern & Erdnüssen; Limetten-Dressing",
-     "poached chicken breast with mango, carrots, salad, herbs & peanuts; lime dressing","8.90 €"],
-    ["Nộm Miến Gà",
-     "Glasnudeln mit Hühnerbrust, Salat, Kräutern & Chili; Limetten-Dressing",
-     "glass noodles with chicken, salad, herbs & chilli; lime dressing","8.90 €"],
-    ["Gỏi Vịt Tae",
-     "Ha-Noi-Salat mit knuspriger Ente, Mango, Kräutern & Erdnüssen; würziges Dressing",
-     "Hanoi-style salad with crispy duck, mango, herbs & peanuts; spicy dressing","10.90 €"],
-    ["Nộm Ngó Sen",
-     "Lotusstiele mit Garnelen, Ananas, Kräutern & Erdnüssen; würziges Dressing",
-     "lotus-stem salad with prawns, pineapple, herbs & peanuts; spicy dressing","10.90 €"],
-    ["Nộm Cá Hồi",
-     "gegrilltes Lachsfilet mit Mango, Kräutern & Erdnüssen; Limetten-Dressing",
-     "grilled salmon with mango, herbs & peanuts; lime dressing","10.90 €"]
-  ],
-  "Hauptgerichte – Nudelgerichte / Noodle mains":[
-    ["Phở",
-     "Reisbandnudelsuppe mit Rindfleisch, Sternanis, Koriander & Limette; Zutat nach Wahl",
-     "rice-noodle soup with beef, star anise, coriander & lime; choice of ingredient","10.90 €"],
-    ["Mì Quảng",
-     "Reisbandnudeln mit knusprigem Lachs, Salat & Kokossauce",
-     "central-Vietnamese turmeric noodles with crispy salmon, salad & coconut sauce","15.50 €"],
-    ["Bún",
-     "Reisnudeln mit Salat, Erdnüssen, Röstzwiebeln & Kräutern; Sauce & Zutat nach Wahl",
-     "cold rice-noodle bowl with salad, peanuts, fried shallots & herbs; sauce & topping of choice","12.90 €"],
-    ["Bún Nước",
-     "Reisnudelsuppe mit Tomaten, Champignons, Dill & Tamarindenbrühe; Zutat nach Wahl",
-     "tamarind rice-noodle soup with tomatoes, mushrooms & dill; choice of topping","14.90 €"],
-    ["Hủ Tiếu Mì Thơ",
-     "große Nudelsuppe mit gegrilltem Lachsfilet, Garnelen & Kräutern",
-     "southern Vietnamese pork-&-seafood noodle soup with grilled salmon, prawns & herbs","15.90 €"]
-  ],
-  "Vegetarische Gerichte / Vegetarian":[
-    ["Đậu Phụ Xào Xả Ớt (scharf)",
-     "gebackener Tofu mit Gemüse, Knoblauch, Zitronengras & Chili",
-     "crispy tofu stir-fried with vegetables, garlic, lemongrass & chilli","11.90 €"],
-    ["Đậu Phụ Masaman (leicht scharf)",
-     "gebackener Tofu mit Kokosmilch, Bambus, Kartoffeln & Karotten",
-     "tofu in mild Massaman curry with coconut milk, bamboo, potatoes & carrots","11.90 €"],
-    ["Rau Xào Thập Cẩm",
-     "verschiedenes Wok-Gemüse, fein & würzig",
-     "mixed seasonal vegetables from the wok, delicately seasoned","11.90 €"]
-  ],
-  "Hühnerfleisch Gerichte / Chicken":[
-    ["Gà Xào Xả Ớt (scharf)",
-     "gebratenes Hühnerbrustfilet mit Gemüse, Zitronengras & Zwiebeln",
-     "stir-fried chicken breast with vegetables, lemongrass & onions","12.90 €"],
-    ["Cà Ri Gà (leicht scharf)",
-     "Hühnerbrust in rotem Curry mit Gemüse & Kokosmilch",
-     "chicken breast in Thai red curry with vegetables & coconut milk","12.90 €"],
-    ["Gà Nướng",
-     "gegrillte Hühnerspieße mit knackigem Gemüse",
-     "grilled chicken skewers with crisp vegetables","14.90 €"]
-  ],
-  "Rindfleisch Gerichte / Beef":[
-    ["Bò Xào Xả Ớt (scharf)",
-     "gebratenes Rindfleisch mit Gemüse, Zitronengras & Zwiebeln",
-     "stir-fried beef with vegetables, lemongrass & onions","13.90 €"],
-    ["Bò Lúc Lắc",
-     "gebratenes Rindfleisch mit Gemüse, Zwiebeln & Cashews",
-     "shaking beef with vegetables, onions & cashew nuts","13.90 €"],
-    ["Bò Cuốn Lúa Hồng",
-     "Rinderhack am Zitronengrasspieß mit Reisnudelsalat & Kräutern",
-     "ground-beef lemongrass skewers with rice-noodle salad & herbs","15.90 €"]
-  ],
-  "Entenfleisch Gerichte / Duck":[
-    ["Vịt Chiên Cà Ri (leicht scharf)",
-     "knusprige Ente mit Gemüse & rotem Curry",
-     "crispy duck in red curry with vegetables","14.90 €"],
-    ["Vịt Chiên Sốt Đậu Phộng",
-     "knusprige Ente mit Gemüse & Erdnusssauce",
-     "crispy duck with vegetables & peanut sauce","15.90 €"],
-    ["Vịt Nướng Hạt Điều",
-     "medium gegrillte Barbarie-Ente mit Cashews & Süßkartoffeln",
-     "medium grilled Barbary duck with cashew nuts & sweet potatoes","17.90 €"]
-  ],
-  "Garnelen Gerichte / Prawns":[
-    ["Tôm Xào Xả Ớt (leicht scharf)",
-     "gebratene Garnelen mit Gemüse, Zitronengras & Zwiebeln",
-     "stir-fried prawns with vegetables, lemongrass & onions","16.90 €"],
-    ["Cà Rô Tôm (leicht scharf)",
-     "Garnelen mit Gemüse, Kokosmilch & rotem Curry",
-     "prawns in red curry with vegetables & coconut milk","16.90 €"],
-    ["Tôm Nướng",
-     "gegrillte Riesengarnelen & vietnamesischer Salat; Süßkartoffeln",
-     "grilled king prawns & Vietnamese herb salad; sweet potatoes","18.90 €"]
-  ],
-  "Lachs Gerichte / Salmon":[
-    ["Cá Hồi Nướng Nước Dừa",
-     "gegrillter Lachs in Curry-Kokossauce mit Gemüse & Basilikum",
-     "grilled salmon in curry-coconut sauce with vegetables & basil","17.90 €"],
-    ["Canh Chua Cá Hồi (scharf)",
-     "süß-scharfe Lachs-Suppe mit Ananas, Dill & Tamarinde",
-     "sweet-sour spicy salmon soup with pineapple, dill & tamarind","16.90 €"]
-  ],
-  "Spezialitäten / Specialities":[
-    ["Cá Hồi Nướng Đặc Biệt",
-     "Lachssteak mit Garnelen, Gemüse & Sauce; Süßkartoffeln",
-     "special grilled salmon steak with prawns, vegetables & sauce; sweet potatoes","18.90 €"],
-    ["Cơm Niêu",
-     "vietnamesischer Tontopf-Duftreis mit Gemüse & Ei; Sauce & Zutat nach Wahl",
-     "clay-pot fragrant rice with vegetables & egg; house sauce & extra topping","13.90 €"],
-    ["Bí Đỏ Sapa",
-     "Bio-Hokkaido-Kürbis & Süßkartoffeln in Curry-Kokossauce; Zutat nach Wahl",
-     "organic Hokkaido pumpkin & sweet potatoes in coconut curry; extra topping of choice","12.90 €"],
-    ["Cá Kho Tộ",
-     "karamellisierter Lachs mit Gemüse",
-     "caramelised salmon in clay pot with vegetables","16.90 €"]
-  ],
-  "Kindermenü / Kids":[
-    ["Gia Đình (für 2 Personen)",
-     "Kokossuppe mit Shrimps",
-     "coconut soup with shrimp (serves 2)","49.00 €"]
-  ],
-  "Dessert":[
-    ["Gà Xiên",
-     "gegrillte Hühnerspieße mit Gemüse & Süßkartoffel-Pommes",
-     "grilled chicken skewers with vegetables & sweet-potato fries","8.90 €"],
-    ["Bánh Rán",
-     "Sesam-Klebreisbällchen",
-     "sesame glutinous rice balls","4.50 €"],
-    ["Chuối Chiên",
-     "gebackene Banane mit Honig, Erdnüssen & Kokosraspeln",
-     "deep-fried banana with honey, peanuts & coconut","4.50 €"],
-    ["Bánh Chuối",
-     "gedämpfte Banane im Klebreismantel mit Kokoscreme & Erdnüssen",
-     "steamed banana dumpling wrapped in sticky rice with coconut cream & peanuts","4.50 €"]
-  ],
-  "Beilagen / Sides":[
-    ["Bánh Khoai Môn",
-     "gedämpfter Taro im Klebreismantel mit Kokoscreme & Erdnüssen",
-     "steamed taro cake wrapped in sticky rice with coconut cream & peanuts","4.50 €"],
-    ["Reis","gekochter Duftreis","steamed jasmine rice","2.00 €"],
-    ["Reisnudeln","Reisnudeln (extra)","extra rice noodles","2.00 €"],
-    ["Frittierte Süßkartoffel-Pommes","knusprige Süßkartoffel-Pommes","crispy sweet-potato fries","3.00 €"]
-  ],
-  "Alkoholfreie Getränke / Soft drinks":[
-    ["Holsten alkoholfrei 0,33 l","","Holsten alcohol-free beer 330 ml","3.90 €"],
-    ["Erdinger alkoholfrei 0,5 l","","Erdinger alcohol-free wheat beer 500 ml","4.90 €"],
-    ["Malzbier 0,33 l","","malt beer 330 ml","3.90 €"],
-    ["Staatl. Fachingen still 0,25 l","","still mineral water 250 ml","2.90 €"],
-    ["Staatl. Fachingen still 0,75 l","","still mineral water 750 ml","6.90 €"],
-    ["Staatl. Fachingen spritzig 0,25 l","","sparkling mineral water 250 ml","2.90 €"],
-    ["Staatl. Fachingen spritzig 0,75 l","","sparkling mineral water 750 ml","6.90 €"]
-  ],
-  "Alkoholische Getränke / Alcohol":[
-    ["Ginger Ale 0,2 l","","ginger ale 200 ml","3.50 €"],
-    ["Bier Sài Gòn 0,3 l","","Saigon lager 300 ml","4.50 €"],
-    ["Erdinger Hefeweizen hell 0,5 l","","Erdinger wheat beer light 500 ml","4.90 €"],
-    ["Erdinger Hefeweizen dunkel 0,5 l","","Erdinger wheat beer dark 500 ml","4.90 €"],
-    ["Somersby Apple 0,33 l","","Somersby apple cider 330 ml","3.90 €"],
-    ["Somersby Blackberry 0,33 l","","Somersby blackberry cider 330 ml","3.90 €"]
-  ]
-};
+  // ─── People setup ─────────────────────────
+  let people = [
+    "Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben",
+    "Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"
+  ];
+  let selectedPeople = [];
+  const colorMap = {};
+  function getColor(name) {
+    if (!colorMap[name]) {
+      const palette = ['#e63946','#2a9d8f','#6a4c93','#f4a261','#264653'];
+      colorMap[name] = palette[Object.keys(colorMap).length % palette.length];
+    }
+    return colorMap[name];
+  }
 
-/* ===== NAME SELECTOR ===== */
-let names=["Mama","Papa","Ben"];
-let selectedName="";
-const namesGrid=document.getElementById("namesGrid"), proceedBtn=document.getElementById("proceedBtn");
-function renderNames(){
-  namesGrid.innerHTML="";
-  names.forEach(n=>{
-    const b=document.createElement("button");
-    b.className="name-btn"; b.textContent=n;
-    b.onclick=()=>{document.querySelectorAll(".name-btn").forEach(x=>x.classList.remove("selected"));
-                   b.classList.add("selected"); selectedName=n; proceedBtn.disabled=false};
-    namesGrid.appendChild(b);
-  });
-  const add=document.createElement("button");
-  add.className="add-btn"; add.textContent="Neuen Namen hinzufügen / Add name";
-  add.onclick=()=>{const v=prompt("Neuer Name / New name:"); if(v){names.push(v.trim());renderNames();}};
-  namesGrid.appendChild(add);
-}
-renderNames();
-proceedBtn.onclick=()=>{document.getElementById("nameModal").style.display="none";
-                        document.getElementById("menuContainer").scrollIntoView({behavior:"smooth"})};
+  // ─── Full menu array (1–63) ───────────────
+  const menu = [
+    { id:"01", de:"SUP CANH CHUA DAU PHU",       en:"Tamarind soup w/ fried tofu, pak choi & mushrooms (mild)",            price:"5.50" },
+    { id:"02", de:"SUP SUA DUA THIT GA",         en:"Coconut milk soup w/ chicken breast & vegetables",                 price:"5.50" },
+    { id:"03", de:"SUP XOAI THIT GA",            en:"Coconut mango soup w/ chicken & vegetables",                       price:"5.50" },
+    { id:"04", de:"SUP MIEN GA",                 en:"Glass noodle soup w/ chicken, veg & coriander",                    price:"5.50" },
+    { id:"05", de:"SUP CAI TOM",                 en:"Prawn soup w/ pak choi, coriander & ginger",                       price:"6.50" },
+    { id:"06", de:"NEM RAN 2 STK",               en:"Fried spring rolls (pork, prawns, veg) w/ special sauce",          price:"5.90" },
+    { id:"07", de:"GOI CUON 2 STK",              en:"Cold summer rolls w/ rice noodles, lettuce, carrots & mango",      price:"5.50" },
+    { id:"08", de:"TOM CHIEN COM 5 STK",         en:"Crispy corn-battered prawns (or tofu, chicken, duck) w/ chili-dip", price:"6.90" },
+    { id:"09", de:"MET THAP CAM",                en:"Mixed appetizer platter w/ tofu, chicken, prawns & sauce",         price:"12.50"},
+    { id:"10", de:"DAU NANH NGUYEN TRAI",        en:"Boiled soybeans w/ sea salt",                                       price:"4.90" },
+    { id:"11", de:"GOI XOAI DAU PHU",            en:"Tofu salad w/ mango, carrots, lettuce, coriander & peanuts",        price:"8.50" },
+    { id:"12", de:"GOI XOAI GA",                 en:"Chicken & mango salad w/ herbs & peanuts",                          price:"8.90" },
+    { id:"13", de:"NOM MIEN GA",                 en:"Glass noodle salad w/ chicken, herbs & peanuts",                    price:"8.90" },
+    { id:"14", de:"GA XAO SA OT",                en:"Stir-fried chicken w/ veg, lemongrass & onions (spicy)",             price:"12.90"},
+    { id:"15", de:"NOM NGO SEN",                 en:"Lotus leaf salad w/ prawns, carrots, peanuts & lime dressing",      price:"10.90"},
+    { id:"16", de:"NOM CA HOI",                  en:"Salad w/ grilled salmon, lettuce, carrots & lime dressing",         price:"10.90"},
+    { id:"17", de:"VIT CHIEN SOT DAU PHONG",     en:"Crispy duck w/ veg & peanut sauce",                                 price:"15.90"},
+    { id:"18", de:"TOM NUONG",                   en:"Grilled tiger prawns w/ salad & sweet potato fries",                price:"18.90"},
+    { id:"20", de:"PHO UND VIETNAM (Reisnudel-Suppe)", en:"Pho — rice-noodle soup with your choice of beef, chicken, tofu or prawns", price:"10.90"},
+    { id:"21", de:"MI QUANG",                    en:"Turmeric rice-noodle w/ crispy salmon, veg & coconut sauce",         price:"15.50"},
+    { id:"22", de:"BUN CHA",                     en:"Grilled pork patties & prawns w/ vermicelli, herbs & dipping sauce", price:"23.90"},
+    { id:"23", de:"BUN NUOC",                    en:"Soup w/ rice noodles, tomatoes, pineapple & coriander",            price:"14.90"},
+    { id:"24", de:"HU TIEU MY THO",              en:"Wheat-noodle soup w/ salmon fillet, prawns & herbs",                 price:"15.90"},
+    { id:"31", de:"DAU PHU XA SOT OT",           en:"Stir-fried tofu & veg in coconut-chili curry (vegan)",                price:"11.90"},
+    { id:"30", de:"DAU PHU XA SOT",              en:"Stir-fried tofu & veg in lemongrass-garlic chili (vegan)",            price:"11.90"},
+    { id:"32", de:"RAU XAO THAP CAM",            en:"Mixed veg stir-fry w/ onion & coriander",                           price:"11.90"},
+    { id:"33", de:"GA XAO SA OT",                en:"Stir-fried chicken w/ veg, lemongrass & onions (spicy)",             price:"12.90"},
+    { id:"34", de:"CA RI GA",                    en:"Chicken curry w/ veg, potatoes & carrots",                          price:"12.90"},
+    { id:"35", de:"GA NUONG",                    en:"Grilled chicken breast w/ crispy veg & peanut sauce",               price:"14.90"},
+    { id:"36", de:"BO XAO SA OT",                en:"Stir-fried beef w/ veg, lemongrass & onions (spicy)",               price:"13.90"},
+    { id:"37", de:"BO LUC LAC",                  en:"Sautéed beef cubes w/ veg & cashew nuts",                          price:"13.90"},
+    { id:"40", de:"VIT CHIEN CA RI",             en:"Crispy duck in mild curry coconut sauce",                            price:"14.90"},
+    { id:"41", de:"VIT CHIEN SOT DAU PHONG",     en:"Crispy duck w/ veg & peanut sauce",                                 price:"15.90"},
+    { id:"42", de:"VIT NUONG HOT DIEU",          en:"Grilled duck in kaffir lime-cashew sauce",                           price:"17.90"},
+    { id:"43", de:"TOM XAO SA OT",               en:"Stir-fried prawns w/ veg, lemongrass & onions (spicy)",              price:"16.90"},
+    { id:"44", de:"CA RI TOM",                   en:"Prawn curry w/ veg & potatoes",                                     price:"16.90"},
+    { id:"45", de:"TOM NUONG",                   en:"Grilled prawns w/ veg & sweet potato fries",                        price:"18.90"},
+    { id:"46", de:"CA HOI NUONG NUOC DUA",       en:"Grilled salmon in coconut sauce & peanuts",                         price:"17.90"},
+    { id:"47", de:"CANH CHUA CA HOI",            en:"Sour-tamarind soup w/ salmon, pineapple & veg",                     price:"17.90"},
+    { id:"48", de:"CA HON NUONG DAC BIET",       en:"Special grilled prawns & veg w/ homemade sauce",                    price:"18.90"},
+    { id:"50", de:"COM SAN QUAN (Spezialitäten)", en:"Rice w/ your choice of pork, tofu, prawns or duck in special sauces", price:"16.90"},
+    { id:"51", de:"BI DO SAPA",                  en:"Sapa-style cod in coconut-lemongrass sauce",                        price:"12.90"},
+    { id:"52", de:"COM RANG",                    en:"Fried rice w/ veg, eggs & your choice of protein",                  price:"17.90"},
+    { id:"53", de:"MI UDON XAO",                 en:"Stir-fried udon w/ veg, tofu, chicken, beef or prawns",              price:"15.90"},
+    { id:"55", de:"COM GIA DINH (ab 2 Pers.)",    en:"Family platter (soup + spring rolls + veg curry + grilled salmon)", price:"49.00"},
+    { id:"56", de:"GA XIEN",                     en:"Grilled chicken skewers w/ pommes or sweet-potato fries",           price:"8.90"},
+    { id:"60", de:"BANH RAN",                    en:"Sesame-fried rice cakes",                                           price:"—"    }, // price on menu?
+    { id:"61", de:"CHUOI CHIEN",                 en:"Fried banana w/ honey & coconut flakes",                           price:"4.50"},
+    { id:"62", de:"BANH CHUOI",                  en:"Steamed banana in sticky-rice crust",                                price:"4.50"},
+    { id:"63", de:"BANH KHOAI MON",              en:"Taro cake in sticky-rice crust w/ coconut cream",                   price:"4.50"}
+  ];
 
-/* ===== MENU RENDER ===== */
-const menuContainer=document.getElementById("menuContainer");
-Object.entries(menu).forEach(([cat,items])=>{
-  const fs=document.createElement("fieldset");
-  const lg=document.createElement("legend"); lg.textContent=cat; fs.appendChild(lg);
-  items.forEach(([title,de,en,price],i)=>{
-    const id=cat.replace(/\s+/g,"_")+i;
-    const div=document.createElement("div"); div.className="item";
-    const cb=document.createElement("input");
-    cb.type="checkbox"; cb.id=id;
-    cb.dataset.text=`${title} – ${de}${en?(" / "+en):""} – ${price}`;
-    const label=document.createElement("label"); label.htmlFor=id;
-    label.innerHTML=`<strong>${title}</strong> – ${de}${en?("<br><em>"+en+"</em>"):""} <span class="price">${price}</span>`;
-    div.append(cb,label); fs.appendChild(div);
-  });
-  menuContainer.appendChild(fs);
-});
+  // ─── Render people selection ─────────────
+  const pg = document.getElementById("people-grid");
+  function renderPeople() {
+    pg.innerHTML = "";
+    people.forEach(name => {
+      const b = document.createElement("button");
+      b.className = "name";
+      b.textContent = name;
+      b.onclick = () => {
+        const idx = selectedPeople.indexOf(name);
+        if (idx === -1) {
+          selectedPeople.push(name);
+          b.style.background = getColor(name);
+        } else {
+          selectedPeople.splice(idx,1);
+          b.style.background = "#333";
+        }
+      };
+      pg.appendChild(b);
+    });
+  }
 
-/* ===== COPY & WHATSAPP ===== */
-document.getElementById("copyBtn").onclick=()=>{
-  if(!selectedName){alert("Bitte Namen wählen / Please choose a name"); return;}
-  const picks=[...document.querySelectorAll('#menuContainer input:checked')].map(x=>x.dataset.text);
-  if(!picks.length){alert("Bitte Gerichte auswählen / Please select dishes"); return;}
-  const txt=`${restaurantName}\nBestellung für / Order for: ${selectedName}\n\n${picks.join("\n")}`;
-  navigator.clipboard.writeText(txt).then(()=>{
-    window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`,'_blank');
-    alert("Bestellung kopiert! / Order copied! (Falls WhatsApp nicht öffnet, Chat manuell einfügen.)");
-  });
-};
+  // ─── Render full menu ───────────────────
+  const ml = document.getElementById("menu-list");
+  function renderMenu(){
+    ml.innerHTML = "";
+    menu.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "menu-item";
+      div.innerHTML = `
+        <h3>${item.id}. ${item.de}<br><small>${item.en}</small></h3>
+        <span class="price">${item.price} €</span>
+        <button class="btn small select-btn">Select / Auswählen</button>
+      `;
+      const btn = div.querySelector(".select-btn");
+      btn.onclick = () => {
+        if(selectedPeople.length === 0) {
+          return alert("Please select at least one person first.");
+        }
+        // cycle quantity per person (0→1→…→5→0)
+        const name = selectedPeople[0];
+        const key = item.id + "|" + name;
+        const cur = parseInt(btn.dataset[key]||"0",10);
+        const next = (cur+1)%6;
+        btn.dataset[key] = next;
+        btn.textContent = next===0
+          ? "Select / Auswählen"
+          : `${item.de} ×${next} for ${name}`;
+      };
+      ml.appendChild(div);
+    });
+  }
+
+  // ─── Wire up overlays & buttons ────────
+  document.getElementById("open-people").onclick = () => {
+    renderPeople();
+    document.getElementById("people-overlay").style.display = "flex";
+  };
+  document.getElementById("close-people").onclick = () => {
+    document.getElementById("people-overlay").style.display = "none";
+    // show badges
+    const sel = document.getElementById("selected-people");
+    sel.innerHTML = selectedPeople.map(n =>
+      `<span class="btn small" style="background:${getColor(n)}">${n}</span>`
+    ).join("");
+  };
+  document.getElementById("add-name").onclick = () => {
+    const n = prompt("New name / Neuen Namen eingeben:");
+    if(n) { people.push(n.trim()); renderPeople(); }
+  };
+
+  document.getElementById("open-food").onclick = () => {
+    if(selectedPeople.length===0) {
+      return alert("Please choose person(s) first.");
+    }
+    renderMenu();
+    document.getElementById("food-overlay").style.display = "flex";
+  };
+  document.getElementById("close-food").onclick = () => {
+    document.getElementById("food-overlay").style.display = "none";
+  };
+
+  document.getElementById("copy").onclick = () => {
+    let text = "";
+    menu.forEach(item => {
+      text += `${item.id}. ${item.de} (${item.en}) - ${item.price} €\n`;
+    });
+    navigator.clipboard.writeText(text);
+    alert("Menu copied to clipboard!");
+  };
+
+  document.getElementById("finish").onclick = () => {
+    let order = selectedPeople.join(", ") + "\n\n";
+    // gather all selects
+    document.querySelectorAll(".select-btn").forEach(btn => {
+      if(!btn.textContent.includes("×")) return;
+      order += btn.textContent + "\n";
+    });
+    const url = `whatsapp://send?text=${encodeURIComponent(order)}`;
+    window.location.href = url;
+  };
 </script>
 </body>
 </html>
