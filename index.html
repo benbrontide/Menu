@@ -6,7 +6,10 @@
   - Verify new menus include every item; report the total added.
   - Confirm layout integrity: no overlapping buttons; responsive grid.
   - TEST: Clicking “Choose person(s)” MUST open the person-selection modal.
-  - TEST: Selecting names updates chips; “Choose your food” button appears when at least one person is selected.
+  - TEST: Selecting a person button toggles its background and border color.
+  - TEST: Person buttons should not overlap in the modal at any viewport size.
+  - TEST: Selected person chips wrap correctly without overlapping.
+  - TEST: “Choose your food” button appears when at least one person is selected.
 -->
 <!DOCTYPE html>
 <html lang="de">
@@ -88,9 +91,12 @@
       display:flex; align-items:center; justify-content:center;
       background:var(--btn-bg); color:var(--btn-color);
       border-radius:6px;
+      transition:background .2s, color .2s;
     }
     .person-btn.selected {
-      border:2px solid #000;
+      background:var(--btn-color);
+      color:var(--btn-bg);
+      border:2px solid var(--btn-color);
     }
 
     .menu-item {
