@@ -10,6 +10,7 @@
   - TEST: Selecting a person button MUST assign a unique random background color distinctly different from others; deselect releases color.
   - TEST: Selected chips show both name and correct background color.
   - TEST: Assigned items display chips with person name, quantity, and matching color.
+  - TEST: “Choose your food” button appears after selecting at least one person and opens menu.
 -->
 <!DOCTYPE html>
 <html lang="de">
@@ -47,13 +48,13 @@
       align-items:center; justify-content:center; background:var(--modal-bg); }
     .modal.active { display:flex; }
     .modal-content { background:#fff; border-radius:8px; width:90%; max-width:480px;
-      max-height:80vh; overflow:auto; padding:1rem; }
+      max-height:80vh; overflow-y:auto; overflow-x:hidden; padding:1rem; }
     .modal-content h3 { margin-top:0; font-size:1.2rem; }
-    #personList { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+    #personList { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
       gap:var(--gap); margin:1rem 0; }
     .person-btn { width:100%; height:var(--btn-h); display:flex;
       align-items:center; justify-content:center; background:var(--btn-bg); color:var(--btn-color);
-      border-radius:6px; position:relative; }
+      border-radius:6px; }
     .person-btn.selected { border:2px solid #000; }
     .menu-item { background:#fff; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.1);
       padding:.8rem; margin:.6rem 0; }
@@ -77,15 +78,19 @@
   <h1>Anno 1800 – Essen bestellen / Place your Order</h1>
   <p class="description">Choose who you are ordering for — it can be multiple people.<br>
     Wähle, für wen du bestellst – es können mehrere Personen sein.</p>
+
   <div id="selectedPersons"></div>
   <button id="choosePersonBtn">Choose person(s) / Person(en) auswählen</button>
   <button id="chooseFoodBtn">Choose your food / Essen auswählen</button>
+
   <div id="menuContainer" style="display:none; margin-top:1rem;"></div>
+
   <div id="actionBar">
     <button id="finishBtn" style="background:#008000;">Finished – WhatsApp / Fertig – WhatsApp</button>
     <button id="copyBtn" style="background:#555;">Copy text / Text kopieren</button>
   </div>
 
+  <!-- PERSON MODAL -->
   <div id="personModal" class="modal">
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
@@ -95,6 +100,7 @@
     </div>
   </div>
 
+  <!-- ASSIGNMENT MODAL -->
   <div id="assignModal" class="modal">
     <div class="modal-content">
       <h3 id="assignTitle"></h3>
@@ -104,26 +110,21 @@
   </div>
 
   <script>
-    // Data
-    const people=["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
-    const menu=[ /* same menu array */ ];
-    let selected={}, orders={};
+    // DATA
+    const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
+    const menu = [ /* menu array unchanged */ ];
+    let selected = {}, orders = {};
 
-    // deterministic distinct hues via golden angle
     function rndHue(i){ return `hsl(${(i*137.5)%360},70%,50%)`; }
-
     function createPersonBtn(name){
-      const btn=document.createElement('button');
-      btn.className='person-btn'; btn.textContent=name;
-      btn.onclick=()=>{
+      const btn = document.createElement('button');
+      btn.className = 'person-btn'; btn.textContent = name;
+      btn.onclick = ()=>{
         if(selected[name]){
-          delete selected[name];
-          btn.classList.remove('selected');
-          btn.style.background='';
+          delete selected[name]; btn.classList.remove('selected'); btn.style.background='';
         } else {
-          selected[name]=rndHue(Object.keys(selected).length);
-          btn.classList.add('selected');
-          btn.style.background=selected[name];
+          selected[name] = rndHue(Object.keys(selected).length);
+          btn.classList.add('selected'); btn.style.background = selected[name];
         }
       };
       document.getElementById('personList').append(btn);
@@ -131,109 +132,107 @@
     people.forEach(createPersonBtn);
 
     function addNewName(){
-      const name=prompt('Enter new name / Gib neuen Namen ein')?.trim();
+      const name = prompt('Enter new name / Gib neuen Namen ein')?.trim();
       if(name && !people.includes(name)){
-        people.push(name);
-        createPersonBtn(name);
+        people.push(name); createPersonBtn(name);
       }
     }
 
     function renderSelected(){
-      const out=document.getElementById('selectedPersons'); out.innerHTML='';
-      for(const [n,c] of Object.entries(selected)){
-        const chip=document.createElement('span');
-        chip.className='person-chip'; chip.textContent=n;
-        chip.style.background=c; out.append(chip);
-      }
-      document.getElementById('chooseFoodBtn').style.display=
-        Object.keys(selected).length?'block':'none';
+      const out = document.getElementById('selectedPersons'); out.innerHTML='';
+      Object.entries(selected).forEach(([n,c])=>{
+        const chip = document.createElement('span');
+        chip.className='person-chip'; chip.textContent=n; chip.style.background=c;
+        out.append(chip);
+      });
+      document.getElementById('chooseFoodBtn').style.display = Object.keys(selected).length ? 'block':'none';
     }
 
-    document.getElementById('choosePersonBtn').onclick=()=>{
+    document.getElementById('choosePersonBtn').onclick = ()=>{
       document.getElementById('personModal').classList.add('active');
     };
     function closePersonModal(){
-      document.getElementById('personModal').classList.remove('active');
-      renderSelected();
+      document.getElementById('personModal').classList.remove('active'); renderSelected();
     }
 
-    document.getElementById('chooseFoodBtn').onclick=()=>{
-      const c=document.getElementById('menuContainer'); c.innerHTML='';
-      menu.forEach((it,i)=>{
-        const div=document.createElement('div'); div.className='menu-item';
-        div.innerHTML=`<div class="menu-header">
-            <div class="menu-text"><strong>${it.de}</strong><br><em>${it.en}</em>
-              <span class="price">${it.price}</span></div>
-            <button>Select / Auswählen</button></div>
+    document.getElementById('chooseFoodBtn').onclick = ()=>{
+      const container = document.getElementById('menuContainer');
+      container.innerHTML = '';
+      menu.forEach((it,i) => {
+        const div = document.createElement('div'); div.className = 'menu-item';
+        div.innerHTML = `
+          <div class="menu-header">
+            <div class="menu-text">
+              <strong>${it.de}</strong><br><em>${it.en}</em>
+              <span class="price">${it.price}</span>
+            </div>
+            <button>Select / Auswählen</button>
+          </div>
           <div class="assigned" id="a${i}"></div>`;
-        div.querySelector('button').onclick=()=>openAssign(i);
-        c.append(div);
+        div.querySelector('button').onclick = () => openAssign(i);
+        container.append(div);
       });
-      c.style.display='block';
-      document.getElementById('actionBar').style.display='flex';
+      container.style.display = 'block';
+      document.getElementById('actionBar').style.display = 'flex';
     };
 
-    let currentIdx=0;
+    let currentIdx = 0;
     function openAssign(idx){
-      currentIdx=idx;
-      document.getElementById('assignTitle').textContent=menu[idx].de;
-      const list=document.getElementById('assignList'); list.innerHTML='';
-      for(const [n,c] of Object.entries(selected)){
-        let qty=(orders[n]||{})[idx]||0;
-        const d=document.createElement('div');
-        d.className='assign-person'; d.style.background=c;
+      currentIdx = idx;
+      document.getElementById('assignTitle').textContent = menu[idx].de;
+      const list = document.getElementById('assignList'); list.innerHTML='';
+      Object.entries(selected).forEach(([n,c])=>{
+        let qty = (orders[n]||{})[idx] || 0;
+        const d = document.createElement('div'); d.className='assign-person'; d.style.background=c;
         if(qty) d.classList.add('selected');
-        d.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:'');
-        d.onclick=()=>{
-          qty=(qty+1)%6;
-          if(qty) d.classList.add('selected'); else d.classList.remove('selected');
-          d.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:'');
-          orders[n]=orders[n]||{};
-          if(qty) orders[n][idx]=qty; else delete orders[n][idx];
+        d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:'');
+        d.onclick = ()=>{
+          qty = (qty+1)%6;
+          qty? d.classList.add('selected') : d.classList.remove('selected');
+          d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:'');
+          orders[n] = orders[n]||{};
+          qty? orders[n][idx] = qty : delete orders[n][idx];
         };
         list.append(d);
-      }
+      });
       document.getElementById('assignModal').classList.add('active');
     }
-
     function confirmAssignment(){
       document.getElementById('assignModal').classList.remove('active');
-      menu.forEach((_,i)=>{
-        const wrap=document.getElementById(`a${i}`); wrap.innerHTML='';
-        for(const [n,c] of Object.entries(selected)){
-          const q=(orders[n]||{})[i]||0;
+      menu.forEach((_,i) => {
+        const wrap = document.getElementById(`a${i}`); wrap.innerHTML='';
+        Object.entries(selected).forEach(([n,c])=>{
+          const q = (orders[n]||{})[i]||0;
           if(q){
-            const chip=document.createElement('span');
-            chip.className='person-chip'; chip.textContent=`${n} (${q})`;
-            chip.style.background=c; wrap.append(chip);
+            const chip = document.createElement('span');
+            chip.className='person-chip'; chip.textContent=`${n} (${q})`; chip.style.background=c;
+            wrap.append(chip);
           }
-        }
+        });
       });
     }
 
     function buildMsg(){
-      let out='';
-      for(const n of Object.keys(orders)){
-        out+=n+":\n";
-        for(const [i,q] of Object.entries(orders[n])){
-          const it=menu[i];
-          out+=`- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
-        }
-        out+="\n";
-      }
+      let out = '';
+      Object.keys(orders).forEach(n=>{
+        out += n + ":\n";
+        Object.entries(orders[n]).forEach(([i,q])=>{
+          const it = menu[i];
+          out += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
+        });
+        out += "\n";
+      });
       return out.trim();
     }
-
-    document.getElementById('finishBtn').onclick=()=>{
-      const t=buildMsg();
+    document.getElementById('finishBtn').onclick = ()=>{
+      const t = buildMsg();
       navigator.clipboard.writeText(t).catch(()=>{});
-      const u=/iphone|ipad|android/i.test(navigator.userAgent)
-                ? 'whatsapp://send?text=' : 'https://wa.me/?text=';
-      location.href=u+encodeURIComponent(t);
+      const u = /iphone|ipad|android/i.test(navigator.userAgent) ?
+                'whatsapp://send?text=' : 'https://wa.me/?text=';
+      location.href = u + encodeURIComponent(t);
     };
-
-    document.getElementById('copyBtn').onclick=()=>{
-      const t=buildMsg();
+    document.getElementById('copyBtn').onclick = ()=>{
+      const t = buildMsg();
       navigator.clipboard.writeText(t)
         .then(()=>alert('Copied!'))
         .catch(()=>alert(t));
