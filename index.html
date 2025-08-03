@@ -6,10 +6,9 @@
   - Verify new menus include every item; report the total added.
   - Confirm layout integrity: no overlapping buttons; responsive grid.
   - TEST: Clicking “Choose person(s)” MUST open the person-selection modal.
-  - TEST: Selecting a person button toggles its background and border color.
-  - TEST: Person buttons should not overlap in the modal at any viewport size.
-  - TEST: Selected person chips wrap correctly without overlapping.
-  - TEST: “Choose your food” button appears when at least one person is selected.
+  - TEST: Person buttons should not overlap at any viewport size.
+  - TEST: Selecting a person button MUST assign a unique random background color distinctly different from others.
+  - TEST: Deselecting a person should release its color for reuse.
 -->
 <!DOCTYPE html>
 <html lang="de">
@@ -32,38 +31,34 @@
       --chip-f: 0.9rem;
     }
     *,*::before,*::after { box-sizing: border-box; }
-    body {
-      margin:0; padding:1rem;
-      font: var(--font);
-      background:#f8f8f8; color:#222;
-    }
+    body { margin:0; padding:1rem; font: var(--font); background:#f8f8f8; color:#222; }
     h1 { margin:0 0 .5rem; font-size:1.6rem; }
     p.description { margin:0 0 1rem; color:#555; }
     button {
       all: unset;
       display:inline-flex;
-      align-items:center; justify-content:center;
+      align-items:center;
+      justify-content:center;
       cursor:pointer;
-      background:var(--btn-bg); color:var(--btn-color);
+      background:var(--btn-bg);
+      color:var(--btn-color);
       border-radius:6px;
       padding:var(--pad-v) var(--pad-h);
       transition:background .2s;
       font-size:1rem;
     }
     button:hover { background:#666; }
-    #choosePersonBtn,#chooseFoodBtn {
-      width:100%; margin-bottom:1rem; text-align:center;
-    }
+    #choosePersonBtn,#chooseFoodBtn { width:100%; margin-bottom:1rem; text-align:center; }
     #chooseFoodBtn { display:none; }
     .person-chip {
       display:inline-block;
       padding:var(--chip-v) var(--chip-h);
       margin:.3rem;
-      background:#555; color:#fff;
+      background:#555;
+      color:#fff;
       border-radius:12px;
       font-size:var(--chip-f);
     }
-
     .modal {
       position:fixed; top:0; left:0;
       width:100%; height:100%;
@@ -78,10 +73,9 @@
       padding:1rem;
     }
     .modal-content h3 { margin-top:0; font-size:1.2rem; }
-
     #personList {
       display:grid;
-      grid-template-columns:repeat(2,1fr);
+      grid-template-columns:repeat(auto-fill, minmax(140px,1fr));
       gap:var(--gap);
       margin:1rem 0;
     }
@@ -91,52 +85,19 @@
       display:flex; align-items:center; justify-content:center;
       background:var(--btn-bg); color:var(--btn-color);
       border-radius:6px;
-      transition:background .2s, color .2s;
+      position:relative;
     }
-    .person-btn.selected {
-      background:var(--btn-color);
-      color:var(--btn-bg);
-      border:2px solid var(--btn-color);
-    }
-
-    .menu-item {
-      background:#fff; border-radius:6px;
-      box-shadow:0 1px 3px rgba(0,0,0,.1);
-      padding:.8rem; margin:.6rem 0;
-    }
-    .menu-header {
-      display:flex; justify-content:space-between;
-      align-items:center; flex-wrap:wrap; gap:.5rem;
-    }
+    .person-btn.selected { border:2px solid #000; }
+    .menu-item { background:#fff; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.1); padding:.8rem; margin:.6rem 0; }
+    .menu-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem; }
     .menu-text { font-size:1rem; }
     .price { font-weight:700; margin-left:.5rem; }
-    .assigned {
-      display:flex; flex-wrap:wrap; gap:.4rem;
-      margin-top:.6rem;
-    }
-    .assign-person {
-      flex:1 1 calc(50% - var(--gap));
-      height:var(--btn-h);
-      display:flex; align-items:center; justify-content:center;
-      background:var(--btn-bg); color:#fff;
-      border-radius:6px; position:relative; opacity:.5;
-      border:2px solid transparent;
-    }
-    .assign-person.selected {
-      opacity:1; border-color:#000;
-    }
-    .assign-person .qty {
-      position:absolute; bottom:-6px; right:-6px;
-      width:24px; height:24px; border-radius:50%;
-      background:#000; color:#fff;
-      display:flex; align-items:center; justify-content:center;
-      font-size:.7rem;
-    }
-
-    #actionBar {
-      display:none; margin-top:1rem;
-      gap:1rem; flex-wrap:wrap;
-    }
+    .assigned { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.6rem; }
+    .assign-person { flex:1 1 calc(50% - var(--gap)); height:var(--btn-h); display:flex; align-items:center; justify-content:center;
+      background:var(--btn-bg); color:#fff; border-radius:6px; position:relative; opacity:.5; border:2px solid transparent; }
+    .assign-person.selected { opacity:1; border-color:#000; }
+    .assign-person .qty { position:absolute; bottom:-6px; right:-6px; width:24px; height:24px; border-radius:50%; background:#000; color:#fff; display:flex; align-items:center; justify-content:center; font-size:.7rem; }
+    #actionBar { display:none; margin-top:1rem; gap:1rem; flex-wrap:wrap; }
     #actionBar button { flex:1 1 48%; }
   </style>
 </head>
@@ -146,29 +107,20 @@
     Choose who you are ordering for — it can be multiple people.<br>
     Wähle, für wen du bestellst – es können mehrere Personen sein.
   </p>
-
   <div id="selectedPersons"></div>
   <button id="choosePersonBtn">Choose person(s) / Person(en) auswählen</button>
   <button id="chooseFoodBtn">Choose your food / Essen auswählen</button>
-
   <div id="menuContainer" style="display:none; margin-top:1rem;"></div>
-
   <div id="actionBar">
-    <button id="finishBtn" style="background:#008000;">
-      Finished – WhatsApp / Fertig – WhatsApp
-    </button>
-    <button id="copyBtn" style="background:#555;">
-      Copy text / Text kopieren
-    </button>
+    <button id="finishBtn" style="background:#008000;">Finished – WhatsApp / Fertig – WhatsApp</button>
+    <button id="copyBtn" style="background:#555;">Copy text / Text kopieren</button>
   </div>
 
   <div id="personModal" class="modal">
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
       <div id="personList"></div>
-      <button style="width:100%; margin-bottom:.8rem;" onclick="addNewName()">
-        Add New Name / Neuen Namen hinzufügen
-      </button>
+      <button style="width:100%; margin-bottom:.8rem;" onclick="addNewName()">Add New Name / Neuen Namen hinzufügen</button>
       <button style="width:100%;" onclick="closePersonModal()">OK</button>
     </div>
   </div>
@@ -183,22 +135,22 @@
 
   <script>
     // initial data
-    const people = [
-      "Christa","Jochen","Sabine","Sven",
-      "Tom","Jan","Lena","Ben",
-      "Jojo","Hanna","Alex","Belle",
-      "Ellen","Vikas","Lisa","Mira"
-    ];
-    const menu = [ /* translated menu items array as before */ ];
-
-    // element refs
+    const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
+    const usedHues = new Set();
     const choosePersonBtn = document.getElementById('choosePersonBtn');
-    const chooseFoodBtn = document.getElementById('chooseFoodBtn');
-    const personModal = document.getElementById('personModal');
-    const personListEl = document.getElementById('personList');
+    const chooseFoodBtn   = document.getElementById('chooseFoodBtn');
+    const personModal     = document.getElementById('personModal');
+    const personListEl    = document.getElementById('personList');
     const selectedPersonsEl = document.getElementById('selectedPersons');
 
     choosePersonBtn.addEventListener('click', openPersonModal);
+
+    function getRandomHue() {
+      let hue;
+      do { hue = Math.floor(Math.random() * 360); } while (usedHues.has(hue));
+      usedHues.add(hue);
+      return hue;
+    }
 
     function openPersonModal() {
       personListEl.innerHTML = '';
@@ -206,7 +158,18 @@
         const btn = document.createElement('button');
         btn.textContent = name;
         btn.className = 'person-btn';
-        btn.onclick = () => btn.classList.toggle('selected');
+        btn.addEventListener('click', () => {
+          const select = btn.classList.toggle('selected');
+          if (select) {
+            const hue = getRandomHue();
+            btn.dataset.hue = hue;
+            btn.style.background = `hsl(${hue},65%,45%)`;
+          } else {
+            const oldHue = parseInt(btn.dataset.hue);
+            usedHues.delete(oldHue);
+            btn.style.background = '';
+          }
+        });
         personListEl.appendChild(btn);
       });
       personModal.classList.add('active');
