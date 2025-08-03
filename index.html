@@ -1,6 +1,15 @@
 <!--
-  PROJECT INSTRUCTIONS CHECKLIST – key tests are the last three lines.
-  … (unchanged instructions) …
+  PROJECT INSTRUCTIONS CHECKLIST:
+  - Use this HTML file as the reference for menu ordering updates.
+  - Change the restaurant name appropriately.
+  - Ensure all menu options are in both English and German and include item numbers if present.
+  - Verify new menus include every item; report the total added.
+  - Confirm layout integrity: no overlapping buttons; responsive grid.
+  - TEST: Clicking “Choose person(s)” MUST open the person-selection modal.
+  - TEST: Person buttons never overlap at any viewport size.
+  - TEST: Selecting a person button MUST assign a unique random background color distinctly different from others; deselect releases color.
+  - TEST: Selected chips show both name and correct background color.
+  - TEST: “Choose your food” button appears after selecting at least one person and opens the menu.
 -->
 <!DOCTYPE html>
 <html lang="de">
@@ -10,48 +19,94 @@
   <title>Anno 1800 – Essen bestellen / Place your Order</title>
   <style>
     :root{
-      --btn-bg:#444;--btn-color:#fff;--modal-bg:rgba(0,0,0,.8);
-      --font:1rem/1.4 "Segoe UI",sans-serif;--gap:.6rem;--btn-h:2.8rem;
-      --pad-v:.8rem;--pad-h:1rem;--chip-v:.4rem;--chip-h:.8rem;--chip-f:.9rem;
+      --btn-bg:#444;
+      --btn-color:#fff;
+      --modal-bg:rgba(0,0,0,.8);
+      --font:1rem/1.4 "Segoe UI",sans-serif;
+      --gap:.6rem;
+      --btn-h:2.8rem;
+      --pad-v:.8rem;
+      --pad-h:1rem;
+      --chip-v:.4rem;
+      --chip-h:.8rem;
+      --chip-f:.9rem;
       --accent:#1e88e5;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0}
     body{padding:1rem;font:var(--font);background:#f8f8f8;color:#222}
     h1{margin-bottom:.5rem;font-size:1.6rem}
-    button{all:unset;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:var(--btn-bg);color:var(--btn-color);border-radius:6px;padding:var(--pad-v) var(--pad-h);transition:background .2s;font-size:1rem;border:2px solid transparent}
+    button{
+      all:unset;
+      display:inline-flex;
+      align-items:center;justify-content:center;
+      cursor:pointer;
+      background:var(--btn-bg);color:var(--btn-color);
+      border-radius:6px;
+      padding:var(--pad-v) var(--pad-h);
+      transition:background .2s;
+      border:2px solid transparent;
+      font-size:1rem;
+    }
     button:hover{background:#666}
     #choosePersonBtn,#chooseFoodBtn{width:100%;margin-bottom:1rem;text-align:center}
     #chooseFoodBtn{display:none}
-    .person-chip{display:inline-block;padding:var(--chip-v) var(--chip-h);margin:.3rem;background:#555;color:#fff;border-radius:12px;font-size:var(--chip-f)}
+    .person-chip{
+      display:inline-block;padding:var(--chip-v) var(--chip-h);margin:.3rem;
+      background:#555;color:#fff;border-radius:12px;font-size:var(--chip-f)
+    }
+    /* Modal */
     .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:var(--modal-bg);z-index:999}
     .modal.active{display:flex}
     .modal-content{background:#fff;border-radius:8px;width:90%;max-width:520px;max-height:80vh;overflow-y:auto;padding:1rem}
     #personList{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin:1rem 0}
-    .person-btn{height:var(--btn-h);display:flex;align-items:center;justify-content:center;background:var(--btn-bg);color:var(--btn-color);border-radius:6px;border:2px solid transparent;user-select:none}
+    .person-btn{
+      height:var(--btn-h);
+      display:flex;align-items:center;justify-content:center;
+      background:var(--btn-bg);color:var(--btn-color);
+      border-radius:6px;border:2px solid transparent;user-select:none
+    }
     .person-btn.selected{border-color:#000}
+    /* Menu */
     .menu-item{background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1);padding:.8rem;margin:.6rem 0}
+    .menu-item button{font-size:.8rem}
     .menu-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
     .price{font-weight:700;margin-left:.5rem}
     .assigned{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
-    .assign-person{flex:1 1 48%;height:var(--btn-h);display:flex;align-items:center;justify-content:center;background:var(--btn-bg);color:#fff;border-radius:6px;position:relative;opacity:.6;border:2px solid transparent}
+    .assign-person{
+      flex:1 1 48%;height:var(--btn-h);
+      display:flex;align-items:center;justify-content:center;
+      background:var(--btn-bg);color:#fff;border-radius:6px;
+      position:relative;opacity:.6;border:2px solid transparent
+    }
     .assign-person.selected{opacity:1;border-color:#000}
-    .assign-person .qty{position:absolute;bottom:-6px;right:-6px;width:24px;height:24px;border-radius:50%;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem}
+    .assign-person .qty{
+      position:absolute;bottom:-6px;right:-6px;width:24px;height:24px;
+      border-radius:50%;background:#000;color:#fff;
+      display:flex;align-items:center;justify-content:center;font-size:.7rem
+    }
+    /* Footer bar */
     #actionBar{display:none;margin-top:1rem;gap:1rem;flex-wrap:wrap}
     #actionBar button{flex:1 1 48%}
-    /* highlight Click to Order Food */
+    /* Accent button */
     #personModal .order-btn{background:var(--accent);font-weight:700}
     #personModal .order-btn:hover{background:#1565c0}
   </style>
 </head>
 <body>
   <h1>Anno 1800 – Essen bestellen / Place your Order</h1>
-  <p class="description">Choose who you are ordering for — it can be multiple people.<br>Wähle, für wen du bestellst – es können mehrere Personen sein.</p>
+  <p class="description">
+    Choose who you are ordering for — it can be multiple people.<br>
+    Wähle, für wen du bestellst – es können mehrere Personen sein.
+  </p>
+
   <div id="selectedPersons"></div>
   <button id="choosePersonBtn">Choose person(s) / Person(en) auswählen</button>
   <button id="chooseFoodBtn">Choose your food / Essen auswählen</button>
+
   <div id="menuContainer" style="display:none;margin-top:1rem"></div>
+
   <div id="actionBar">
-    <button id="finishBtn" style="background:#008000">Finished – WhatsApp / Fertig – WhatsApp</button>
+    <button id="finishBtn" style="background:#008000;">Finished – WhatsApp / Fertig – WhatsApp</button>
     <button id="copyBtn">Copy text / Text kopieren</button>
   </div>
 
@@ -60,8 +115,12 @@
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
       <div id="personList"></div>
-      <button style="width:100%;margin-bottom:.8rem" onclick="addNewName()">Add New Name / Neuen Namen hinzufügen</button>
-      <button class="order-btn" style="width:100%" onclick="closePersonModal()">Click to Order Food</button>
+      <button style="width:100%;margin-bottom:.8rem" onclick="addNewName()">
+        Add New Name / Neuen Namen hinzufügen
+      </button>
+      <button class="order-btn" style="width:100%;" onclick="closePersonModal()">
+        Click to Order Food
+      </button>
     </div>
   </div>
 
@@ -69,77 +128,257 @@
   <div id="assignModal" class="modal">
     <div class="modal-content">
       <h3 id="assignTitle"></h3>
-      <div id="assignList" style="display:flex;flex-wrap:wrap;gap:var(--gap);margin:1rem 0"></div>
-      <button style="width:100%" onclick="confirmAssignment()">OK</button>
+      <div id="assignList"
+           style="display:flex;flex-wrap:wrap;gap:var(--gap);margin:1rem 0;"></div>
+      <button style="width:100%;" onclick="confirmAssignment()">OK</button>
     </div>
   </div>
 
   <script>
-    /* ---------- DATA ---------- */
-    const people=["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
-    // 69‑item Anno 1800 menu (kept shortened here for brevity)
-    const menu=[{de:"Achatschnecken mit feinen Gemüsewürfeln in Kräuterbutter, dazu frisches Brot",en:"Achatschnecken ...",price:"8,00 €"},/* …66 more… */];
+    /***************   DATA   ***************/
+    const people = [
+      "Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben",
+      "Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"
+    ];
 
-    /* ---------- STATE ---------- */
-    const selected={},orders={};
+    /* 69-item menu, German + English + price */
+    const menu = [
+      {de:"Achatschnecken mit feinen Gemüsewürfeln in Kräuterbutter, dazu frisches Brot",en:"Achatschnecken with fine vegetable cubes in herb butter, served with fresh bread",price:"8,00 €"},
+      {de:"Matjesfilet auf Schwarzbrot mit Salatgarnitur",en:"Matjes herring fillet on rye bread with salad garnish",price:"9,00 €"},
+      {de:"Vier Riesengarnelen mit feinen Gemüsestreifen in Knoblauch gebraten, dazu frisches Brot",en:"Four king prawns sautéed with vegetable strips in garlic, served with fresh bread",price:"15,50 €"},
+      {de:"Küstenteller – frischer Räucherlachs mit Meerrettich, Riesengarnele, Matjesfilet & Nordseekrabben, Brot",en:"Coastal platter – smoked salmon, king prawn, matjes fillet & North Sea shrimp with bread",price:"22,00 €"},
+      {de:"Carpaccio vom Rind mit gehobeltem Parmesan",en:"Beef carpaccio with shaved Parmesan",price:"17,00 €"},
+      {de:"Schälchen Oliven & frisches Brot",en:"Bowl of olives & fresh bread",price:"6,00 €"},
+      {de:"Käsewürfel, Oliven & frisches Brot",en:"Cheese cubes, olives & fresh bread",price:"12,00 €"},
+      {de:"Kleiner gemischter Salat* mit Dressing",en:"Small mixed salad* with dressing",price:"6,50 €"},
+      {de:"Hummus Dip mit Gemüsesticks & frisches Brot",en:"Hummus dip with vegetable sticks & fresh bread",price:"10,00 €"},
+      {de:"Kräuterbaguette mit Kräuterbutter",en:"Herb baguette with herb butter",price:"2,50 €"},
+      {de:"Kräuterbaguette mit Kräuterbutter & Käse überbacken",en:"Herb baguette with herb butter & cheese",price:"3,00 €"},
+      {de:"Chili sin Carne mit Soja-Hack, Jalapeños & Tortilla-Chips",en:"Chili sin carne with soy mince, jalapeños & tortilla chips",price:"11,00 €"},
+      {de:"Gemüse-Grilletta mit Thai-Chili-Dip, Pommes/Bratkartoffeln & Salat",en:"Vegetable Grilletta with Thai chili dip, fries/fried potatoes & salad",price:"13,50 €"},
+      {de:"Fisch vom Feld (vegan) mit Aioli, Pommes/Bratkartoffeln & Salat",en:"Plant-based 'fish' with aioli, fries/fried potatoes & salad",price:"16,00 €"},
+      {de:"Vegane Frikadelle mit Thai-Chili-Dip, Pommes/Bratkartoffeln & Salat",en:"Vegan patty with Thai chili dip, fries/fried potatoes & salad",price:"16,00 €"},
+      {de:"Knödelei – Dreierlei Semmelknödel, Salat & Sauce",en:"Trio of bread dumplings with salad & sauce",price:"17,00 €"},
+      {de:"Vegetarischer Gemüseeintopf mit Knoblauch & Oliven, Kräuterbaguette",en:"Vegetable stew with garlic & olives, herb baguette",price:"13,00 €"},
+      {de:"Frische Bratkartoffeln mit drei Spiegeleiern",en:"Fried potatoes with three fried eggs",price:"8,00 €"},
+      {de:"Tomatensuppe mit Sahnehaube",en:"Tomato soup with cream",price:"8,00 €"},
+      {de:"Zwiebelsuppe französische Art mit Käse",en:"French onion soup with cheese",price:"8,00 €"},
+      {de:"Meerrettichgemüsesuppe mit Roastbeefstreifen",en:"Horseradish vegetable soup with roast beef strips",price:"8,00 €"},
+      {de:"Fischsuppe Heiligenhafener Art mit frischem Gemüse",en:"Heiligenhafen fish soup with fresh vegetables",price:"9,00 €"},
+      {de:"Großer gemischter Salat* mit Dressing",en:"Large mixed salad* with dressing",price:"11,00 €"},
+      {de:"Salat mit Thunfisch",en:"Salad with tuna",price:"16,00 €"},
+      {de:"Salat mit vier Riesengarnelen",en:"Salad with four king prawns",price:"21,00 €"},
+      {de:"Salat mit Räucherlachs",en:"Salad with smoked salmon",price:"19,00 €"},
+      {de:"Salat mit Curry-Hähnchenstreifen & Früchten",en:"Salad with curry chicken strips & fruit",price:"18,00 €"},
+      {de:"Salat mit Rinderstreifen & Champignons",en:"Salad with beef strips & mushrooms",price:"21,00 €"},
+      {de:"Salat mit gebratenem Gemüse & Oliven",en:"Salad with roasted vegetables & olives",price:"16,00 €"},
+      {de:"Hausgemachtes Sauerfleisch mit Remouladensauce",en:"Homemade sour meat with remoulade",price:"18,00 €"},
+      {de:"Bratkartoffelverhältnis – Roastbeef, Matjes, Sauerfleisch",en:"Roast beef, matjes & sour meat platter",price:"23,00 €"},
+      {de:"ANNO-Roastbeef rosa gebraten mit Remouladensauce",en:"ANNO roast beef (pink) with remoulade",price:"22,00 €"},
+      {de:"Hinterhaxe vom Deichwiesenlamm in Rosmarinsauce",en:"Lamb shank in rosemary sauce",price:"26,00 €"},
+      {de:"Schweineschnitzel ca.300 g paniert mit Limonenbutter",en:"Pork schnitzel ~300 g breaded with lime butter",price:"17,00 €"},
+      {de:"Hähnchenschnitzel ca.200 g paniert mit Limonenbutter",en:"Chicken schnitzel ~200 g breaded with lime butter",price:"15,00 €"},
+      {de:"Steakteller ca.220 g – 3 Rindersteaks mit Thai-Chili-Sauce",en:"Steak plate ~220 g – 3 beef steaks with Thai-chili sauce",price:"25,00 €"},
+      {de:"Rumpsteak ca.250 g mit Kräuterbutter",en:"Rump steak ~250 g with herb butter",price:"29,00 €"},
+      {de:"Rumpsteak ca.250 g mit Kräuterbutter, Zwiebeln & Champignons",en:"Rump steak ~250 g with herb butter, onions & mushrooms",price:"32,00 €"},
+      {de:"Grillplatte – Rumpsteak, Schweinefilet & Lammsteak",en:"Mixed grill – rump steak, pork fillet & lamb steak",price:"31,00 €"},
+      {de:"Lammhüftsteaks ca.220 g mit Kräuterbutter & Spinat",en:"Lamb hip steaks ~220 g with herb butter & spinach",price:"29,00 €"},
+      {de:"Schweinemedaillons mit Champignons auf Pfeffersauce",en:"Pork medallions with mushrooms on pepper sauce",price:"28,00 €"},
+      {de:"Hackbällchen (Rind & Schwein) auf Pfeffersauce",en:"Meatballs (beef & pork) on pepper sauce",price:"16,00 €"},
+      {de:"Kräuterbaguette",en:"Herb baguette",price:"2,50 €"},
+      {de:"Kräuterbaguette mit Käse",en:"Herb baguette with cheese",price:"3,00 €"},
+      {de:"Gemüse-Mix",en:"Mixed vegetables",price:"4,00 €"},
+      {de:"Spinat",en:"Spinach",price:"4,00 €"},
+      {de:"Zwei Spiegeleier",en:"Two fried eggs",price:"4,00 €"},
+      {de:"Geschmorte Zwiebeln und/oder Champignons",en:"Braised onions and/or mushrooms",price:"4,00 €"},
+      {de:"Champignon-, Pfeffer-, Tomaten- oder Senfsauce",en:"Mushroom, pepper, tomato or mustard sauce",price:"3,00 €"},
+      {de:"Hollandaise",en:"Hollandaise sauce",price:"3,00 €"},
+      {de:"Pommes Frites",en:"French fries",price:"3,50 €"},
+      {de:"Backfischstäbchen",en:"Fish sticks",price:"7,00 €"},
+      {de:"Kleines paniertes Schweineschnitzel",en:"Small breaded pork schnitzel",price:"8,00 €"},
+      {de:"Nürnberger Bratwürstchen",en:"Nuremberg sausages",price:"7,00 €"},
+      {de:"Hackbällchen (Rind & Schwein) mit Tomatensauce",en:"Meatballs (beef & pork) with tomato sauce",price:"7,00 €"},
+      {de:"Bourbon-Vanilleeis (2 Kugeln) mit heißen Kirschen",en:"2 scoops bourbon-vanilla ice cream with hot cherries",price:"7,00 €"},
+      {de:"Rote Grütze mit Eierlikör oder Sahne",en:"Red berry compote with advocaat or cream",price:"8,00 €"},
+      {de:"Applecrumble mit 1 Kugel Vanilleeis",en:"Apple crumble with 1 scoop vanilla ice cream",price:"7,50 €"},
+      {de:"Schokotörtchen mit flüssigem Kern + Vanilleeis",en:"Chocolate fondant with vanilla ice cream",price:"7,50 €"},
+      {de:"Kalter Hund mit 1 Kugel Vanilleeis",en:"Chocolate-biscuit cake with vanilla ice cream",price:"7,50 €"},
+      {de:"Warmer Milchreis mit Zimt & Zucker",en:"Warm rice pudding with cinnamon & sugar",price:"5,50 €"},
+      {de:"Matjesfilet Hausfrauenart (3 Stück)",en:"Matjes housewife-style (3 pcs)",price:"17,00 €"},
+      {de:"Rotbarschfilet auf Senfsauce",en:"Redfish fillet on mustard sauce",price:"23,00 €"},
+      {de:"Dorschfilet auf Spinat mit Limonenbutter",en:"Cod fillet on spinach with lime butter",price:"25,00 €"},
+      {de:"Fischer-Omelett mit Seelachswürfeln & Bratkartoffeln",en:"Fisherman omelette with pollock & fried potatoes",price:"27,00 €"},
+      {de:"Fischfiletplatte ANNO 1800",en:"Assorted fish fillet platter ANNO 1800",price:"29,00 €"},
+      {de:"Nordische Scholle (Speck)",en:"North-Sea plaice with bacon",price:"26,00 €"},
+      {de:"Nordische Scholle (Krabben)",en:"North-Sea plaice with shrimp",price:"31,00 €"},
+      {de:"Grünschalmuscheln überbacken mit Käse & Knoblauch",en:"Green-shell mussels au gratin with cheese & garlic",price:"15,00 €"}
+    ];
 
-    /* ---------- UTILS ---------- */
-    const colourUsed=new Set();
-    function distinctHue(){
-      let hue;let tries=0;
-      do{hue=Math.floor(Math.random()*360);tries++;}while([...colourUsed].some(h=>Math.abs(h-hue)<40)&&tries<50);
-      colourUsed.add(hue);return `hsl(${hue},70%,50%)`;
-    }
+    /***************   STATE / ELEMENTS   ***************/
+    const selected = Object.create(null);           // { name: colour }
+    const orders   = Object.create(null);           // { name: { menuIdx: qty } }
 
-    /* ---------- ELEMENTS ---------- */
-    const els={
-      personModal:document.getElementById('personModal'),
-      personList:document.getElementById('personList'),
-      chooseFoodBtn:document.getElementById('chooseFoodBtn'),
-      selectedPersons:document.getElementById('selectedPersons'),
-      menuContainer:document.getElementById('menuContainer'),
-      actionBar:document.getElementById('actionBar'),
-      assignModal:document.getElementById('assignModal'),
-      assignTitle:document.getElementById('assignTitle'),
-      assignList:document.getElementById('assignList')
+    const els = {
+      personModal     : document.getElementById('personModal'),
+      personList      : document.getElementById('personList'),
+      chooseFoodBtn   : document.getElementById('chooseFoodBtn'),
+      selectedPersons : document.getElementById('selectedPersons'),
+      menuContainer   : document.getElementById('menuContainer'),
+      actionBar       : document.getElementById('actionBar'),
+      assignModal     : document.getElementById('assignModal'),
+      assignTitle     : document.getElementById('assignTitle'),
+      assignList      : document.getElementById('assignList')
     };
 
-    /* ---------- PERSON BUTTONS ---------- */
+    /***************   DISTINCT COLOUR PICKER   ***************/
+    const usedHues = [];
+    function hueDistance(a,b){const d=Math.abs(a-b);return Math.min(d,360-d);}
+    function pickColour(){
+      for(let t=0;t<720;t++){
+        const h=Math.floor(Math.random()*360);
+        if(usedHues.every(u=>hueDistance(u,h)>=40)){usedHues.push(h);return `hsl(${h},70%,50%)`;}
+      }
+      return `hsl(${Math.floor(Math.random()*360)},70%,50%)`;
+    }
+
+    /***************   PERSON GRID   ***************/
     function createPersonBtn(name){
-      const btn=document.createElement('button');btn.className='person-btn';btn.textContent=name;
+      const btn=document.createElement('button');
+      btn.className='person-btn';
+      btn.textContent=name;
       btn.onclick=()=>{
-        if(selected[name]){delete selected[name];btn.classList.remove('selected');btn.style.background='';colourUsed.delete(btn._hue);}else{
-          const colour=distinctHue();btn._hue=parseInt(colour.match(/hsl\((\d+)/)[1]);selected[name]=colour;btn.classList.add('selected');btn.style.background=colour;}
+        if(selected[name]){
+          const hue=parseInt(selected[name].match(/hsl\\((\\d+)/)[1]);
+          usedHues.splice(usedHues.indexOf(hue),1);
+          delete selected[name];
+          btn.classList.remove('selected');
+          btn.style.background='';
+        }else{
+          const col=pickColour();
+          selected[name]=col;
+          btn.classList.add('selected');
+          btn.style.background=col;
+        }
       };
       els.personList.append(btn);
     }
     people.forEach(createPersonBtn);
-    function addNewName(){const n=prompt('Enter new name')?.trim();if(n&&!people.includes(n)){people.push(n);createPersonBtn(n);}}
 
-    /* ---------- RENDER SELECTED ---------- */
+    function addNewName(){
+      const n=prompt('Enter new name')?.trim();
+      if(n && !people.includes(n)){
+        people.push(n);
+        createPersonBtn(n);
+      }
+    }
+
+    /***************   RENDER SELECTED BAR   ***************/
     function renderSelected(){
-      els.selectedPersons.innerHTML='';Object.entries(selected).forEach(([n,c])=>{const chip=document.createElement('span');chip.className='person-chip';chip.textContent=n;chip.style.background=c;els.selectedPersons.append(chip);});
+      els.selectedPersons.innerHTML='';
+      for(const [n,c] of Object.entries(selected)){
+        const chip=document.createElement('span');
+        chip.className='person-chip';
+        chip.textContent=n;
+        chip.style.background=c;
+        els.selectedPersons.append(chip);
+      }
       els.chooseFoodBtn.style.display=Object.keys(selected).length?'block':'none';
     }
 
-    /* ---------- MODAL CONTROLS ---------- */
+    /***************   MODAL FLOW   ***************/
     document.getElementById('choosePersonBtn').onclick=()=>els.personModal.classList.add('active');
-    window.closePersonModal=()=>{els.personModal.classList.remove('active');renderSelected();};
-
-    /* ---------- MENU ---------- */
-    els.chooseFoodBtn.onclick=()=>{
-      els.menuContainer.innerHTML='';menu.forEach((it,i)=>{const div=document.createElement('div');div.className='menu-item';div.innerHTML=`<div class='menu-header'><div><strong>${it.de}</strong><br><em>${it.en}</em> <span class='price'>${it.price}</span></div><button onclick='openAssign(${i})'>Select</button></div><div class='assigned' id='a${i}'></div>`;els.menuContainer.append(div);});
-      els.menuContainer.style.display='block';els.actionBar.style.display='flex';
+    window.closePersonModal = ()=>{
+      els.personModal.classList.remove('active');
+      renderSelected();
     };
 
-    /* ---------- ASSIGN ---------- */
-    window.openAssign=i=>{els.assignTitle.textContent=menu[i].de;els.assignList.innerHTML='';Object.entries(selected).forEach(([n,c])=>{let qty=(orders[n]||{})[i]||0;const d=document.createElement('div');d.className='assign-person';d.style.background=c;const update=()=>d.innerHTML=n+(qty?`<span class='qty'>${qty}</span>`:'');update();d.onclick=()=>{qty=(qty+1)%6;qty?d.classList.add('selected'):d.classList.remove('selected');update();orders[n]=orders[n]||{};qty?orders[n][i]=qty:delete orders[n][i];};if(qty)d.classList.add('selected');els.assignList.append(d);});els.assignModal.classList.add('active');};
-    window.confirmAssignment=()=>{els.assignModal.classList.remove('active');menu.forEach((_,i)=>{const wrap=document.getElementById(`a${i}`);wrap.innerHTML='';Object.entries(selected).forEach(([n,c])=>{const q=(orders[n]||{})[i]||0;if(q){const chip=document.createElement('span');chip.className='person-chip';chip.textContent=`${n} (${q})`;chip.style.background=c;wrap.append(chip);}});});};
+    /***************   MENU RENDER   ***************/
+    els.chooseFoodBtn.onclick=()=>{
+      els.menuContainer.innerHTML='';
+      menu.forEach((it,i)=>{
+        const div=document.createElement('div');
+        div.className='menu-item';
+        div.innerHTML=
+          `<div class='menu-header'>
+             <div><strong>${it.de}</strong><br><em>${it.en}</em> <span class='price'>${it.price}</span></div>
+             <button onclick='openAssign(${i})'>Select</button>
+           </div>
+           <div class='assigned' id='a${i}'></div>`;
+        els.menuContainer.append(div);
+      });
+      els.menuContainer.style.display='block';
+      els.actionBar.style.display='flex';
+    };
 
-    /* ---------- EXPORT ---------- */
-    function buildMsg(){let out='';Object.keys(orders).forEach(n=>{out+=n+':\n';Object.entries(orders[n]).forEach(([i,q])=>{const it=menu[i];out+=`- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;});out+='\n';});return out.trim();}
-    document.getElementById('finishBtn').onclick=()=>{const t=buildMsg();navigator.clipboard.writeText(t).catch(()=>{});location.href=(/iphone|ipad|android/i.test(navigator.userAgent)?'whatsapp://send?text=':'https://wa.me/?text=')+encodeURIComponent(t);};
-    document.getElementById('copyBtn').onclick=()=>{const t=buildMsg();navigator.clipboard.writeText(t).then(()=>alert('Copied!')).catch(()=>alert(t));};
+    /***************   ASSIGNMENT FLOW   ***************/
+    window.openAssign = idx=>{
+      els.assignTitle.textContent=menu[idx].de;
+      els.assignList.innerHTML='';
+      for(const [n,c] of Object.entries(selected)){
+        let qty=(orders[n]||{})[idx]||0;
+        const d=document.createElement('div');
+        d.className='assign-person';
+        d.style.background=c;
+        const refresh=()=>d.innerHTML=n+(qty?`<span class='qty'>${qty}</span>`:'');
+        refresh();
+        d.onclick=()=>{
+          qty=(qty+1)%6;
+          qty?d.classList.add('selected'):d.classList.remove('selected');
+          refresh();
+          orders[n]=orders[n]||{};
+          qty?orders[n][idx]=qty:delete orders[n][idx];
+        };
+        if(qty) d.classList.add('selected');
+        els.assignList.append(d);
+      }
+      els.assignModal.classList.add('active');
+    };
+
+    window.confirmAssignment = ()=>{
+      els.assignModal.classList.remove('active');
+      menu.forEach((_,i)=>{
+        const wrap=document.getElementById(`a${i}`);
+        wrap.innerHTML='';
+        for(const [n,c] of Object.entries(selected)){
+          const q=(orders[n]||{})[i]||0;
+          if(q){
+            const chip=document.createElement('span');
+            chip.className='person-chip';
+            chip.textContent=`${n} (${q})`;
+            chip.style.background=c;
+            wrap.append(chip);
+          }
+        }
+      });
+    };
+
+    /***************   WHATSAPP / COPY   ***************/
+    function buildMsg(){
+      let out='';
+      for(const n of Object.keys(orders)){
+        out+=n+':\\n';
+        for(const [i,q] of Object.entries(orders[n])){
+          const it=menu[i];
+          out+=`- ${q}× ${it.de} (${it.en}) – ${it.price}\\n`;
+        }
+        out+='\\n';
+      }
+      return out.trim();
+    }
+
+    document.getElementById('finishBtn').onclick=()=>{
+      const t=buildMsg();
+      navigator.clipboard.writeText(t).catch(()=>{});
+      const u=/iphone|ipad|android/i.test(navigator.userAgent)?'whatsapp://send?text=':'https://wa.me/?text=';
+      location.href=u+encodeURIComponent(t);
+    };
+
+    document.getElementById('copyBtn').onclick=()=>{
+      const t=buildMsg();
+      navigator.clipboard.writeText(t)
+        .then(()=>alert('Copied!'))
+        .catch(()=>alert(t));
+    };
   </script>
 </body>
 </html>
