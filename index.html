@@ -83,18 +83,17 @@ Wähle, für wen du bestellst – es können mehrere Personen sein.</p>
 <div id="assignModal" class="modal">
   <div class="modal-content">
     <h3 id="assignTitle"></h3>
-    <div id="assignList" style="display:flex;flex-wrap:wrap;gap:var(--gap);margin:1rem 0"></div>
+    <div id="assignList" style="display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0"></div>
     <button style="width:100%" onclick="confirmAssignment()">OK</button>
   </div>
 </div>
 
 <script>
 /* ---------- PEOPLE ---------- */
-const people=["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo",
-              "Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
+const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
 
-/* ---------- FULL MENU (69 items) ---------- */
-const menu=[
+/* ---------- FULL 69-ITEM MENU ---------- */
+const menu = [
 {de:"Achatschnecken mit feinen Gemüsewürfeln in Kräuterbutter, dazu frisches Brot",en:"Achatschnecken with fine vegetable cubes in herb butter, served with fresh bread",price:"8,00 €"},
 {de:"Matjesfilet auf Schwarzbrot mit Salatgarnitur",en:"Matjes herring fillet on rye bread with salad garnish",price:"9,00 €"},
 {de:"Vier Riesengarnelen mit feinen Gemüsestreifen in Knoblauch gebraten, dazu frisches Brot",en:"Four king prawns sautéed with vegetable strips in garlic, served with fresh bread",price:"15,50 €"},
@@ -113,7 +112,7 @@ const menu=[
 {de:"Knödelei – Dreierlei Semmelknödel, Salat & Sauce",en:"Trio of bread dumplings with salad & sauce",price:"17,00 €"},
 {de:"Vegetarischer Gemüseeintopf mit Knoblauch & Oliven, Kräuterbaguette",en:"Vegetable stew with garlic & olives, herb baguette",price:"13,00 €"},
 {de:"Frische Bratkartoffeln mit drei Spiegeleiern",en:"Fried potatoes with three fried eggs",price:"8,00 €"},
-{de:"Tomatensuppe mit Sahnehaube",en:"Tomato soup with cream",price:"8,00 €"},
+{de:"Tomatensuppe mit Sahнеhaube",en:"Tomato soup with cream",price:"8,00 €"},
 {de:"Zwiebelsuppe französische Art mit Käse",en:"French onion soup with cheese",price:"8,00 €"},
 {de:"Meerrettichgemüsesuppe mit Roastbeefstreifen",en:"Horseradish vegetable soup with roast beef strips",price:"8,00 €"},
 {de:"Fischsuppe Heiligenhafener Art mit frischem Gemüse",en:"Heiligenhafen fish soup with fresh vegetables",price:"9,00 €"},
@@ -166,43 +165,47 @@ const menu=[
 {de:"Grünschalmuscheln überbacken mit Käse & Knoblauch",en:"Green-shell mussels au gratin with cheese & garlic",price:"15,00 €"}
 ];
 
-/* ---------- STATE & ELEMENTS ---------- */
-const selected=Object.create(null),orders=Object.create(null);
-const els={
-  personModal:document.getElementById("personModal"),
-  personList:document.getElementById("personList"),
-  chooseFoodBtn:document.getElementById("chooseFoodBtn"),
-  selectedPersons:document.getElementById("selectedPersons"),
-  menuContainer:document.getElementById("menuContainer"),
-  actionBar:document.getElementById("actionBar"),
-  assignModal:document.getElementById("assignModal"),
-  assignTitle:document.getElementById("assignTitle"),
-  assignList:document.getElementById("assignList")
+/* ---------- STATE & ELEMENT REFS ---------- */
+const selected = Object.create(null), orders = Object.create(null);
+const els = {
+  personModal     : document.getElementById("personModal"),
+  personList      : document.getElementById("personList"),
+  chooseFoodBtn   : document.getElementById("chooseFoodBtn"),
+  selectedPersons : document.getElementById("selectedPersons"),
+  menuContainer   : document.getElementById("menuContainer"),
+  actionBar       : document.getElementById("actionBar"),
+  assignModal     : document.getElementById("assignModal"),
+  assignTitle     : document.getElementById("assignTitle"),
+  assignList      : document.getElementById("assignList")
 };
 
-/* ---------- UNIQUE COLOUR PICKER ---------- */
+/* ---------- DISTINCT COLOUR PICKER ---------- */
 const usedHues=[];
-const hueDist=(a,b)=>Math.min(Math.abs(a-b),360-Math.abs(a-b));
+const dist=(a,b)=>Math.min(Math.abs(a-b),360-Math.abs(a-b));
 function pickColour(){
   for(let i=0;i<720;i++){
     const h=Math.floor(Math.random()*360);
-    if(usedHues.every(u=>hueDist(u,h)>=40)){usedHues.push(h);return`hsl(${h},70%,50%)`;}
+    if(usedHues.every(u=>dist(u,h)>=40)){usedHues.push(h);return`hsl(${h},70%,50%)`;}
   }
   return`hsl(${Math.floor(Math.random()*360)},70%,50%)`;
 }
 
-/* ---------- PERSON BUTTONS ---------- */
+/* ---------- PERSON GRID ---------- */
 function createPersonBtn(name){
   const btn=document.createElement("button");
-  btn.className="person-btn";btn.textContent=name;
+  btn.className="person-btn";
+  btn.textContent=name;
   btn.onclick=()=>{
     if(selected[name]){
-      const h=parseInt(selected[name].match(/hsl\\((\\d+)/)[1],10);
+      const h=parseInt(selected[name].match(/hsl\((\d+)/)[1],10); // regex fixed
       usedHues.splice(usedHues.indexOf(h),1);
-      delete selected[name];btn.classList.remove("selected");btn.style.background="";
+      delete selected[name];
+      btn.classList.remove("selected");
+      btn.style.background="";
     }else{
       selected[name]=pickColour();
-      btn.classList.add("selected");btn.style.background=selected[name];
+      btn.classList.add("selected");
+      btn.style.background=selected[name];
     }
   };
   els.personList.append(btn);
@@ -213,23 +216,25 @@ function addNewName(){
   if(n&&!people.includes(n)){people.push(n);createPersonBtn(n);}
 }
 
-/* ---------- RENDER SELECTED ---------- */
+/* ---------- SELECTED BAR ---------- */
 function renderSelected(){
   els.selectedPersons.innerHTML="";
   for(const [n,c] of Object.entries(selected)){
     const chip=document.createElement("span");
-    chip.className="person-chip";chip.textContent=n;chip.style.background=c;
+    chip.className="person-chip";
+    chip.textContent=n;
+    chip.style.background=c;
     els.selectedPersons.append(chip);
   }
   els.chooseFoodBtn.style.display=Object.keys(selected).length?"block":"none";
 }
 
-/* ---------- MODALS ---------- */
+/* ---------- MODAL FLOW ---------- */
 document.getElementById("choosePersonBtn").onclick=()=>els.personModal.classList.add("active");
 function closePersonModal(){els.personModal.classList.remove("active");renderSelected();}
 window.closePersonModal=closePersonModal;
 
-/* ---------- MENU ---------- */
+/* ---------- MENU RENDER ---------- */
 els.chooseFoodBtn.onclick=()=>{
   els.menuContainer.innerHTML="";
   menu.forEach((it,i)=>{
@@ -246,24 +251,26 @@ els.chooseFoodBtn.onclick=()=>{
   els.actionBar.style.display="flex";
 };
 
-/* ---------- ASSIGN ---------- */
+/* ---------- ASSIGN FLOW ---------- */
 function openAssign(idx){
   els.assignTitle.textContent=menu[idx].de;
   els.assignList.innerHTML="";
   for(const [n,c] of Object.entries(selected)){
     let qty=(orders[n]||{})[idx]||0;
-    const d=document.createElement("div");
-    d.className="assign-person";d.style.background=c;
-    const paint=()=>d.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
+    const card=document.createElement("div");
+    card.className="assign-person";
+    card.style.background=c;
+    const paint=()=>card.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
     paint();
-    d.onclick=()=>{
+    card.onclick=()=>{
       qty=(qty+1)%6;
-      qty?d.classList.add("selected"):d.classList.remove("selected");
-      paint();orders[n]=orders[n]||{};
+      qty?card.classList.add("selected"):card.classList.remove("selected");
+      paint();
+      orders[n]=orders[n]||{};
       qty?orders[n][idx]=qty:delete orders[n][idx];
     };
-    if(qty)d.classList.add("selected");
-    els.assignList.append(d);
+    if(qty)card.classList.add("selected");
+    els.assignList.append(card);
   }
   els.assignModal.classList.add("active");
 }
@@ -271,7 +278,8 @@ window.openAssign=openAssign;
 function confirmAssignment(){
   els.assignModal.classList.remove("active");
   menu.forEach((_,i)=>{
-    const wrap=document.getElementById(`a${i}`);wrap.innerHTML="";
+    const wrap=document.getElementById(`a${i}`);
+    wrap.innerHTML="";
     for(const [n,c] of Object.entries(selected)){
       const q=(orders[n]||{})[i]||0;
       if(q){
@@ -290,12 +298,13 @@ window.confirmAssignment=confirmAssignment;
 const buildMsg=()=>Object.keys(orders).map(n=>{
   const lines=Object.entries(orders[n])
         .map(([i,q])=>`- ${q}× ${menu[i].de} (${menu[i].en}) – ${menu[i].price}`)
-        .join("\\n");
-  return `${n}:\\n${lines}`;
-}).join("\\n\\n");
+        .join("\n");
+  return `${n}:\n${lines}`;
+}).join("\n\n");
 
 document.getElementById("finishBtn").onclick=()=>{
-  const t=buildMsg();navigator.clipboard.writeText(t).catch(()=>{});
+  const t=buildMsg();
+  navigator.clipboard.writeText(t).catch(()=>{});
   const base=/iphone|ipad|android/i.test(navigator.userAgent)?"whatsapp://send?text=":"https://wa.me/?text=";
   location.href=base+encodeURIComponent(t);
 };
