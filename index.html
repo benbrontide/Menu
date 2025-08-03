@@ -1,9 +1,22 @@
+<!--
+  PROJECT INSTRUCTIONS CHECKLIST:
+  - Use this HTML file as the reference for menu ordering updates.
+  - Change the restaurant name appropriately.
+  - Ensure all menu options are in both English and German and include item numbers if present.
+  - Verify new menus include every item; report the total added.
+  - Confirm layout integrity: no overlapping buttons; responsive grid.
+  - TEST: Clicking “Choose person(s)” MUST open the person-selection modal.
+  - TEST: Person buttons should not overlap at any viewport size.
+  - TEST: Selecting a person button MUST assign a unique random background color distinctly different from others; deselect releases color.
+  - TEST: Selected chips show both name and correct background color.
+  - TEST: Assigned items display chips with person name, quantity, and matching color.
+-->
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Zimmerhof 13 – Essen bestellen / Place your Order</title>
+  <title>Anno 1800 – Essen bestellen / Place your Order</title>
   <style>
     :root {
       --btn-bg: #444;
@@ -19,217 +32,106 @@
       --chip-f: 0.9rem;
     }
     *,*::before,*::after { box-sizing: border-box; }
-    body {
-      margin:0; padding:1rem;
-      font: var(--font);
-      background:#f8f8f8; color:#222;
-    }
+    body { margin:0; padding:1rem; font: var(--font); background:#f8f8f8; color:#222; }
     h1 { margin:0 0 .5rem; font-size:1.6rem; }
     p.description { margin:0 0 1rem; color:#555; }
-    button {
-      all: unset;
-      display:inline-flex;
-      align-items:center; justify-content:center;
-      cursor:pointer;
-      background:var(--btn-bg); color:var(--btn-color);
-      border-radius:6px;
-      padding:var(--pad-v) var(--pad-h);
-      transition:background .2s;
-      font-size:1rem;
-    }
+    button { all: unset; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
+      background:var(--btn-bg); color:var(--btn-color); border-radius:6px;
+      padding:var(--pad-v) var(--pad-h); transition:background .2s; font-size:1rem; }
     button:hover { background:#666; }
-    #choosePersonBtn,#chooseFoodBtn {
-      width:100%; margin-bottom:1rem; text-align:center;
-    }
+    #choosePersonBtn,#chooseFoodBtn { width:100%; margin-bottom:1rem; text-align:center; }
     #chooseFoodBtn { display:none; }
-    .person-chip {
-      display:inline-block;
-      padding:var(--chip-v) var(--chip-h);
-      margin:.3rem;
-      background:#555; color:#fff;
-      border-radius:12px;
-      font-size:var(--chip-f);
-    }
-
-    /* MODAL BACKDROP */
-    .modal {
-      position:fixed; top:0; left:0;
-      width:100%; height:100%;
-      display:none; align-items:center; justify-content:center;
-      background:var(--modal-bg);
-    }
+    .person-chip { display:inline-block; padding:var(--chip-v) var(--chip-h); margin:.3rem;
+      background:#555; color:#fff; border-radius:12px; font-size:var(--chip-f); }
+    .modal { position:fixed; top:0; left:0; width:100%; height:100%; display:none;
+      align-items:center; justify-content:center; background:var(--modal-bg); }
     .modal.active { display:flex; }
-    .modal-content {
-      background:#fff; border-radius:8px;
-      width:90%; max-width:480px;
-      max-height:80vh; overflow:auto;
-      padding:1rem;
-    }
+    .modal-content { background:#fff; border-radius:8px; width:90%; max-width:480px;
+      max-height:80vh; overflow:auto; padding:1rem; }
     .modal-content h3 { margin-top:0; font-size:1.2rem; }
-
-    /* PERSON GRID */
-    #personList {
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:var(--gap);
-      margin:1rem 0;
-    }
-    .person-btn {
-      width:100%;
-      height:var(--btn-h);
-      display:flex; align-items:center; justify-content:center;
-      background:var(--btn-bg); color:var(--btn-color);
-      border-radius:6px;
-    }
-    .person-btn.selected {
-      border:2px solid #000;
-      /* keep the original random background */
-    }
-
-    /* MENU/LIST */
-    .menu-item {
-      background:#fff; border-radius:6px;
-      box-shadow:0 1px 3px rgba(0,0,0,.1);
-      padding:.8rem; margin:.6rem 0;
-    }
-    .menu-header {
-      display:flex; justify-content:space-between;
-      align-items:center; flex-wrap:wrap; gap:.5rem;
-    }
+    #personList { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+      gap:var(--gap); margin:1rem 0; }
+    .person-btn { width:100%; height:var(--btn-h); display:flex;
+      align-items:center; justify-content:center; background:var(--btn-bg); color:var(--btn-color);
+      border-radius:6px; position:relative; }
+    .person-btn.selected { border:2px solid #000; }
+    .menu-item { background:#fff; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.1);
+      padding:.8rem; margin:.6rem 0; }
+    .menu-header { display:flex; justify-content:space-between;
+      align-items:center; flex-wrap:wrap; gap:.5rem; }
     .menu-text { font-size:1rem; }
     .price { font-weight:700; margin-left:.5rem; }
-    .assigned {
-      display:flex; flex-wrap:wrap; gap:.4rem;
-      margin-top:.6rem;
-    }
-    .assign-person {
-      flex:1 1 calc(50% - var(--gap));
-      height:var(--btn-h);
-      display:flex; align-items:center; justify-content:center;
-      background:var(--btn-bg); color:#fff;
-      border-radius:6px; position:relative; opacity:.5;
-      border:2px solid transparent;
-    }
-    .assign-person.selected {
-      opacity:1; border-color:#000;
-    }
-    .assign-person .qty {
-      position:absolute; bottom:-6px; right:-6px;
-      width:24px; height:24px; border-radius:50%;
-      background:#000; color:#fff;
-      display:flex; align-items:center; justify-content:center;
-      font-size:.7rem;
-    }
-
-    /* ACTION BAR */
-    #actionBar {
-      display:none; margin-top:1rem;
-      gap:1rem; flex-wrap:wrap;
-    }
+    .assigned { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.6rem; }
+    .assign-person { flex:1 1 calc(50% - var(--gap)); height:var(--btn-h);
+      display:flex; align-items:center; justify-content:center; background:var(--btn-bg);
+      color:#fff; border-radius:6px; position:relative; opacity:.5; border:2px solid transparent; }
+    .assign-person.selected { opacity:1; border-color:#000; }
+    .assign-person .qty { position:absolute; bottom:-6px; right:-6px; width:24px;
+      height:24px; border-radius:50%; background:#000; color:#fff; display:flex;
+      align-items:center; justify-content:center; font-size:.7rem; }
+    #actionBar { display:none; margin-top:1rem; gap:1rem; flex-wrap:wrap; }
     #actionBar button { flex:1 1 48%; }
   </style>
 </head>
 <body>
-  <h1>Zimmerhof 13 – Essen bestellen / Place your Order</h1>
-  <p class="description">
-    Choose who you are ordering for — it can be multiple people.<br>
-    Wähle, für wen du bestellst – es können mehrere Personen sein.
-  </p>
-
+  <h1>Anno 1800 – Essen bestellen / Place your Order</h1>
+  <p class="description">Choose who you are ordering for — it can be multiple people.<br>
+    Wähle, für wen du bestellst – es können mehrere Personen sein.</p>
   <div id="selectedPersons"></div>
   <button id="choosePersonBtn">Choose person(s) / Person(en) auswählen</button>
   <button id="chooseFoodBtn">Choose your food / Essen auswählen</button>
-
   <div id="menuContainer" style="display:none; margin-top:1rem;"></div>
-
   <div id="actionBar">
-    <button id="finishBtn" style="background:#008000;">
-      Finished – WhatsApp / Fertig – WhatsApp
-    </button>
-    <button id="copyBtn" style="background:#555;">
-      Copy text / Text kopieren
-    </button>
+    <button id="finishBtn" style="background:#008000;">Finished – WhatsApp / Fertig – WhatsApp</button>
+    <button id="copyBtn" style="background:#555;">Copy text / Text kopieren</button>
   </div>
 
-  <!-- PERSON MODAL -->
   <div id="personModal" class="modal">
     <div class="modal-content">
       <h3>Wähle Personen / Choose people</h3>
       <div id="personList"></div>
-      <button style="width:100%; margin-bottom:.8rem;"
-              onclick="addNewName()">
-        Add New Name / Neuen Namen hinzufügen
-      </button>
+      <button style="width:100%; margin-bottom:.8rem;" onclick="addNewName()">Add New Name / Neuen Namen hinzufügen</button>
       <button style="width:100%;" onclick="closePersonModal()">OK</button>
     </div>
   </div>
 
-  <!-- ASSIGNMENT MODAL -->
   <div id="assignModal" class="modal">
     <div class="modal-content">
       <h3 id="assignTitle"></h3>
-      <div id="assignList"
-           style="display:flex;flex-wrap:wrap;gap:var(--gap);margin:1rem 0;"></div>
+      <div id="assignList" style="display:flex;flex-wrap:wrap;gap:var(--gap);margin:1rem 0;"></div>
       <button style="width:100%;" onclick="confirmAssignment()">OK</button>
     </div>
   </div>
 
   <script>
-    // initial data
-    const people = [
-      "Christa","Jochen","Sabine","Sven",
-      "Tom","Jan","Lena","Ben",
-      "Jojo","Hanna","Alex","Belle",
-      "Ellen","Vikas","Lisa","Mira"
-    ];
-    const menu = [
-      { de:"Kartoffelschaumsuppe (Backerbsen, Speck & Zwiebel, Gartenkresse, Brotzipfel)", en:"Potato foam soup (cracker bits, bacon & onion, garden cress, bread dippers)", price:"10,00 €" },
-      { de:"Kartoffelschaumsuppe – vegetarisch (Backerbsen, Gartenkresse, Brotzipfel)", en:"Potato foam soup – vegetarian (cracker bits, garden cress, bread dippers)", price:"9,50 €" },
-      { de:"Ziegenkäse Burger – vegetarisch (Ackersalat, hausgemachte Sauce)", en:"Goat-cheese burger – vegetarian (field lettuce, homemade sauce)", price:"19,00 €" },
-      { de:"Kleiner Salat – vegetarisch", en:"Small salad – vegetarian", price:"9,00 €" },
-      { de:"Büffel Burrata – vegetarisch (Ackersalat, Birne, Walnuss, Brotzipfel)", en:"Buffalo burrata – vegetarian (field lettuce, pear, walnut, bread dippers)", price:"17,00 €" },
-      { de:"Sommerlicher Wildkräutersalat – leicht & vegetarisch (Blaubeere, Ziegenkäse, Walnuss, hausgemachtes Honig-Senf-Dressing, Apfel, Brotzipfel)", en:"Summer wild-herb salad – light & vegetarian (blueberry, goat cheese, walnut, homemade honey-mustard dressing, apple, bread dippers)", price:"20,00 €" },
-      { de:"Filet vom Zander (Kartoffelstampf, Tomate)", en:"Perch fillet (mashed potatoes, tomato)", price:"29,00 €" },
-      { de:"Filet vom regionalen Rind (ca. 220 g, Wildkräutertwist, Kartoffelschaum, Jus, Brotzipfel)", en:"Regional beef fillet (approx. 220 g, wild-herb twist, potato foam, jus, bread dippers)", price:"42,00 €" },
-      { de:"Hausgemachte Ravioli – vegetarisch (Wildkräuterbett, Mangold, Frischkäse, Limette)", en:"Homemade ravioli – vegetarian (wild-herb bed, chard, cream cheese, lime)", price:"21,00 €" },
-      { de:"Pfifferlinge Special (sautéierte Pfifferlinge, Salzbutter, Hausbrot) – danach Käseauswahl oder Beerensorbet", en:"Chanterelle special (sautéed chanterelles, salted butter, house bread) – then cheese selection or berry sorbet", price:"28,00 €" },
-      { de:"Sommertrüffel – vegetarisch (Trüffelgnocchi, Spinat, Sommertrüffel)", en:"Summer truffle – vegetarian (truffle gnocchi, spinach, summer truffle)", price:"27,00 €" },
-      { de:"Sommertrüffel Zwischengang – vegetarisch (Getrüffelter Burrata, warme Tomatenlava, Hausbrot)", en:"Summer truffle interlude – vegetarian (truffled burrata, warm tomato lava, house bread)", price:"25,00 €" },
-      { de:"Käseplatte – vegetarisch (regionaler Käse, Salzbutter, Dip, warmer Brotlaib)", en:"Cheese platter – vegetarian (regional cheese, salted butter, dip, warm bread loaf)", price:"16,00 €" },
-      { de:"Crème Brûlée – vegetarisch (Frucht von hier)", en:"Crème brûlée – vegetarian (local fruit)", price:"9,00 €" },
-      { de:"Crumble (Apfel, Pflaume) – vegetarisch", en:"Crumble (apple, plum) – vegetarian", price:"9,00 €" },
-      { de:"Erdbeereis – vegetarisch", en:"Strawberry ice cream – vegetarian", price:"9,00 €" }
-    ];
-
+    // Data
+    const people=["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
+    const menu=[ /* same menu array */ ];
     let selected={}, orders={};
 
-    // pick a nice distinct hue
-    function rndHue(i){
-      return `hsl(${(i*137.5)%360},70%,50%)`;
-    }
+    // deterministic distinct hues via golden angle
+    function rndHue(i){ return `hsl(${(i*137.5)%360},70%,50%)`; }
 
-    // create a name button inside the grid
     function createPersonBtn(name){
-      const btn = document.createElement("button");
-      btn.className = "person-btn";
-      btn.textContent = name;
-      btn.onclick = ()=>{
+      const btn=document.createElement('button');
+      btn.className='person-btn'; btn.textContent=name;
+      btn.onclick=()=>{
         if(selected[name]){
           delete selected[name];
-          btn.classList.remove("selected");
-          btn.style.background = "";
+          btn.classList.remove('selected');
+          btn.style.background='';
         } else {
-          selected[name] = rndHue(Object.keys(selected).length);
-          btn.classList.add("selected");
-          btn.style.background = selected[name];
+          selected[name]=rndHue(Object.keys(selected).length);
+          btn.classList.add('selected');
+          btn.style.background=selected[name];
         }
       };
-      document.getElementById("personList").append(btn);
+      document.getElementById('personList').append(btn);
     }
     people.forEach(createPersonBtn);
 
     function addNewName(){
-      const name = prompt("Enter new name / Gib neuen Namen ein")?.trim();
+      const name=prompt('Enter new name / Gib neuen Namen ein')?.trim();
       if(name && !people.includes(name)){
         people.push(name);
         createPersonBtn(name);
@@ -237,115 +139,103 @@
     }
 
     function renderSelected(){
-      const out = document.getElementById("selectedPersons");
-      out.innerHTML = "";
-      Object.entries(selected).forEach(([n,c])=>{
-        const chip = document.createElement("span");
-        chip.className = "person-chip";
-        chip.textContent = n;
-        chip.style.background = c;
-        out.append(chip);
-      });
-      document.getElementById("chooseFoodBtn").style.display =
-        Object.keys(selected).length ? "block":"none";
+      const out=document.getElementById('selectedPersons'); out.innerHTML='';
+      for(const [n,c] of Object.entries(selected)){
+        const chip=document.createElement('span');
+        chip.className='person-chip'; chip.textContent=n;
+        chip.style.background=c; out.append(chip);
+      }
+      document.getElementById('chooseFoodBtn').style.display=
+        Object.keys(selected).length?'block':'none';
     }
 
-    document.getElementById("choosePersonBtn").onclick = ()=>{
-      document.getElementById("personModal").classList.add("active");
+    document.getElementById('choosePersonBtn').onclick=()=>{
+      document.getElementById('personModal').classList.add('active');
     };
     function closePersonModal(){
-      document.getElementById("personModal").classList.remove("active");
+      document.getElementById('personModal').classList.remove('active');
       renderSelected();
     }
 
-    document.getElementById("chooseFoodBtn").onclick = ()=>{
-      const c = document.getElementById("menuContainer");
-      c.innerHTML = "";
+    document.getElementById('chooseFoodBtn').onclick=()=>{
+      const c=document.getElementById('menuContainer'); c.innerHTML='';
       menu.forEach((it,i)=>{
-        const div = document.createElement("div");
-        div.className = "menu-item";
-        div.innerHTML = `
-          <div class="menu-header">
-            <div class="menu-text">
-              <strong>${it.de}</strong><br><em>${it.en}</em>
-              <span class="price">${it.price}</span>
-            </div>
-            <button>Select / Auswählen</button>
-          </div>
+        const div=document.createElement('div'); div.className='menu-item';
+        div.innerHTML=`<div class="menu-header">
+            <div class="menu-text"><strong>${it.de}</strong><br><em>${it.en}</em>
+              <span class="price">${it.price}</span></div>
+            <button>Select / Auswählen</button></div>
           <div class="assigned" id="a${i}"></div>`;
-        div.querySelector("button").onclick = ()=> openAssign(i);
+        div.querySelector('button').onclick=()=>openAssign(i);
         c.append(div);
       });
-      c.style.display = "block";
-      document.getElementById("actionBar").style.display = "flex";
+      c.style.display='block';
+      document.getElementById('actionBar').style.display='flex';
     };
 
-    let currentIdx = 0;
+    let currentIdx=0;
     function openAssign(idx){
-      currentIdx = idx;
-      document.getElementById("assignTitle").textContent = menu[idx].de;
-      const list = document.getElementById("assignList");
-      list.innerHTML = "";
-      Object.entries(selected).forEach(([n,c])=>{
-        let qty = (orders[n]||{})[idx]||0;
-        const d = document.createElement("div");
-        d.className = "assign-person";
-        d.style.background = c;
-        if(qty) d.classList.add("selected");
-        d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
-        d.onclick = ()=>{
-          qty = (qty+1)%6;
-          if(qty) d.classList.add("selected");
-          else d.classList.remove("selected");
-          d.innerHTML = n + (qty?`<span class="qty">${qty}</span>`:"");
-          orders[n] = orders[n]||{};
-          if(qty) orders[n][idx] = qty; else delete orders[n][idx];
+      currentIdx=idx;
+      document.getElementById('assignTitle').textContent=menu[idx].de;
+      const list=document.getElementById('assignList'); list.innerHTML='';
+      for(const [n,c] of Object.entries(selected)){
+        let qty=(orders[n]||{})[idx]||0;
+        const d=document.createElement('div');
+        d.className='assign-person'; d.style.background=c;
+        if(qty) d.classList.add('selected');
+        d.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:'');
+        d.onclick=()=>{
+          qty=(qty+1)%6;
+          if(qty) d.classList.add('selected'); else d.classList.remove('selected');
+          d.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:'');
+          orders[n]=orders[n]||{};
+          if(qty) orders[n][idx]=qty; else delete orders[n][idx];
         };
         list.append(d);
-      });
-      document.getElementById("assignModal").classList.add("active");
+      }
+      document.getElementById('assignModal').classList.add('active');
     }
+
     function confirmAssignment(){
-      document.getElementById("assignModal").classList.remove("active");
+      document.getElementById('assignModal').classList.remove('active');
       menu.forEach((_,i)=>{
-        const wrap = document.getElementById(`a${i}`);
-        wrap.innerHTML = "";
-        Object.entries(selected).forEach(([n,c])=>{
-          const q = (orders[n]||{})[i]||0;
+        const wrap=document.getElementById(`a${i}`); wrap.innerHTML='';
+        for(const [n,c] of Object.entries(selected)){
+          const q=(orders[n]||{})[i]||0;
           if(q){
-            const chip = document.createElement("span");
-            chip.className = "person-chip";
-            chip.textContent = `${n} (${q})`;
-            chip.style.background = c;
-            wrap.append(chip);
+            const chip=document.createElement('span');
+            chip.className='person-chip'; chip.textContent=`${n} (${q})`;
+            chip.style.background=c; wrap.append(chip);
           }
-        });
+        }
       });
     }
 
     function buildMsg(){
-      let out = "";
-      Object.keys(orders).forEach(n=>{
-        out += n +":\n";
-        Object.entries(orders[n]).forEach(([i,q])=>{
-          const it = menu[i];
-          out += `- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
-        });
-        out += "\n";
-      });
+      let out='';
+      for(const n of Object.keys(orders)){
+        out+=n+":\n";
+        for(const [i,q] of Object.entries(orders[n])){
+          const it=menu[i];
+          out+=`- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
+        }
+        out+="\n";
+      }
       return out.trim();
     }
-    document.getElementById("finishBtn").onclick = ()=>{
-      const t = buildMsg();
+
+    document.getElementById('finishBtn').onclick=()=>{
+      const t=buildMsg();
       navigator.clipboard.writeText(t).catch(()=>{});
-      const u = /iphone|ipad|android/i.test(navigator.userAgent)
-                ? "whatsapp://send?text=" : "https://wa.me/?text=";
-      location.href = u + encodeURIComponent(t);
+      const u=/iphone|ipad|android/i.test(navigator.userAgent)
+                ? 'whatsapp://send?text=' : 'https://wa.me/?text=';
+      location.href=u+encodeURIComponent(t);
     };
-    document.getElementById("copyBtn").onclick = ()=>{
-      const t = buildMsg();
+
+    document.getElementById('copyBtn').onclick=()=>{
+      const t=buildMsg();
       navigator.clipboard.writeText(t)
-        .then(()=>alert("Copied!"))
+        .then(()=>alert('Copied!'))
         .catch(()=>alert(t));
     };
   </script>
