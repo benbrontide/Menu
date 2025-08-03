@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Quán An Ngon Uelzen – Essen bestellen / Place your Order</title>
+  <title>Anno 1800 – Essen bestellen / Place your Order</title>
   <style>
     :root {
       --btn-bg: #444;
@@ -129,10 +129,10 @@
   </style>
 </head>
 <body>
-  <h1>Quán An Ngon Uelzen – Essen bestellen / Place your Order</h1>
+  <h1>Anno 1800 – Essen bestellen / Place your Order</h1>
   <p class="description">
     Choose who you are ordering for — it can be multiple people.<br>
-    Wähle, für wen du bestellst — es können mehrere Personen sein.
+    Wähle, für wen du bestellst – es können mehrere Personen sein.
   </p>
 
   <div id="selectedPersons"></div>
@@ -166,14 +166,13 @@
   <div id="assignModal" class="modal">
     <div class="modal-content">
       <h3 id="assignTitle"></h3>
-      <div id="assignList"
-           style="display:flex;flex-wrap:wrap;gap:var(--gap);margin:1rem 0;"></div>
+      <div id="assignList" style="display:flex;flex-wrap:wrap;gap:var(--gap);margin:1rem 0;"></div>
       <button style="width:100%;" onclick="confirmAssignment()">OK</button>
     </div>
   </div>
 
   <script>
-    // ─── INITIAL SETUP ───────────────────
+    // initial data
     const people = [
       "Christa","Jochen","Sabine","Sven",
       "Tom","Jan","Lena","Ben",
@@ -181,204 +180,66 @@
       "Ellen","Vikas","Lisa","Mira"
     ];
     const menu = [
-      { de:"01. SUP CANH CHUA DAU PHU",   en:"Tamarind soup w/ fried tofu, pak choi & mushrooms (mild)", price:"5.50 €" },
-      { de:"02. SUP SUA DUA THIT GA",     en:"Coconut milk soup w/ chicken breast & vegetables",         price:"5.50 €" },
-      { de:"03. SUP XOAI THIT GA",        en:"Coconut-mango soup w/ chicken & vegetables",               price:"5.50 €" },
-      { de:"04. SUP MIEN GA",             en:"Glass-noodle soup w/ chicken, veg & coriander",            price:"5.50 €" },
-      { de:"05. SUP CAI TOM",             en:"Prawn soup w/ pak choi, coriander & ginger",               price:"6.50 €" },
-      { de:"06. NEM RAN 2 STK",           en:"Fried spring rolls (pork, prawns, veg) w/ special sauce",  price:"5.90 €" },
-      { de:"07. GOI CUON 2 STK",          en:"Summer rolls w/ rice noodles, lettuce, carrots & mango",    price:"5.50 €" },
-      { de:"08. TOM CHIEN COM 5 STK",     en:"Crispy prawns (or tofu, chicken, duck) in corn batter, chili-dip", price:"6.90 €" },
-      { de:"09. MET THAP CAM",            en:"Mixed starter platter w/ tofu, chicken, prawns & sauce",   price:"12.50 €" },
-      { de:"10. DAU NANH NGUYEN TRAI",    en:"Boiled soybeans w/ sea salt",                              price:"4.90 €" },
-      { de:"11. GOI XOAI DAU PHU",        en:"Tofu mango salad w/ carrots, lettuce, coriander & peanuts", price:"8.50 €" },
-      { de:"12. GOI XOAI GA",             en:"Chicken mango salad w/ herbs & peanuts",                   price:"8.90 €" },
-      { de:"13. NOM MIEN GA",             en:"Glass-noodle salad w/ chicken, herbs & peanuts",           price:"8.90 €" },
-      { de:"14. GA XAO SA OT",            en:"Stir-fried chicken w/ veg, lemongrass & onions (spicy)",    price:"12.90 €" },
-      { de:"15. NOM NGO SEN",             en:"Lotus-stem salad w/ prawns, carrots & peanuts, lime-dressing", price:"10.90 €" },
-      { de:"16. NOM CA HOI",              en:"Salad w/ grilled salmon, lettuce, carrots & lime-dressing", price:"10.90 €" },
-      { de:"17. VIT CHIEN SOT DAU PHONG", en:"Crispy duck w/ veg & peanut sauce",                       price:"15.90 €" },
-      { de:"18. TOM NUONG",               en:"Grilled prawns w/ salad & sweet-potato fries",              price:"18.90 €" },
-      { de:"20. PHO UND VIETNAM",         en:"Pho noodle soup w/ your choice of beef, chicken, tofu or prawns", price:"10.90 €" },
-      { de:"21. MI QUANG",                en:"Turmeric rice-noodle w/ crispy salmon, veg & coconut sauce", price:"15.50 €" },
-      { de:"22. BUN CHA",                 en:"Grilled pork patties & prawns w/ vermicelli, herbs & dip", price:"23.90 €" },
-      { de:"23. BUN NUOC",                en:"Soup w/ rice noodles, tomatoes, pineapple & herbs",        price:"14.90 €" },
-      { de:"24. HU TIEU MY THO",          en:"Wheat-noodle soup w/ salmon fillet, prawns & herbs",       price:"15.90 €" },
-      { de:"30. DAU PHU XA SOT OT",       en:"Stir-fried tofu & veg in lemongrass-chili garlic (vegan)",   price:"11.90 €" },
-      { de:"31. DAU PHU XA SOT",          en:"Stir-fried tofu & veg in coconut-chili curry (vegan)",       price:"11.90 €" },
-      { de:"32. RAU XAO THAP CAM",        en:"Mixed veg stir-fry w/ onions & coriander (vegan)",         price:"11.90 €" },
-      { de:"33. GA XAO SA OT",            en:"Stir-fried chicken w/ veg, lemongrass & onions (spicy)",    price:"12.90 €" },
-      { de:"34. CA RI GA",                en:"Chicken curry w/ veg, potatoes & carrots",                 price:"12.90 €" },
-      { de:"35. GA NUONG",                en:"Grilled chicken breast w/ crispy veg & peanut sauce",      price:"14.90 €" },
-      { de:"36. BO XAO SA OT",            en:"Stir-fried beef w/ veg, lemongrass & onions (spicy)",       price:"13.90 €" },
-      { de:"37. BO LUC LAC",              en:"Shaky beef cubes w/ veg & cashew nuts",                   price:"13.90 €" },
-      { de:"40. VIT CHIEN CA RI",         en:"Crispy duck in mild coconut-curry sauce",                  price:"14.90 €" },
-      { de:"41. VIT CHIEN SOT DAU PHONG", en:"Crispy duck w/ veg & peanut sauce",                       price:"15.90 €" },
-      { de:"42. VIT NUONG HOT DIEU",      en:"Grilled duck in kaffir-lime cashew sauce",                  price:"17.90 €" },
-      { de:"43. TOM XAO SA OT",           en:"Stir-fried prawns w/ veg, lemongrass & onions (spicy)",    price:"16.90 €" },
-      { de:"44. CA RI TOM",               en:"Prawn curry w/ veg & potatoes",                           price:"16.90 €" },
-      { de:"45. TOM NUONG",               en:"Grilled prawns & sweet-potato fries",                     price:"18.90 €" },
-      { de:"46. CA HOI NUONG NUOC DUA",   en:"Grilled salmon in coconut sauce & peanuts",                price:"17.90 €" },
-      { de:"47. CANH CHUA CA HOI",        en:"Tamarind soup w/ salmon, pineapple & veg",                price:"17.90 €" },
-      { de:"48. CA HON NUONG DAC BIET",   en:"Special grilled prawns & veg w/ homemade sauce",           price:"18.90 €" },
-      { de:"50. COM SAN QUAN",            en:"Rice w/ your choice of pork, tofu, prawns or duck & house sauces", price:"16.90 €" },
-      { de:"51. BI DO SAPA",              en:"Sapa cod in coconut-lemongrass sauce",                    price:"12.90 €" },
-      { de:"52. COM RANG",                en:"Fried rice w/ veg, eggs & your choice of protein",        price:"17.90 €" },
-      { de:"53. MI UDON XAO",             en:"Stir-fried udon w/ veg, tofu, chicken, beef or prawns",   price:"15.90 €" },
-      { de:"55. COM GIA DINH (ab 2 Pers.)",en:"Family platter (soup + spring rolls + curry + salmon)",   price:"49.00 €" },
-      { de:"56. GA XIEN",                 en:"Grilled chicken skewers w/ pommes or sweet-potato fries", price:"8.90 €" },
-      { de:"60. BANH RAN",                en:"Sesame-fried rice cakes",                                price:"4.50 €" },
-      { de:"61. CHUOI CHIEN",             en:"Fried banana w/ honey & coconut flakes",                  price:"4.50 €" },
-      { de:"62. BANH CHUOI",              en:"Steamed banana in sticky-rice crust",                    price:"4.50 €" },
-      { de:"63. BANH KHOAI MON",          en:"Taro cake in sticky-rice crust w/ coconut cream",        price:"4.50 €" }
-    ];
-
-    // store selections
-    let selected={}, orders={};
-
-    // generate distinct hues
-    function rndHue(i){
-      return `hsl(${(i*137.5)%360},70%,50%)`;
-    }
-
-    // build person grid
-    function createPersonBtn(name){
-      const btn=document.createElement("button");
-      btn.className="person-btn"; btn.textContent=name;
-      btn.onclick=()=>{
-        if(selected[name]){
-          delete selected[name];
-          btn.classList.remove("selected"); btn.style.background="";
-        } else {
-          const hue=rndHue(Object.keys(selected).length);
-          selected[name]=hue;
-          btn.classList.add("selected"); btn.style.background=hue;
-        }
-      };
-      document.getElementById("personList").append(btn);
-    }
-    people.forEach(createPersonBtn);
-
-    function addNewName(){
-      const n=prompt("Neuen Namen eingeben / Enter new name")?.trim();
-      if(n && !people.includes(n)){
-        people.push(n);
-        createPersonBtn(n);
-      }
-    }
-
-    function renderSelected(){
-      const out=document.getElementById("selectedPersons");
-      out.innerHTML="";
-      Object.entries(selected).forEach(([n,c])=>{
-        const chip=document.createElement("span");
-        chip.className="person-chip"; chip.textContent=n;
-        chip.style.background=c;
-        out.append(chip);
-      });
-      document.getElementById("chooseFoodBtn").style.display=
-        Object.keys(selected).length?"block":"none";
-    }
-
-    document.getElementById("choosePersonBtn").onclick=()=>{
-      document.getElementById("personModal").classList.add("active");
-    };
-    function closePersonModal(){
-      document.getElementById("personModal").classList.remove("active");
-      renderSelected();
-    }
-
-    // render menu
-    document.getElementById("chooseFoodBtn").onclick=()=>{
-      const mc=document.getElementById("menuContainer");
-      mc.innerHTML="";
-      menu.forEach((it,i)=>{
-        const div=document.createElement("div");
-        div.className="menu-item";
-        div.innerHTML=`
-          <div class="menu-header">
-            <div class="menu-text">
-              <strong>${it.de}</strong><br><em>${it.en}</em>
-              <span class="price">${it.price}</span>
-            </div>
-            <button>Select / Auswählen</button>
-          </div>
-          <div class="assigned" id="a${i}"></div>`;
-        div.querySelector("button").onclick=()=>openAssign(i);
-        mc.append(div);
-      });
-      mc.style.display="block";
-      document.getElementById("actionBar").style.display="flex";
-    };
-
-    let currentIdx=0;
-    function openAssign(idx){
-      currentIdx=idx;
-      document.getElementById("assignTitle").textContent=menu[idx].de;
-      const list=document.getElementById("assignList");
-      list.innerHTML="";
-      Object.entries(selected).forEach(([n,c])=>{
-        let qty=(orders[n]||{})[idx]||0;
-        const d=document.createElement("div");
-        d.className="assign-person"; d.style.background=c;
-        if(qty) d.classList.add("selected");
-        d.innerHTML=n + (qty?`<span class="qty">${qty}</span>`:"");
-        d.onclick=()=>{
-          qty=(qty+1)%6;
-          if(qty) d.classList.add("selected"); else d.classList.remove("selected");
-          d.innerHTML=n + (qty?`<span class="qty">${qty}</span>`:"");
-          orders[n]=orders[n]||{};
-          if(qty) orders[n][idx]=qty; else delete orders[n][idx];
-        };
-        list.append(d);
-      });
-      document.getElementById("assignModal").classList.add("active");
-    }
-    function confirmAssignment(){
-      document.getElementById("assignModal").classList.remove("active");
-      menu.forEach((_,i)=>{
-        const wrap=document.getElementById(`a${i}`);
-        wrap.innerHTML="";
-        Object.entries(selected).forEach(([n,c])=>{
-          const q=(orders[n]||{})[i]||0;
-          if(q){
-            const chip=document.createElement("span");
-            chip.className="person-chip";
-            chip.textContent=`${n} (${q})`;
-            chip.style.background=c;
-            wrap.append(chip);
-          }
-        });
-      });
-    }
-
-    function buildMsg(){
-      let out="";
-      Object.keys(orders).forEach(n=>{
-        out+=n+":\n";
-        Object.entries(orders[n]).forEach(([i,q])=>{
-          const it=menu[i];
-          out+=`- ${q}× ${it.de} (${it.en}) – ${it.price}\n`;
-        });
-        out+="\n";
-      });
-      return out.trim();
-    }
-
-    document.getElementById("finishBtn").onclick=()=>{
-      const t=buildMsg();
-      navigator.clipboard.writeText(t).catch(()=>{});
-      const ua=navigator.userAgent;
-      const prefix=/iphone|ipad|android/i.test(ua)
-        ?"whatsapp://send?text=":"https://wa.me/?text=";
-      location.href=prefix+encodeURIComponent(t);
-    };
-    document.getElementById("copyBtn").onclick=()=>{
-      const t=buildMsg();
-      navigator.clipboard.writeText(t)
-        .then(()=>alert("Copied!"))
-        .catch(()=>alert(t));
-    };
-  </script>
-</body>
-</html>
+      // Vorspeisen
+      { de:"Achatschnecken mit feinen Gemüsewürfeln in Kräuterbutter, dazu frisches Brot", en:"Achatschnecken with fine vegetable cubes in herb butter, served with fresh bread", price:"8,00 €" },
+      { de:"Matjesfilet auf Schwarzbrot mit Salatgarnitur", en:"Matjes herring fillet on rye bread with salad garnish", price:"9,00 €" },
+      { de:"Vier Riesengarnelen mit feinen Gemüsestreifen in Knoblauch gebraten, dazu frisches Brot", en:"Four king prawns sautéed with fine vegetable strips in garlic, served with fresh bread", price:"15,50 €" },
+      { de:"Küstenteller – frischer Räucherlachs mit Meerrettich, in Knoblauchöl gebratene Riesengarnele, Matjesfilet Hausfrauenart & marinierte Nordseekrabben, dazu frisches Brot mit Küstenbutter", en:"Coastal platter – fresh smoked salmon with horseradish, king prawn fried in garlic oil, home-style matjes fillet & marinated North Sea shrimp, with fresh bread and coastal butter", price:"22,00 €" },
+      { de:"Carpaccio vom Rind mit gehobeltem Parmesan", en:"Beef carpaccio with shaved Parmesan", price:"17,00 €" },
+      { de:"Schälchen Oliven & frisches Brot", en:"Bowl of olives & fresh bread", price:"6,00 €" },
+      { de:"Käsewürfel, Oliven & frisches Brot", en:"Cheese cubes, olives & fresh bread", price:"12,00 €" },
+      { de:"Kleiner gemischter Salat* mit Joghurtdressing oder Vinaigrette", en:"Small mixed salad* with yogurt dressing or vinaigrette", price:"6,50 €" },
+      { de:"Hummus Dip mit Gemüsesticks & frisches Brot", en:"Hummus dip with vegetable sticks & fresh bread", price:"10,00 €" },
+      { de:"Kräuterbaguette mit Kräuterbutter", en:"Herb baguette with herb butter", price:"2,50 €" },
+      { de:"Kräuterbaguette mit Kräuterbutter & Käse überbacken", en:"Herb baguette with herb butter & melted cheese", price:"3,00 €" },
+      // Fleischlos glücklich
+      { de:"Chili sin Carne mit Soja-Hack, Jalapeños & Tortilla-Chips", en:"Chili sin carne with soy mince, jalapeños & tortilla chips", price:"11,00 €" },
+      { de:"Gemüse-Grilletta mit hausgemachtem Thai-Chili-Dip, Pommes oder Bratkartoffeln & Salatbeilage", en:"Vegetable grilletta with homemade Thai chili dip, fries or fried potatoes & side salad", price:"13,50 €" },
+      { de:"Fisch vom Feld mit hausgemachter Aioli, Pommes oder Bratkartoffeln & Salatbeilage", en:"Field fish with homemade aioli, fries or fried potatoes & side salad", price:"16,00 €" },
+      { de:"Frikadelle mit hausgemachtem Thai-Chili-Dip, Pommes oder Bratkartoffeln & Salatbeilage", en:"Vegetarian meatball with homemade Thai chili dip, fries or fried potatoes & side salad", price:"16,00 €" },
+      { de:"Knödelei – Dreierlei Semmelknödel (Tomaten, Käse & Spinat) mit Salatbeilage und Sauce nach Wahl", en:"Knödelei – trio of bread dumplings (tomato, cheese & spinach) with side salad and sauce of choice", price:"17,00 €" },
+      { de:"Vegetarischer Gemüseeintopf mit Knoblauch & Oliven, dazu Kräuterbaguette", en:"Vegetarian vegetable stew with garlic & olives, served with herb baguette", price:"13,00 €" },
+      { de:"Frische hausgemachte Bratkartoffeln mit 3 Spiegeleiern", en:"Fresh homemade fried potatoes with three fried eggs", price:"8,00 €" },
+      // Löffelglück
+      { de:"Tomatensuppe mit Sahnehaube", en:"Tomato soup with cream topping", price:"8,00 €" },
+      { de:"Zwiebelsuppe ‚französische Art‘ mit Käse überbacken", en:"French onion soup with gratinated cheese", price:"8,00 €" },
+      { de:"Feine Meerrettichgemüsesuppe mit Roastbeefstreifen", en:"Horseradish vegetable soup with roast beef strips", price:"8,00 €" },
+      { de:"Fischsuppe ‚Heiligenhafener Art‘ mit frischem Gemüse", en:"Heiligenhafen-style fish soup with fresh vegetables", price:"9,00 €" },
+      // Glücklich Grün
+      { de:"Kleiner gemischter Salat* mit Joghurtdressing oder Vinaigrette", en:"Small mixed salad* with yogurt dressing or vinaigrette", price:"6,50 €" },
+      { de:"Großer gemischter Salat* mit Joghurtdressing oder Vinaigrette", en:"Large mixed salad* with yogurt dressing or vinaigrette", price:"11,00 €" },
+      { de:"Salat mit Thunfisch", en:"Salad with tuna", price:"16,00 €" },
+      { de:"Salat mit vier Riesengarnelen", en:"Salad with four king prawns", price:"21,00 €" },
+      { de:"Salat mit Räucherlachs", en:"Salad with smoked salmon", price:"19,00 €" },
+      { de:"Salat mit in Curry gebratenen Hähnchenstreifen & frischen Früchten", en:"Salad with curry-fried chicken strips & fresh fruits", price:"18,00 €" },
+      { de:"Salat mit Rinderstreifen & Champignons", en:"Salad with beef strips & mushrooms", price:"21,00 €" },
+      { de:"Salat mit gebratenem Gemüse & Oliven (Knoblauch)", en:"Salad with roasted vegetables & olives (garlic)", price:"16,00 €" },
+      // Leckereien aus Ostholstein
+      { de:"Hausgemachtes Sauerfleisch mit Remouladensauce", en:"Homemade sour meat with remoulade sauce", price:"18,00 €" },
+      { de:"Bratkartoffelverhältnis – Roastbeef, Matjes, Sauerfleisch mit Remouladensauce", en:"Bratkartoffel ratio – roast beef, matjes, sour meat with remoulade sauce", price:"23,00 €" },
+      { de:"‚ANNO‘-Roastbeef rosa gebraten mit Remouladensauce", en:"'ANNO' roast beef pink roasted with remoulade sauce", price:"22,00 €" },
+      { de:"Hinterhaxe vom Deichwiesenlamm in Gemüse-Rosmarinsauce geschmort", en:"Shank of dike meadow lamb braised in vegetable rosemary sauce", price:"26,00 €" },
+      { de:"Schweineschnitzel ca. 300g paniert mit Limonenbutter", en:"Pork schnitzel approx. 300g breaded with lime butter", price:"17,00 €" },
+      { de:"Hähnchenschnitzel ca. 200g paniert mit Limonenbutter", en:"Chicken schnitzel approx. 200g breaded with lime butter", price:"15,00 €" },
+      // Frisch vom Grill
+      { de:"Steakteller ca. 220g – 3 kleine Rindersteaks mit Thai-Chili-Sauce", en:"Steak platter approx. 220g – 3 small beef steaks with Thai chile sauce", price:"25,00 €" },
+      { de:"Rumpsteak ca. 250g mit hausgemachter Kräuterbutter", en:"Rump steak approx. 250g with homemade herb butter", price:"29,00 €" },
+      { de:"Rumpsteak ca. 250g mit hausgemachter Kräuterbutter, geschmorten Zwiebeln & Champignons", en:"Rump steak approx. 250g with homemade herb butter, caramelized onions & mushrooms", price:"32,00 €" },
+      { de:"Grillplatte – Rumpsteak, Schweinefilet & Lammsteak auf Champignonsauce", en:"Mixed grill – rump steak, pork fillet & lamb steak on mushroom sauce", price:"31,00 €" },
+      { de:"Lammhüftsteaks ca. 220g mit hausgemachter Kräuterbutter & Spinat", en:"Lamb hip steaks approx. 220g with homemade herb butter & spinach", price:"29,00 €" },
+      { de:"Schweinemedaillons mit frischen Champignons auf Pfeffersauce", en:"Pork medallions with fresh mushrooms on pepper sauce", price:"28,00 €" },
+      { de:"Hackbällchen (Rind & Schwein) auf Pfeffersauce", en:"Meatballs (beef & pork) on pepper sauce", price:"16,00 €" },
+      { de:"Kräuterbaguette", en:"Herb baguette", price:"2,50 €" },
+      { de:"Kräuterbaguette mit Käse überbacken", en:"Herb baguette with melted cheese", price:"3,00 €" },
+      { de:"Gemüse-Mix", en:"Vegetable mix", price:"4,00 €" },
+      { de:"Spinat", en:"Spinach", price:"4,00 €" },
+      { de:"Zwei Spiegeleier", en:"Two fried eggs", price:"4,00 €" },
+      { de:"Geschmorte Zwiebeln und/oder Champignons", en:"Braised onions and/or mushrooms", price:"4,00 €" },
+      { de:"Sauce Champignon/Pfeffer/Tomate/Senf", en:"Mushroom/pepper/tomato/mustard sauce", price:"3,00 €" },
+      { de:"Hollandaise", en:"Hollandaise sauce", price:"3,00 €" },
+      // Für unsere Lütten
+      { de:"Pommes Frites", en:"French fries", price:"3,50 €" },
+      { de:"Backfischstäbchen", en:"Breaded fish sticks", price:"7,00 €" },
+      { de:"Kleines paniertes Schweineschnitzel", en:"Small breaded pork schnitzel", price:"8,00 €" },
+      { de:"Nürnberger Bratwürstchen", en:"Nuremberg sausages", price:"7,00 €" },
+      { de:"Hackbällchen (Rind & Schwein) mit Tomatensauce", en:
