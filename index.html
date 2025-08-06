@@ -90,7 +90,7 @@ Wähle, für wen du bestellst – es können mehrere Personen sein.</p>
 <script>
 const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
 
-/* --- OCR-extracted menu from your photos --- */
+// Menu: from the images, not a generic menu
 const menu = [
   {de:"Lachs Maki Roll",en:"Salmon Maki Roll",price:"6,75 €"},
   {de:"Avocado Maki Roll",en:"Avocado Maki Roll",price:"6,30 €"},
@@ -110,171 +110,183 @@ const menu = [
   {de:"Salmon Philadelphia Roll",en:"Salmon Philadelphia Roll",price:"13,95 €"},
   {de:"Veggie Roll",en:"Veggie Roll (avocado, cucumber, carrot)",price:"9,45 €"},
   {de:"Double Salmon Roll",en:"Double Salmon Roll (cooked salmon, avocado, honey-mustard sauce)",price:"16,65 €"},
-  {de:"Rotes Chicken-Curry",en:"Red Chicken Curry (chicken, chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"17,55 €"},
-  {de:"Rotes Fisch-Curry",en:"Red Fish Curry (pollock, chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"19,35 €"},
-  {de:"Rotes Gemüse-Curry",en:"Red Veggie Curry (chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"15,75 €"},
-  {de:"Rindfleisch-Curry",en:"Beef Curry (beef, chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"19,35 €"},
-  {de:"Garnelen-Curry",en:"Prawn Curry (prawns, chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"19,35 €"},
+  {de:"Rotes Chicken-Curry",en:"Red Chicken Curry",price:"17,55 €"},
+  {de:"Rotes Fisch-Curry",en:"Red Fish Curry",price:"19,35 €"},
+  {de:"Rotes Gemüse-Curry",en:"Red Veggie Curry",price:"15,75 €"},
+  {de:"Rindfleisch-Curry",en:"Beef Curry",price:"19,35 €"},
+  {de:"Garnelen-Curry",en:"Prawn Curry",price:"19,35 €"},
   {de:"Beef Poke Bowl",en:"Beef Poke Bowl",price:"18,45 €"},
   {de:"Tuna Poke Bowl",en:"Tuna Poke Bowl",price:"18,45 €"},
   {de:"Teriyaki Salmon Bowl",en:"Teriyaki Salmon Bowl",price:"17,55 €"},
   {de:"Fried Chicken Bowl",en:"Fried Chicken Bowl",price:"15,75 €"},
   {de:"Veggi Bowl",en:"Veggie Bowl",price:"14,85 €"},
-  {de:"Tibetianische Nudelsuppe",en:"Tibetan Noodle Soup (beef, homemade noodles, spring onion, tomato, vegetables)",price:"14,85 €"},
-  {de:"Mii Nudeln „Street Food Style“",en:"Mii Noodles “Street Food Style” (beef, ginger, onion, garlic, paprika, teriyaki sauce, sesame)",price:"16,65 €"},
-  {de:"Tempura Garnelen",en:"Tempura Prawns (black tiger prawns, chili-mayo, sweet chili sauce)",price:"16,65 €"},
-  {de:"Lachsfilet",en:"Salmon Fillet (salmon, rosemary potatoes, salad)",price:"20,25 €"},
+  {de:"Tibetianische Nudelsuppe",en:"Tibetan Noodle Soup",price:"14,85 €"},
+  {de:"Mii Nudeln „Street Food Style“",en:"Mii Noodles “Street Food Style”",price:"16,65 €"},
+  {de:"Tempura Garnelen",en:"Tempura Prawns",price:"16,65 €"},
+  {de:"Lachsfilet",en:"Salmon Fillet",price:"20,25 €"},
   {de:"Currywurst mit Pommes",en:"Currywurst with Fries",price:"11,25 €"},
-  {de:"Kapitän Blaubärs „Meeresfantasie“",en:"Captain Bluebear's “Sea Fantasy” (fish fingers, fries)",price:"6,75 €"},
-  {de:"Crunchy Chicken",en:"Crunchy Chicken (nuggets, fries)",price:"6,75 €"},
+  {de:"Kapitän Blaubärs „Meeresfantasie“",en:"Captain Bluebear's “Sea Fantasy”",price:"6,75 €"},
+  {de:"Crunchy Chicken",en:"Crunchy Chicken",price:"6,75 €"},
   {de:"Pommes frites",en:"French Fries",price:"4,05 €"},
   {de:"Kuchen des Tages",en:"Cake of the Day",price:"4,05 €"}
 ];
 
-/* ---------- STATE & ELEMENT REFS ---------- */
-const selected = Object.create(null), orders = Object.create(null);
-const els = {
-  personModal     : document.getElementById("personModal"),
-  personList      : document.getElementById("personList"),
-  chooseFoodBtn   : document.getElementById("chooseFoodBtn"),
-  selectedPersons : document.getElementById("selectedPersons"),
-  menuContainer   : document.getElementById("menuContainer"),
-  actionBar       : document.getElementById("actionBar"),
-  assignModal     : document.getElementById("assignModal"),
-  assignTitle     : document.getElementById("assignTitle"),
-  assignList      : document.getElementById("assignList")
-};
-
-/* ---------- DISTINCT COLOUR PICKER ---------- */
-const usedHues=[];
-const dist=(a,b)=>Math.min(Math.abs(a-b),360-Math.abs(a-b));
-function pickColour(){
-  for(let i=0;i<720;i++){
-    const h=Math.floor(Math.random()*360);
-    if(usedHues.every(u=>dist(u,h)>=40)){usedHues.push(h);return`hsl(${h},70%,50%)`;}
-  }
-  return`hsl(${Math.floor(Math.random()*360)},70%,50%)`;
-}
-
-/* ---------- PERSON GRID ---------- */
-function createPersonBtn(name){
-  const btn=document.createElement("button");
-  btn.className="person-btn";
-  btn.textContent=name;
-  btn.onclick=()=>{
-    if(selected[name]){
-      const h=parseInt(selected[name].match(/hsl\((\d+)/)[1],10);
-      usedHues.splice(usedHues.indexOf(h),1);
-      delete selected[name];
-      btn.classList.remove("selected");
-      btn.style.background="";
-    }else{
-      selected[name]=pickColour();
-      btn.classList.add("selected");
-      btn.style.background=selected[name];
-    }
+window.onload = function() {
+  /* ---------- STATE & ELEMENT REFS ---------- */
+  const selected = Object.create(null), orders = Object.create(null);
+  const els = {
+    personModal     : document.getElementById("personModal"),
+    personList      : document.getElementById("personList"),
+    chooseFoodBtn   : document.getElementById("chooseFoodBtn"),
+    selectedPersons : document.getElementById("selectedPersons"),
+    menuContainer   : document.getElementById("menuContainer"),
+    actionBar       : document.getElementById("actionBar"),
+    assignModal     : document.getElementById("assignModal"),
+    assignTitle     : document.getElementById("assignTitle"),
+    assignList      : document.getElementById("assignList")
   };
-  els.personList.append(btn);
-}
-function renderPersonList() {
-  els.personList.innerHTML = "";
-  people.forEach(createPersonBtn);
-}
-function addNewName(){
-  const n=prompt("Enter new name")?.trim();
-  if(n&&!people.includes(n)){people.push(n);createPersonBtn(n);}
-}
 
-/* ---------- SELECTED BAR ---------- */
-function renderSelected(){
-  els.selectedPersons.innerHTML="";
-  for(const [n,c] of Object.entries(selected)){
-    const chip=document.createElement("span");
-    chip.className="person-chip";
-    chip.textContent=n;
-    chip.style.background=c;
-    els.selectedPersons.append(chip);
-  }
-  els.chooseFoodBtn.style.display=Object.keys(selected).length?"block":"none";
-}
-
-/* ---------- MODAL FLOW ---------- */
-document.getElementById("choosePersonBtn").onclick=()=>{
-  renderPersonList();
-  els.personModal.classList.add("active");
-};
-function closePersonModal(){els.personModal.classList.remove("active");renderSelected();}
-window.closePersonModal=closePersonModal;
-
-/* ---------- MENU RENDER ---------- */
-els.chooseFoodBtn.onclick=()=>{
-  els.menuContainer.innerHTML="";
-  menu.forEach((it,i)=>{
-    const div=document.createElement("div");
-    div.className="menu-item";
-    div.innerHTML=`<div class="menu-header">
-       <div><strong>${it.de}</strong><br><em>${it.en}</em> <span class="price">${it.price}</span></div>
-       <button onclick="openAssign(${i})">Select</button>
-     </div>
-     <div class="assigned" id="a${i}"></div>`;
-    els.menuContainer.append(div);
-  });
-  els.menuContainer.style.display="block";
-  els.actionBar.style.display="flex";
-};
-
-/* ---------- ASSIGN FLOW ---------- */
-function openAssign(idx){
-  els.assignTitle.textContent=menu[idx].de;
-  els.assignList.innerHTML="";
-  for(const [n,c] of Object.entries(selected)){
-    let qty=(orders[n]||{})[idx]||0;
-    const card=document.createElement("div");
-    card.className="assign-person";
-    card.style.background=c;
-    const paint=()=>card.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
-    paint();
-    card.onclick=()=>{
-      qty=(qty+1)%6;
-      qty?card.classList.add("selected"):card.classList.remove("selected");
-      paint();
-      orders[n]=orders[n]||{};
-      qty?orders[n][idx]=qty:delete orders[n][idx];
-    };
-    if(qty)card.classList.add("selected");
-    els.assignList.append(card);
-  }
-  els.assignModal.classList.add("active");
-}
-window.openAssign=openAssign;
-function confirmAssignment(){
-  els.assignModal.classList.remove("active");
-  menu.forEach((_,i)=>{
-    const wrap=document.getElementById(`a${i}`);
-    wrap.innerHTML="";
-    for(const [n,c] of Object.entries(selected)){
-      const q=(orders[n]||{})[i]||0;
-      if(q){
-        const chip=document.createElement("span");
-        chip.className="person-chip";
-        chip.textContent=`${n} (${q})`;
-        chip.style.background=c;
-        wrap.append(chip);
-      }
+  /* ---------- DISTINCT COLOUR PICKER ---------- */
+  const usedHues=[];
+  const dist=(a,b)=>Math.min(Math.abs(a-b),360-Math.abs(a-b));
+  function pickColour(){
+    for(let i=0;i<720;i++){
+      const h=Math.floor(Math.random()*360);
+      if(usedHues.every(u=>dist(u,h)>=40)){usedHues.push(h);return`hsl(${h},70%,50%)`;}
     }
-  });
-}
-window.confirmAssignment=confirmAssignment;
+    return`hsl(${Math.floor(Math.random()*360)},70%,50%)`;
+  }
 
-/* ---------- EXPORT ---------- */
-const buildMsg=()=>Object.keys(orders).map(n=>{
-  const lines=Object.entries(orders[n])
-        .map(([i,q])=>`- ${q}× ${menu[i].de} (${menu[i].en}) – ${menu[i].price}`)
-        .join("\n");
-  return `${n}:\n${lines}`;
-}).join("\n\n");
+  /* ---------- PERSON GRID ---------- */
+  function createPersonBtn(name){
+    const btn=document.createElement("button");
+    btn.className="person-btn";
+    btn.textContent=name;
+    btn.onclick=()=>{
+      if(selected[name]){
+        const h=parseInt(selected[name].match(/hsl\((\d+)/)[1],10);
+        usedHues.splice(usedHues.indexOf(h),1);
+        delete selected[name];
+        btn.classList.remove("selected");
+        btn.style.background="";
+      }else{
+        selected[name]=pickColour();
+        btn.classList.add("selected");
+        btn.style.background=selected[name];
+      }
+    };
+    els.personList.append(btn);
+  }
+  function renderPersonList() {
+    els.personList.innerHTML = "";
+    people.forEach(createPersonBtn);
+  }
+  function addNewName(){
+    const n=prompt("Enter new name")?.trim();
+    if(n&&!people.includes(n)){people.push(n);createPersonBtn(n);}
+  }
+  window.addNewName = addNewName;
 
-document.getElementById("finishBtn").onclick=()=>{
-  const t=buildMsg();
-  navigator.clipboard.writeText(t).catch(()=>{});
-  const base=/iphone|ipad|android/i.test(navigator.userAgent)?"whatsapp://send?text=":"https://wa.me/?text=";
+  /* ---------- SELECTED BAR ---------- */
+  function renderSelected(){
+    els.selectedPersons.innerHTML="";
+    for(const [n,c] of Object.entries(selected)){
+      const chip=document.createElement("span");
+      chip.className="person-chip";
+      chip.textContent=n;
+      chip.style.background=c;
+      els.selectedPersons.append(chip);
+    }
+    els.chooseFoodBtn.style.display=Object.keys(selected).length?"block":"none";
+  }
+
+  /* ---------- MODAL FLOW ---------- */
+  document.getElementById("choosePersonBtn").onclick=()=>{
+    renderPersonList();
+    els.personModal.classList.add("active");
+  };
+  function closePersonModal(){els.personModal.classList.remove("active");renderSelected();}
+  window.closePersonModal=closePersonModal;
+
+  /* ---------- MENU RENDER ---------- */
+  els.chooseFoodBtn.onclick=()=>{
+    els.menuContainer.innerHTML="";
+    menu.forEach((it,i)=>{
+      const div=document.createElement("div");
+      div.className="menu-item";
+      div.innerHTML=`<div class="menu-header">
+         <div><strong>${it.de}</strong><br><em>${it.en}</em> <span class="price">${it.price}</span></div>
+         <button onclick="openAssign(${i})">Select</button>
+       </div>
+       <div class="assigned" id="a${i}"></div>`;
+      els.menuContainer.append(div);
+    });
+    els.menuContainer.style.display="block";
+    els.actionBar.style.display="flex";
+  };
+
+  /* ---------- ASSIGN FLOW ---------- */
+  function openAssign(idx){
+    els.assignTitle.textContent=menu[idx].de;
+    els.assignList.innerHTML="";
+    for(const [n,c] of Object.entries(selected)){
+      let qty=(orders[n]||{})[idx]||0;
+      const card=document.createElement("div");
+      card.className="assign-person";
+      card.style.background=c;
+      const paint=()=>card.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
+      paint();
+      card.onclick=()=>{
+        qty=(qty+1)%6;
+        qty?card.classList.add("selected"):card.classList.remove("selected");
+        paint();
+        orders[n]=orders[n]||{};
+        qty?orders[n][idx]=qty:delete orders[n][idx];
+      };
+      if(qty)card.classList.add("selected");
+      els.assignList.append(card);
+    }
+    els.assignModal.classList.add("active");
+  }
+  window.openAssign=openAssign;
+  function confirmAssignment(){
+    els.assignModal.classList.remove("active");
+    menu.forEach((_,i)=>{
+      const wrap=document.getElementById(`a${i}`);
+      wrap.innerHTML="";
+      for(const [n,c] of Object.entries(selected)){
+        const q=(orders[n]||{})[i]||0;
+        if(q){
+          const chip=document.createElement("span");
+          chip.className="person-chip";
+          chip.textContent=`${n} (${q})`;
+          chip.style.background=c;
+          wrap.append(chip);
+        }
+      }
+    });
+  }
+  window.confirmAssignment=confirmAssignment;
+
+  /* ---------- EXPORT ---------- */
+  const buildMsg=()=>Object.keys(orders).map(n=>{
+    const lines=Object.entries(orders[n])
+          .map(([i,q])=>`- ${q}× ${menu[i].de} (${menu[i].en}) – ${menu[i].price}`)
+          .join("\n");
+    return `${n}:\n${lines}`;
+  }).join("\n\n");
+
+  document.getElementById("finishBtn").onclick=()=>{
+    const t=buildMsg();
+    navigator.clipboard.writeText(t).catch(()=>{});
+    const base=/iphone|ipad|android/i.test(navigator.userAgent)?"whatsapp://send?text=":"https://wa.me/?text=";
+    location.href=base+encodeURIComponent(t);
+  };
+  document.getElementById("copyBtn").onclick=()=>{
+    const t=buildMsg();
+    navigator.clipboard.writeText(t).then(()=>alert("Copied!")).catch(()=>alert(t));
+  };
+};
+</script>
+</body>
+</html>
