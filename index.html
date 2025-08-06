@@ -40,8 +40,7 @@
                flex-wrap:wrap;gap:.5rem}
   .price{font-weight:700;margin-left:.5rem}
   .assigned{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
-  .assign-person{flex:1 1 48%;height:var(--btn-h);display:flex;align-items:center;
-                 justify-content:center;background:var(--btn-bg);color:#fff;border-radius:6px;
+  .assign-person{flex:1 1 48%;height:var(--btn-h);display:flex;align-items:center;justify-content:center;background:var(--btn-bg);color:#fff;border-radius:6px;
                  position:relative;opacity:.6;border:2px solid transparent}
   .assign-person.selected{opacity:1;border-color:#000}
   .assign-person .qty{position:absolute;bottom:-6px;right:-6px;width:24px;height:24px;
@@ -89,71 +88,47 @@ Wähle, für wen du bestellst – es können mehrere Personen sein.</p>
 </div>
 
 <script>
-/* ---------- PEOPLE ---------- */
 const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
 
-/* ---------- NORBU AM MEER MENU – OCR from photos ---------- */
+/* --- OCR-extracted menu from your photos --- */
 const menu = [
-  // Vorspeisen / Starters
-  {de:"Frühlingsrollen",en:"Spring rolls",price:"5,50 €"},
-  {de:"Edamame",en:"Edamame",price:"5,00 €"},
-  {de:"Wakame-Salat",en:"Wakame salad",price:"6,00 €"},
-  {de:"Suppen (Miso, Kokos, Wantan)",en:"Soups (miso, coconut, wonton)",price:"5,00 €"},
-  {de:"Gyoza mit Hähnchen",en:"Gyoza with chicken",price:"6,50 €"},
-  {de:"Gyoza mit Gemüse",en:"Gyoza with vegetables",price:"6,50 €"},
-  {de:"Kimchi",en:"Kimchi",price:"4,50 €"},
-  // Sushi Maki
-  {de:"Lachs Maki (8 Stück)",en:"Salmon maki (8 pcs)",price:"6,00 €"},
-  {de:"Thunfisch Maki (8 Stück)",en:"Tuna maki (8 pcs)",price:"6,50 €"},
-  {de:"Gurke Maki (8 Stück)",en:"Cucumber maki (8 pcs)",price:"5,00 €"},
-  {de:"Avocado Maki (8 Stück)",en:"Avocado maki (8 pcs)",price:"5,50 €"},
-  // Inside-Out Rolls
-  {de:"California Roll (8 Stück)",en:"California roll (8 pcs)",price:"9,50 €"},
-  {de:"Lachs Avocado Roll (8 Stück)",en:"Salmon avocado roll (8 pcs)",price:"10,00 €"},
-  {de:"Ebi Tempura Roll (8 Stück)",en:"Ebi tempura roll (8 pcs)",price:"11,00 €"},
-  {de:"Vegetarische Roll (8 Stück)",en:"Vegetarian roll (8 pcs)",price:"9,00 €"},
-  {de:"Thunfisch Avocado Roll (8 Stück)",en:"Tuna avocado roll (8 pcs)",price:"10,50 €"},
-  // Sashimi
-  {de:"Sashimi Lachs (6 Stück)",en:"Salmon sashimi (6 pcs)",price:"12,50 €"},
-  {de:"Sashimi Thunfisch (6 Stück)",en:"Tuna sashimi (6 pcs)",price:"13,00 €"},
-  {de:"Sashimi Mix (12 Stück)",en:"Sashimi mix (12 pcs)",price:"22,00 €"},
-  // Nigiri
-  {de:"Nigiri Lachs (2 Stück)",en:"Salmon nigiri (2 pcs)",price:"5,50 €"},
-  {de:"Nigiri Thunfisch (2 Stück)",en:"Tuna nigiri (2 pcs)",price:"6,00 €"},
-  {de:"Nigiri Ebi (2 Stück)",en:"Prawn nigiri (2 pcs)",price:"5,50 €"},
-  {de:"Nigiri Avocado (2 Stück)",en:"Avocado nigiri (2 pcs)",price:"4,50 €"},
-  // Bowls
-  {de:"Lachs Bowl",en:"Salmon bowl",price:"13,50 €"},
-  {de:"Thunfisch Bowl",en:"Tuna bowl",price:"14,00 €"},
-  {de:"Veggie Bowl",en:"Veggie bowl",price:"12,00 €"},
-  {de:"Chicken Bowl",en:"Chicken bowl",price:"13,00 €"},
-  // Hauptgerichte / Main Courses
-  {de:"Gebratener Reis mit Gemüse",en:"Fried rice with vegetables",price:"9,50 €"},
-  {de:"Gebratener Reis mit Hähnchen",en:"Fried rice with chicken",price:"11,00 €"},
-  {de:"Gebratener Reis mit Garnelen",en:"Fried rice with prawns",price:"12,50 €"},
-  {de:"Gebratene Nudeln mit Gemüse",en:"Fried noodles with vegetables",price:"9,50 €"},
-  {de:"Gebratene Nudeln mit Hähnchen",en:"Fried noodles with chicken",price:"11,00 €"},
-  {de:"Gebratene Nudeln mit Garnelen",en:"Fried noodles with prawns",price:"12,50 €"},
-  // Norbu Spezialitäten
-  {de:"Ente mit Gemüse und Reis",en:"Duck with vegetables and rice",price:"15,00 €"},
-  {de:"Rindfleisch mit Brokkoli und Reis",en:"Beef with broccoli and rice",price:"14,50 €"},
-  {de:"Hähnchen Süß-Sauer",en:"Sweet-sour chicken",price:"13,00 €"},
-  {de:"Gebackenes Gemüse mit Reis",en:"Battered vegetables with rice",price:"12,00 €"},
-  // Extras
-  {de:"Reis",en:"Rice",price:"2,50 €"},
-  {de:"Süß-Sauer-Sauce",en:"Sweet-sour sauce",price:"1,50 €"},
-  {de:"Sojasauce",en:"Soy sauce",price:"1,00 €"},
-  {de:"Wasabi",en:"Wasabi",price:"1,00 €"},
-  // Nachtisch / Dessert
-  {de:"Mochi Eis (2 Stück)",en:"Mochi ice cream (2 pcs)",price:"5,00 €"},
-  {de:"Gebackene Banane mit Honig",en:"Fried banana with honey",price:"5,50 €"},
-  {de:"Sesambällchen (3 Stück)",en:"Sesame balls (3 pcs)",price:"4,50 €"},
-  // Getränke (main non-alc)
-  {de:"Wasser 0,5l",en:"Water 0.5l",price:"2,50 €"},
-  {de:"Apfelschorle 0,5l",en:"Apple spritzer 0.5l",price:"3,00 €"},
-  {de:"Cola 0,5l",en:"Cola 0.5l",price:"3,00 €"},
-  {de:"Fanta 0,5l",en:"Fanta 0.5l",price:"3,00 €"},
-  {de:"Tee",en:"Tea",price:"2,00 €"}
+  {de:"Lachs Maki Roll",en:"Salmon Maki Roll",price:"6,75 €"},
+  {de:"Avocado Maki Roll",en:"Avocado Maki Roll",price:"6,30 €"},
+  {de:"Crispy Salmon Roll",en:"Crispy Salmon Roll (baked salmon, cream cheese, edamame)",price:"12,15 €"},
+  {de:"Crispy Duck Roll",en:"Crispy Duck Roll (baked duck, mango, romaine, hoisin, chili mayo)",price:"12,15 €"},
+  {de:"Crispy Veggi Roll",en:"Crispy Veggie Roll (spring onion, pepper, cucumber, avocado, cream cheese)",price:"10,35 €"},
+  {de:"Tempura Prawn Roll",en:"Tempura Prawn Roll (tempura prawn, cucumber, romaine, chili-mayo, sesame)",price:"14,85 €"},
+  {de:"Crunchy Salmon Roll",en:"Crunchy Salmon Roll (salmon, avocado, spring onion, crunchy tempura, chili-mayo, teriyaki, sesame)",price:"13,05 €"},
+  {de:"Sushi a la Chef Classic",en:"Sushi a la Chef Classic (assorted rolls, optionally with sashimi)",price:"33,75 €"},
+  {de:"Sushi a la Chef Veggi",en:"Sushi a la Chef Veggi (veggie variation)",price:"24,75 €"},
+  {de:"Lachs Tuna Sashimi",en:"Salmon Tuna Sashimi (6)",price:"14,85 €"},
+  {de:"Lachs Sashimi",en:"Salmon Sashimi (6)",price:"13,50 €"},
+  {de:"Tuna Sashimi",en:"Tuna Sashimi (6)",price:"16,20 €"},
+  {de:"Tuna Maki Roll",en:"Tuna Maki Roll",price:"7,65 €"},
+  {de:"Gurken Maki Roll",en:"Cucumber Maki Roll",price:"5,85 €"},
+  {de:"Avocado Gurken Roll",en:"Avocado Cucumber Roll",price:"8,55 €"},
+  {de:"Salmon Philadelphia Roll",en:"Salmon Philadelphia Roll",price:"13,95 €"},
+  {de:"Veggie Roll",en:"Veggie Roll (avocado, cucumber, carrot)",price:"9,45 €"},
+  {de:"Double Salmon Roll",en:"Double Salmon Roll (cooked salmon, avocado, honey-mustard sauce)",price:"16,65 €"},
+  {de:"Rotes Chicken-Curry",en:"Red Chicken Curry (chicken, chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"17,55 €"},
+  {de:"Rotes Fisch-Curry",en:"Red Fish Curry (pollock, chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"19,35 €"},
+  {de:"Rotes Gemüse-Curry",en:"Red Veggie Curry (chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"15,75 €"},
+  {de:"Rindfleisch-Curry",en:"Beef Curry (beef, chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"19,35 €"},
+  {de:"Garnelen-Curry",en:"Prawn Curry (prawns, chili, ginger, garlic, lemongrass, lime leaves, vegetables, coconut, basmati, sesame)",price:"19,35 €"},
+  {de:"Beef Poke Bowl",en:"Beef Poke Bowl",price:"18,45 €"},
+  {de:"Tuna Poke Bowl",en:"Tuna Poke Bowl",price:"18,45 €"},
+  {de:"Teriyaki Salmon Bowl",en:"Teriyaki Salmon Bowl",price:"17,55 €"},
+  {de:"Fried Chicken Bowl",en:"Fried Chicken Bowl",price:"15,75 €"},
+  {de:"Veggi Bowl",en:"Veggie Bowl",price:"14,85 €"},
+  {de:"Tibetianische Nudelsuppe",en:"Tibetan Noodle Soup (beef, homemade noodles, spring onion, tomato, vegetables)",price:"14,85 €"},
+  {de:"Mii Nudeln „Street Food Style“",en:"Mii Noodles “Street Food Style” (beef, ginger, onion, garlic, paprika, teriyaki sauce, sesame)",price:"16,65 €"},
+  {de:"Tempura Garnelen",en:"Tempura Prawns (black tiger prawns, chili-mayo, sweet chili sauce)",price:"16,65 €"},
+  {de:"Lachsfilet",en:"Salmon Fillet (salmon, rosemary potatoes, salad)",price:"20,25 €"},
+  {de:"Currywurst mit Pommes",en:"Currywurst with Fries",price:"11,25 €"},
+  {de:"Kapitän Blaubärs „Meeresfantasie“",en:"Captain Bluebear's “Sea Fantasy” (fish fingers, fries)",price:"6,75 €"},
+  {de:"Crunchy Chicken",en:"Crunchy Chicken (nuggets, fries)",price:"6,75 €"},
+  {de:"Pommes frites",en:"French Fries",price:"4,05 €"},
+  {de:"Kuchen des Tages",en:"Cake of the Day",price:"4,05 €"}
 ];
 
 /* ---------- STATE & ELEMENT REFS ---------- */
@@ -201,7 +176,10 @@ function createPersonBtn(name){
   };
   els.personList.append(btn);
 }
-people.forEach(createPersonBtn);
+function renderPersonList() {
+  els.personList.innerHTML = "";
+  people.forEach(createPersonBtn);
+}
 function addNewName(){
   const n=prompt("Enter new name")?.trim();
   if(n&&!people.includes(n)){people.push(n);createPersonBtn(n);}
@@ -221,7 +199,10 @@ function renderSelected(){
 }
 
 /* ---------- MODAL FLOW ---------- */
-document.getElementById("choosePersonBtn").onclick=()=>els.personModal.classList.add("active");
+document.getElementById("choosePersonBtn").onclick=()=>{
+  renderPersonList();
+  els.personModal.classList.add("active");
+};
 function closePersonModal(){els.personModal.classList.remove("active");renderSelected();}
 window.closePersonModal=closePersonModal;
 
@@ -295,4 +276,5 @@ const buildMsg=()=>Object.keys(orders).map(n=>{
 
 document.getElementById("finishBtn").onclick=()=>{
   const t=buildMsg();
-  navigator.clip
+  navigator.clipboard.writeText(t).catch(()=>{});
+  const base=/iphone|ipad|android/i.test(navigator.userAgent)?"whatsapp://send?text=":"https://wa.me/?text=";
