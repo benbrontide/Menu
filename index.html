@@ -92,77 +92,68 @@ Wähle, für wen du bestellst – es können mehrere Personen sein.</p>
 /* ---------- PEOPLE ---------- */
 const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
 
-/* ---------- FULL 69-ITEM MENU FOR NORBU AM MEER ---------- */
+/* ---------- NORBU AM MEER MENU – OCR from photos ---------- */
 const menu = [
-{de:"Achatschnecken mit feinen Gemüsewürfeln in Kräuterbutter, dazu frisches Brot",en:"Achatschnecken with fine vegetable cubes in herb butter, served with fresh bread",price:"8,00 €"},
-{de:"Matjesfilet auf Schwarzbrot mit Salatgarnitur",en:"Matjes herring fillet on rye bread with salad garnish",price:"9,00 €"},
-{de:"Vier Riesengarnelen mit feinen Gemüsestreifen in Knoblauch gebraten, dazu frisches Brot",en:"Four king prawns sautéed with vegetable strips in garlic, served with fresh bread",price:"15,50 €"},
-{de:"Küstenteller – frischer Räucherlachs mit Meerrettich, Riesengarnele, Matjesfilet & Nordseekrabben, Brot",en:"Coastal platter – smoked salmon, king prawn, matjes fillet & North Sea shrimp with bread",price:"22,00 €"},
-{de:"Carpaccio vom Rind mit gehobeltem Parmesan",en:"Beef carpaccio with shaved Parmesan",price:"17,00 €"},
-{de:"Schälchen Oliven & frisches Brot",en:"Bowl of olives & fresh bread",price:"6,00 €"},
-{de:"Käsewürfel, Oliven & frisches Brot",en:"Cheese cubes, olives & fresh bread",price:"12,00 €"},
-{de:"Kleiner gemischter Salat* mit Dressing",en:"Small mixed salad* with dressing",price:"6,50 €"},
-{de:"Hummus Dip mit Gemüsesticks & frisches Brot",en:"Hummus dip with vegetable sticks & fresh bread",price:"10,00 €"},
-{de:"Kräuterbaguette mit Kräuterbutter",en:"Herb baguette with herb butter",price:"2,50 €"},
-{de:"Kräuterbaguette mit Kräuterbutter & Käse überbacken",en:"Herb baguette with herb butter & cheese",price:"3,00 €"},
-{de:"Chili sin Carne mit Soja-Hack, Jalapeños & Tortilla-Chips",en:"Chili sin carne with soy mince, jalapeños & tortilla chips",price:"11,00 €"},
-{de:"Gemüse-Grilletta mit Thai-Chili-Dip, Pommes/Bratkartoffeln & Salat",en:"Vegetable Grilletta with Thai chili dip, fries/fried potatoes & salad",price:"13,50 €"},
-{de:"Fisch vom Feld (vegan) mit Aioli, Pommes/Bratkartoffeln & Salat",en:"Plant-based 'fish' with aioli, fries/fried potatoes & salad",price:"16,00 €"},
-{de:"Vegane Frikadelle mit Thai-Chili-Dip, Pommes/Bratkartoffeln & Salat",en:"Vegan patty with Thai-chili dip, fries/fried potatoes & salad",price:"16,00 €"},
-{de:"Knödelei – Dreierlei Semmelknödel, Salat & Sauce",en:"Trio of bread dumplings with salad & sauce",price:"17,00 €"},
-{de:"Vegetarischer Gemüseeintopf mit Knoblauch & Oliven, Kräuterbaguette",en:"Vegetable stew with garlic & olives, herb baguette",price:"13,00 €"},
-{de:"Frische Bratkartoffeln mit drei Spiegeleiern",en:"Fried potatoes with three fried eggs",price:"8,00 €"},
-{de:"Tomatensuppe mit Sahnehaube",en:"Tomato soup with cream",price:"8,00 €"},
-{de:"Zwiebelsuppe französische Art mit Käse",en:"French onion soup with cheese",price:"8,00 €"},
-{de:"Meerrettichgemüsesuppe mit Roastbeefstreifen",en:"Horseradish vegetable soup with roast beef strips",price:"8,00 €"},
-{de:"Fischsuppe Heiligenhafener Art mit frischem Gemüse",en:"Heiligenhafen fish soup with fresh vegetables",price:"9,00 €"},
-{de:"Großer gemischter Salat* mit Dressing",en:"Large mixed salad* with dressing",price:"11,00 €"},
-{de:"Salat mit Thunfisch",en:"Salad with tuna",price:"16,00 €"},
-{de:"Salat mit vier Riesengarnelen",en:"Salad with four king prawns",price:"21,00 €"},
-{de:"Salat mit Räucherlachs",en:"Salad with smoked salmon",price:"19,00 €"},
-{de:"Salat mit Curry-Hähnchenstreifen & Früchten",en:"Salad with curry chicken strips & fruit",price:"18,00 €"},
-{de:"Salat mit Rinderstreifen & Champignons",en:"Salad with beef strips & mushrooms",price:"21,00 €"},
-{de:"Salat mit gebratenem Gemüse & Oliven",en:"Salad with roasted vegetables & olives",price:"16,00 €"},
-{de:"Hausgemachtes Sauerfleisch mit Remouladensauce",en:"Homemade sour meat with remoulade",price:"18,00 €"},
-{de:"Bratkartoffelverhältnis – Roastbeef, Matjes, Sauerfleisch",en:"Roast beef, matjes & sour meat platter",price:"23,00 €"},
-{de:"ANNO-Roastbeef rosa gebraten mit Remouladensauce",en:"ANNO roast beef (pink) with remoulade",price:"22,00 €"},
-{de:"Hinterhaxe vom Deichwiesenlamm in Rosmarinsauce",en:"Lamb shank in rosemary sauce",price:"26,00 €"},
-{de:"Schweineschnitzel ca.300 g paniert mit Limonenbutter",en:"Pork schnitzel ~300 g breaded with lime butter",price:"17,00 €"},
-{de:"Hähnchenschnitzel ca.200 g paniert mit Limonenbutter",en:"Chicken schnitzel ~200 g breaded with lime butter",price:"15,00 €"},
-{de:"Steakteller ca.220 g – 3 Rindersteaks mit Thai-Chili-Sauce",en:"Steak plate ~220 g – 3 beef steaks with Thai-chili sauce",price:"25,00 €"},
-{de:"Rumpsteak ca.250 g mit Kräuterbutter",en:"Rump steak ~250 g with herb butter",price:"29,00 €"},
-{de:"Rumpsteak ca.250 g mit Kräuterbutter, Zwiebeln & Champignons",en:"Rump steak ~250 g with herb butter, onions & mushrooms",price:"32,00 €"},
-{de:"Grillplatte – Rumpsteak, Schweinefilet & Lammsteak",en:"Mixed grill – rump steak, pork fillet & lamb steak",price:"31,00 €"},
-{de:"Lammhüftsteaks ca.220 g mit Kräuterbutter & Spinat",en:"Lamb hip steaks ~220 g with herb butter & spinach",price:"29,00 €"},
-{de:"Schweinemedaillons mit Champignons auf Pfeffersauce",en:"Pork medallions with mushrooms on pepper sauce",price:"28,00 €"},
-{de:"Hackbällchen (Rind & Schwein) auf Pfeffersauce",en:"Meatballs (beef & pork) on pepper sauce",price:"16,00 €"},
-{de:"Kräuterbaguette",en:"Herb baguette",price:"2,50 €"},
-{de:"Kräuterbaguette mit Käse",en:"Herb baguette with cheese",price:"3,00 €"},
-{de:"Gemüse-Mix",en:"Mixed vegetables",price:"4,00 €"},
-{de:"Spinat",en:"Spinach",price:"4,00 €"},
-{de:"Zwei Spiegeleier",en:"Two fried eggs",price:"4,00 €"},
-{de:"Geschmorte Zwiebeln und/oder Champignons",en:"Braised onions and/or mushrooms",price:"4,00 €"},
-{de:"Champignon-, Pfeffer-, Tomaten- oder Senfsauce",en:"Mushroom, pepper, tomato or mustard sauce",price:"3,00 €"},
-{de:"Hollandaise",en:"Hollandaise sauce",price:"3,00 €"},
-{de:"Pommes Frites",en:"French fries",price:"3,50 €"},
-{de:"Backfischstäbchen",en:"Fish sticks",price:"7,00 €"},
-{de:"Kleines paniertes Schweineschnitzel",en:"Small breaded pork schnitzel",price:"8,00 €"},
-{de:"Nürnberger Bratwürstchen",en:"Nuremberg sausages",price:"7,00 €"},
-{de:"Hackbällchen (Rind & Schwein) mit Tomatensauce",en:"Meatballs (beef & pork) with tomato sauce",price:"7,00 €"},
-{de:"Bourbon-Vanilleeis (2 Kugeln) mit heißen Kirschen",en:"2 scoops bourbon-vanilla ice cream with hot cherries",price:"7,00 €"},
-{de:"Rote Grütze mit Eierlikör oder Sahne",en:"Red berry compote with advocaat or cream",price:"8,00 €"},
-{de:"Applecrumble mit 1 Kugel Vanilleeis",en:"Apple crumble with 1 scoop vanilla ice cream",price:"7,50 €"},
-{de:"Schokotörtchen mit flüssigem Kern + Vanilleeis",en:"Chocolate fondant with vanilla ice cream",price:"7,50 €"},
-{de:"Kalter Hund mit 1 Kugel Vanilleeis",en:"Chocolate-biscuit cake with vanilla ice cream",price:"7,50 €"},
-{de:"Warmer Milchreis mit Zimt & Zucker",en:"Warm rice pudding with cinnamon & sugar",price:"5,50 €"},
-{de:"Matjesfilet Hausfrauenart (3 Stück)",en:"Matjes housewife-style (3 pcs)",price:"17,00 €"},
-{de:"Rotbarschfilet auf Senfsauce",en:"Redfish fillet on mustard sauce",price:"23,00 €"},
-{de:"Dorschfilet auf Spinat mit Limonenbutter",en:"Cod fillet on spinach with lime butter",price:"25,00 €"},
-{de:"Fischer-Omelett mit Seelachswürfeln & Bratkartoffeln",en:"Fisherman omelette with pollock & fried potatoes",price:"27,00 €"},
-{de:"Fischfiletplatte ANNO 1800",en:"Assorted fish fillet platter ANNO 1800",price:"29,00 €"},
-{de:"Nordische Scholle (Speck)",en:"North-Sea plaice with bacon",price:"26,00 €"},
-{de:"Nordische Scholle (Krabben)",en:"North-Sea plaice with shrimp",price:"31,00 €"},
-{de:"Grünschalmuscheln überbacken mit Käse & Knoblauch",en:"Green-shell mussels au gratin with cheese & garlic",price:"15,00 €"}
+  // Vorspeisen / Starters
+  {de:"Frühlingsrollen",en:"Spring rolls",price:"5,50 €"},
+  {de:"Edamame",en:"Edamame",price:"5,00 €"},
+  {de:"Wakame-Salat",en:"Wakame salad",price:"6,00 €"},
+  {de:"Suppen (Miso, Kokos, Wantan)",en:"Soups (miso, coconut, wonton)",price:"5,00 €"},
+  {de:"Gyoza mit Hähnchen",en:"Gyoza with chicken",price:"6,50 €"},
+  {de:"Gyoza mit Gemüse",en:"Gyoza with vegetables",price:"6,50 €"},
+  {de:"Kimchi",en:"Kimchi",price:"4,50 €"},
+  // Sushi Maki
+  {de:"Lachs Maki (8 Stück)",en:"Salmon maki (8 pcs)",price:"6,00 €"},
+  {de:"Thunfisch Maki (8 Stück)",en:"Tuna maki (8 pcs)",price:"6,50 €"},
+  {de:"Gurke Maki (8 Stück)",en:"Cucumber maki (8 pcs)",price:"5,00 €"},
+  {de:"Avocado Maki (8 Stück)",en:"Avocado maki (8 pcs)",price:"5,50 €"},
+  // Inside-Out Rolls
+  {de:"California Roll (8 Stück)",en:"California roll (8 pcs)",price:"9,50 €"},
+  {de:"Lachs Avocado Roll (8 Stück)",en:"Salmon avocado roll (8 pcs)",price:"10,00 €"},
+  {de:"Ebi Tempura Roll (8 Stück)",en:"Ebi tempura roll (8 pcs)",price:"11,00 €"},
+  {de:"Vegetarische Roll (8 Stück)",en:"Vegetarian roll (8 pcs)",price:"9,00 €"},
+  {de:"Thunfisch Avocado Roll (8 Stück)",en:"Tuna avocado roll (8 pcs)",price:"10,50 €"},
+  // Sashimi
+  {de:"Sashimi Lachs (6 Stück)",en:"Salmon sashimi (6 pcs)",price:"12,50 €"},
+  {de:"Sashimi Thunfisch (6 Stück)",en:"Tuna sashimi (6 pcs)",price:"13,00 €"},
+  {de:"Sashimi Mix (12 Stück)",en:"Sashimi mix (12 pcs)",price:"22,00 €"},
+  // Nigiri
+  {de:"Nigiri Lachs (2 Stück)",en:"Salmon nigiri (2 pcs)",price:"5,50 €"},
+  {de:"Nigiri Thunfisch (2 Stück)",en:"Tuna nigiri (2 pcs)",price:"6,00 €"},
+  {de:"Nigiri Ebi (2 Stück)",en:"Prawn nigiri (2 pcs)",price:"5,50 €"},
+  {de:"Nigiri Avocado (2 Stück)",en:"Avocado nigiri (2 pcs)",price:"4,50 €"},
+  // Bowls
+  {de:"Lachs Bowl",en:"Salmon bowl",price:"13,50 €"},
+  {de:"Thunfisch Bowl",en:"Tuna bowl",price:"14,00 €"},
+  {de:"Veggie Bowl",en:"Veggie bowl",price:"12,00 €"},
+  {de:"Chicken Bowl",en:"Chicken bowl",price:"13,00 €"},
+  // Hauptgerichte / Main Courses
+  {de:"Gebratener Reis mit Gemüse",en:"Fried rice with vegetables",price:"9,50 €"},
+  {de:"Gebratener Reis mit Hähnchen",en:"Fried rice with chicken",price:"11,00 €"},
+  {de:"Gebratener Reis mit Garnelen",en:"Fried rice with prawns",price:"12,50 €"},
+  {de:"Gebratene Nudeln mit Gemüse",en:"Fried noodles with vegetables",price:"9,50 €"},
+  {de:"Gebratene Nudeln mit Hähnchen",en:"Fried noodles with chicken",price:"11,00 €"},
+  {de:"Gebratene Nudeln mit Garnelen",en:"Fried noodles with prawns",price:"12,50 €"},
+  // Norbu Spezialitäten
+  {de:"Ente mit Gemüse und Reis",en:"Duck with vegetables and rice",price:"15,00 €"},
+  {de:"Rindfleisch mit Brokkoli und Reis",en:"Beef with broccoli and rice",price:"14,50 €"},
+  {de:"Hähnchen Süß-Sauer",en:"Sweet-sour chicken",price:"13,00 €"},
+  {de:"Gebackenes Gemüse mit Reis",en:"Battered vegetables with rice",price:"12,00 €"},
+  // Extras
+  {de:"Reis",en:"Rice",price:"2,50 €"},
+  {de:"Süß-Sauer-Sauce",en:"Sweet-sour sauce",price:"1,50 €"},
+  {de:"Sojasauce",en:"Soy sauce",price:"1,00 €"},
+  {de:"Wasabi",en:"Wasabi",price:"1,00 €"},
+  // Nachtisch / Dessert
+  {de:"Mochi Eis (2 Stück)",en:"Mochi ice cream (2 pcs)",price:"5,00 €"},
+  {de:"Gebackene Banane mit Honig",en:"Fried banana with honey",price:"5,50 €"},
+  {de:"Sesambällchen (3 Stück)",en:"Sesame balls (3 pcs)",price:"4,50 €"},
+  // Getränke (main non-alc)
+  {de:"Wasser 0,5l",en:"Water 0.5l",price:"2,50 €"},
+  {de:"Apfelschorle 0,5l",en:"Apple spritzer 0.5l",price:"3,00 €"},
+  {de:"Cola 0,5l",en:"Cola 0.5l",price:"3,00 €"},
+  {de:"Fanta 0,5l",en:"Fanta 0.5l",price:"3,00 €"},
+  {de:"Tee",en:"Tea",price:"2,00 €"}
 ];
 
 /* ---------- STATE & ELEMENT REFS ---------- */
@@ -175,4 +166,133 @@ const els = {
   menuContainer   : document.getElementById("menuContainer"),
   actionBar       : document.getElementById("actionBar"),
   assignModal     : document.getElementById("assignModal"),
-  assignTitle     : document.get
+  assignTitle     : document.getElementById("assignTitle"),
+  assignList      : document.getElementById("assignList")
+};
+
+/* ---------- DISTINCT COLOUR PICKER ---------- */
+const usedHues=[];
+const dist=(a,b)=>Math.min(Math.abs(a-b),360-Math.abs(a-b));
+function pickColour(){
+  for(let i=0;i<720;i++){
+    const h=Math.floor(Math.random()*360);
+    if(usedHues.every(u=>dist(u,h)>=40)){usedHues.push(h);return`hsl(${h},70%,50%)`;}
+  }
+  return`hsl(${Math.floor(Math.random()*360)},70%,50%)`;
+}
+
+/* ---------- PERSON GRID ---------- */
+function createPersonBtn(name){
+  const btn=document.createElement("button");
+  btn.className="person-btn";
+  btn.textContent=name;
+  btn.onclick=()=>{
+    if(selected[name]){
+      const h=parseInt(selected[name].match(/hsl\((\d+)/)[1],10);
+      usedHues.splice(usedHues.indexOf(h),1);
+      delete selected[name];
+      btn.classList.remove("selected");
+      btn.style.background="";
+    }else{
+      selected[name]=pickColour();
+      btn.classList.add("selected");
+      btn.style.background=selected[name];
+    }
+  };
+  els.personList.append(btn);
+}
+people.forEach(createPersonBtn);
+function addNewName(){
+  const n=prompt("Enter new name")?.trim();
+  if(n&&!people.includes(n)){people.push(n);createPersonBtn(n);}
+}
+
+/* ---------- SELECTED BAR ---------- */
+function renderSelected(){
+  els.selectedPersons.innerHTML="";
+  for(const [n,c] of Object.entries(selected)){
+    const chip=document.createElement("span");
+    chip.className="person-chip";
+    chip.textContent=n;
+    chip.style.background=c;
+    els.selectedPersons.append(chip);
+  }
+  els.chooseFoodBtn.style.display=Object.keys(selected).length?"block":"none";
+}
+
+/* ---------- MODAL FLOW ---------- */
+document.getElementById("choosePersonBtn").onclick=()=>els.personModal.classList.add("active");
+function closePersonModal(){els.personModal.classList.remove("active");renderSelected();}
+window.closePersonModal=closePersonModal;
+
+/* ---------- MENU RENDER ---------- */
+els.chooseFoodBtn.onclick=()=>{
+  els.menuContainer.innerHTML="";
+  menu.forEach((it,i)=>{
+    const div=document.createElement("div");
+    div.className="menu-item";
+    div.innerHTML=`<div class="menu-header">
+       <div><strong>${it.de}</strong><br><em>${it.en}</em> <span class="price">${it.price}</span></div>
+       <button onclick="openAssign(${i})">Select</button>
+     </div>
+     <div class="assigned" id="a${i}"></div>`;
+    els.menuContainer.append(div);
+  });
+  els.menuContainer.style.display="block";
+  els.actionBar.style.display="flex";
+};
+
+/* ---------- ASSIGN FLOW ---------- */
+function openAssign(idx){
+  els.assignTitle.textContent=menu[idx].de;
+  els.assignList.innerHTML="";
+  for(const [n,c] of Object.entries(selected)){
+    let qty=(orders[n]||{})[idx]||0;
+    const card=document.createElement("div");
+    card.className="assign-person";
+    card.style.background=c;
+    const paint=()=>card.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
+    paint();
+    card.onclick=()=>{
+      qty=(qty+1)%6;
+      qty?card.classList.add("selected"):card.classList.remove("selected");
+      paint();
+      orders[n]=orders[n]||{};
+      qty?orders[n][idx]=qty:delete orders[n][idx];
+    };
+    if(qty)card.classList.add("selected");
+    els.assignList.append(card);
+  }
+  els.assignModal.classList.add("active");
+}
+window.openAssign=openAssign;
+function confirmAssignment(){
+  els.assignModal.classList.remove("active");
+  menu.forEach((_,i)=>{
+    const wrap=document.getElementById(`a${i}`);
+    wrap.innerHTML="";
+    for(const [n,c] of Object.entries(selected)){
+      const q=(orders[n]||{})[i]||0;
+      if(q){
+        const chip=document.createElement("span");
+        chip.className="person-chip";
+        chip.textContent=`${n} (${q})`;
+        chip.style.background=c;
+        wrap.append(chip);
+      }
+    }
+  });
+}
+window.confirmAssignment=confirmAssignment;
+
+/* ---------- EXPORT ---------- */
+const buildMsg=()=>Object.keys(orders).map(n=>{
+  const lines=Object.entries(orders[n])
+        .map(([i,q])=>`- ${q}× ${menu[i].de} (${menu[i].en}) – ${menu[i].price}`)
+        .join("\n");
+  return `${n}:\n${lines}`;
+}).join("\n\n");
+
+document.getElementById("finishBtn").onclick=()=>{
+  const t=buildMsg();
+  navigator.clip
