@@ -17,7 +17,7 @@
   button{all:unset;display:inline-flex;align-items:center;justify-content:center;
          cursor:pointer;background:var(--btn-bg);color:var(--btn-color);
          border-radius:6px;padding:var(--pad-v) var(--pad-h);
-         border:2px solid transparent;transition:background .2s;font-size:1rem}
+         border:2px solid transparent;transition:background .2s,font-size .2s}
   button:hover{background:#666}
   #choosePersonBtn,#chooseFoodBtn{width:100%;margin-bottom:1rem;text-align:center}
   #chooseFoodBtn{display:none}
@@ -51,6 +51,9 @@
   #actionBar button{flex:1 1 48%}
   #personModal .order-btn{background:var(--accent);font-weight:700}
   #personModal .order-btn:hover{background:#1565c0}
+  @media(max-width:420px){
+    #personList{grid-template-columns:repeat(2,1fr)}
+  }
 </style>
 </head>
 <body>
@@ -89,26 +92,26 @@ Wähle, für wen du bestellst – es können mehrere Personen sein.</p>
 </div>
 
 <script>
-/* ---------- PEOPLE (unchanged) ---------- */
+/* ---------- PEOPLE (unchanged list) ---------- */
 const people = ["Christa","Jochen","Sabine","Sven","Tom","Jan","Lena","Ben","Jojo","Hanna","Alex","Belle","Ellen","Vikas","Lisa","Mira"];
 
-/* ---------- FULL MENU (15 items) – O MARINHEIRO CAFE & BAR ---------- */
+/* ---------- MENU (15 items) – from the O Marinheiro board ---------- */
 const menu = [
   {de:"O Marinheiro Burger – 180g Rind, Käse, kleiner Salatmix", en:"O Marinheiro Burger – 180g beef patty, cheese, small salad mix", price:"10,50 €"},
   {de:"Veggie-Burger – 150g Patty (Blumenkohl, Karotten, Weizenvollkornmehl, Eier, Erbsen, Sellerie), Käse, kleiner Salatmix", en:"Veggie Burger – 150g patty (cauliflower, carrots, whole-wheat flour, eggs, peas, celery), cheese, small salad mix", price:"10,50 €"},
-  {de:"Black Tiger Garnelen nach portugiesischer Art – mit Knoblauch- oder Cocktailsauce, kleiner Salatmix", en:"Black Tiger prawns Portuguese style – with garlic or cocktail sauce, small salad mix", price:"14,00 €"},
-  {de:"Bifana-Burger – portugiesischer Burger mit Schweinerücken in Knoblauch-Paprika-Tomaten-Zwiebelsauce, kleiner Salatmix", en:"Bifana Burger – Portuguese pork loin in garlic–paprika–tomato–onion sauce, small salad mix", price:"9,50 €"},
-  {de:"Hüftsteak-Burger (Prego no Pão) – rustikales Brötchen, Rinderhüftsteak vom Grill, Schinken & Käse", en:"Rump steak burger (Prego no Pão) – rustic bun, grilled rump steak, ham & cheese", price:"11,00 €"},
+  {de:"Black Tiger Garnelen portugiesische Art – mit Knoblauch- oder Cocktailsauce, kleiner Salatmix", en:"Black Tiger prawns Portuguese style – with garlic or cocktail sauce, small salad mix", price:"14,00 €"},
+  {de:"Bifana-Burger – Schweinerücken in Knoblauch‑Paprika‑Tomaten‑Zwiebelsauce, kleiner Salatmix", en:"Bifana Burger – pork loin in garlic‑paprika‑tomato‑onion sauce, small salad mix", price:"9,50 €"},
+  {de:"Hüftsteak‑Burger (Prego no Pão) – rustikales Brötchen, Rinderhüftsteak vom Grill, Schinken & Käse", en:"Rump steak burger (Prego no Pão) – rustic bun, grilled rump steak, ham & cheese", price:"11,00 €"},
   {de:"Tintenfischstücke, mehliert – mit Knoblauch- oder Cocktailsauce, kleiner Salatmix", en:"Fried squid pieces (lightly floured) – with garlic or cocktail sauce, small salad mix", price:"12,00 €"},
-  {de:"Verschiedene Teigtaschen (gefüllt) – Krebsfleisch, Schweinefleisch, Hähnchen, Garnelenpaste, Stockfisch oder vegetarisch", en:"Assorted dumplings (filled) – crab, pork, chicken, shrimp paste, salt cod or vegetarian", price:"Stk. 2,00 € · 5 Stk. 9,00 €"},
+  {de:"Verschiedene Teigtaschen (gefüllt) – Krebsfleisch, Schweinefleisch, Hähnchen, Garnelenpaste, Stockfisch oder vegetarisch", en:"Assorted dumplings – crab, pork, chicken, shrimp paste, salt cod or vegetarian", price:"Stk. 2,00 € · 5 Stk. 9,00 €"},
   {de:"Pommes – mit Mayonnaise oder Ketchup", en:"Fries – with mayonnaise or ketchup", price:"4,50 €"},
   {de:"Bratwurst (Krakauer oder Thüringer) im Brötchen", en:"Bratwurst (Krakauer or Thuringian) in a roll", price:"5,00 €"},
   {de:"Currywurst mit Brot", en:"Curry sausage with bread", price:"6,00 €"},
-  {de:"Hähnchenbrustfilet in Piri-Piri-Sauce im Brötchen", en:"Chicken breast fillet in piri‑piri sauce in a roll", price:"7,50 €"},
-  {de:"Churros – mit Schoko-, Vanille- oder Caramelsauce, Puderzucker, Zimt & Zucker", en:"Churros – with chocolate, vanilla or caramel sauce; icing sugar, cinnamon & sugar", price:"6,00 €"},
-  {de:"Schnitzelbrötchen – mit Marinheiro-Sauce und kleinem Salatmix", en:"Schnitzel roll – with Marinheiro sauce and small salad mix", price:"7,00 €"},
+  {de:"Hähnchenbrustfilet in Piri‑Piri‑Sauce im Brötchen", en:"Chicken breast fillet in piri‑piri sauce in a roll", price:"7,50 €"},
+  {de:"Churros – mit Schoko‑, Vanille‑ oder Caramelsauce; Puderzucker, Zimt & Zucker", en:"Churros – with chocolate, vanilla or caramel sauce; icing sugar, cinnamon & sugar", price:"6,00 €"},
+  {de:"Schnitzelbrötchen – mit Marinheiro‑Sauce und kleinem Salatmix", en:"Schnitzel roll – with Marinheiro sauce and small salad mix", price:"7,00 €"},
   {de:"Fischbrötchen – mit Backfisch oder Black Tiger Garnele", en:"Fish roll – with fried fish or Black Tiger prawn", price:"7,00 €"},
-  {de:"Fischbrötchen – mit Stockfisch-Frikadelle oder Garnelen-Teigtasche", en:"Fish roll – with salt‑cod patty or shrimp dumpling", price:"5,00 €"}
+  {de:"Fischbrötchen – mit Stockfisch‑Frikadelle oder Garnelen‑Teigtasche", en:"Fish roll – with salt‑cod patty or shrimp dumpling", price:"5,00 €"}
 ];
 
 /* ---------- STATE & ELEMENT REFS ---------- */
@@ -125,15 +128,22 @@ const els = {
   assignList      : document.getElementById("assignList")
 };
 
-/* ---------- DISTINCT COLOUR PICKER ---------- */
+/* ---------- COLOUR RULES (Hanna must be pink) ---------- */
+const HANNA_NAME = "Hanna";
+const HANNA_COLOR = "#ff69b4";  // pink
+const HANNA_HUE = 330;          // reserve this hue so others avoid being similar
+
 const usedHues=[];
-const dist=(a,b)=>Math.min(Math.abs(a-b),360-Math.abs(a-b));
+const hueDist=(a,b)=>Math.min(Math.abs(a-b),360-Math.abs(a-b));
 function pickColour(){
   for(let i=0;i<720;i++){
     const h=Math.floor(Math.random()*360);
-    if(usedHues.every(u=>dist(u,h)>=40)){usedHues.push(h);return`hsl(${h},70%,50%)`;}
+    if(usedHues.every(u=>hueDist(u,h)>=40) && hueDist(HANNA_HUE,h)>=40){ // ensure very different from Hanna
+      usedHues.push(h);
+      return `hsl(${h},70%,50%)`;
+    }
   }
-  return`hsl(${Math.floor(Math.random()*360)},70%,50%)`;
+  return `hsl(${Math.floor(Math.random()*360)},70%,50%)`;
 }
 
 /* ---------- PERSON GRID ---------- */
@@ -143,20 +153,34 @@ function createPersonBtn(name){
   btn.textContent=name;
   btn.onclick=()=>{
     if(selected[name]){
-      const h=parseInt(selected[name].match(/hsl\((\d+)/)[1],10); // regex fixed
-      usedHues.splice(usedHues.indexOf(h),1);
+      // deselect
+      if(name===HANNA_NAME){
+        const ix=usedHues.indexOf(HANNA_HUE);
+        if(ix>-1) usedHues.splice(ix,1);
+      }else{
+        const m=/hsl\((\d+)/.exec(selected[name]);
+        if(m){ const h=parseInt(m[1],10); const ix=usedHues.indexOf(h); if(ix>-1) usedHues.splice(ix,1); }
+      }
       delete selected[name];
       btn.classList.remove("selected");
       btn.style.background="";
     }else{
-      selected[name]=pickColour();
+      // select
+      if(name===HANNA_NAME){
+        selected[name]=HANNA_COLOR;
+        if(!usedHues.includes(HANNA_HUE)) usedHues.push(HANNA_HUE);
+        btn.style.background=HANNA_COLOR;
+      }else{
+        selected[name]=pickColour();
+        btn.style.background=selected[name];
+      }
       btn.classList.add("selected");
-      btn.style.background=selected[name];
     }
   };
   els.personList.append(btn);
 }
 people.forEach(createPersonBtn);
+
 function addNewName(){
   const n=prompt("Enter new name")?.trim();
   if(n&&!people.includes(n)){people.push(n);createPersonBtn(n);}
@@ -169,7 +193,7 @@ function renderSelected(){
     const chip=document.createElement("span");
     chip.className="person-chip";
     chip.textContent=n;
-    chip.style.background=c;
+    chip.style.background=(n===HANNA_NAME)?HANNA_COLOR:c;
     els.selectedPersons.append(chip);
   }
   els.chooseFoodBtn.style.display=Object.keys(selected).length?"block":"none";
@@ -205,7 +229,7 @@ function openAssign(idx){
     let qty=(orders[n]||{})[idx]||0;
     const card=document.createElement("div");
     card.className="assign-person";
-    card.style.background=c;
+    card.style.background=(n===HANNA_NAME)?HANNA_COLOR:c;
     const paint=()=>card.innerHTML=n+(qty?`<span class="qty">${qty}</span>`:"");
     paint();
     card.onclick=()=>{
@@ -221,6 +245,7 @@ function openAssign(idx){
   els.assignModal.classList.add("active");
 }
 window.openAssign=openAssign;
+
 function confirmAssignment(){
   els.assignModal.classList.remove("active");
   menu.forEach((_,i)=>{
@@ -232,7 +257,7 @@ function confirmAssignment(){
         const chip=document.createElement("span");
         chip.className="person-chip";
         chip.textContent=`${n} (${q})`;
-        chip.style.background=c;
+        chip.style.background=(n===HANNA_NAME)?HANNA_COLOR:c;
         wrap.append(chip);
       }
     }
